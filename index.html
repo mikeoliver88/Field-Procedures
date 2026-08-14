@@ -594,6 +594,18 @@
   }
   .ab-input:focus{border-color:var(--amber); box-shadow:0 0 0 3px rgba(224,168,46,0.15);}
   .ab-input-date{font-size:14px;}
+  .ab-checkbox-row{
+    display:flex; align-items:center; gap:9px;
+    font-family:var(--sans); font-size:13.5px; color:var(--text);
+    padding:2px 1px 10px;
+    cursor:pointer;
+  }
+  .ab-checkbox-row input[type="checkbox"]{
+    width:17px; height:17px;
+    accent-color:var(--amber);
+    cursor:pointer;
+  }
+  .ab-hidden{display:none;}
   .ab-toggle-group{display:flex; gap:8px; margin-bottom:8px;}
   .ab-toggle-btn{
     flex:1;
@@ -769,6 +781,19 @@
     cursor:pointer;
   }
   .md-complete-btn-undo{background:var(--panel); border:1px solid var(--border); color:var(--text-dim);}
+  .md-edit-btn{
+    flex-shrink:0;
+    width:34px; height:34px;
+    display:flex; align-items:center; justify-content:center;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    border-radius:7px;
+    cursor:pointer;
+  }
+  .md-edit-btn:hover{border-color:var(--amber); color:var(--amber);}
+  .md-row-editing{display:flex; flex-direction:column;}
+  .md-row-editing .ab-input{margin-bottom:8px;}
   .md-add-form{
     background:var(--panel-2);
     border:1px solid var(--border);
@@ -785,6 +810,31 @@
   .md-src-gps{background:rgba(62,142,82,0.12); border:1px solid rgba(62,142,82,0.35); color:#8ee6a2;}
   .md-src-warn{background:rgba(224,168,46,0.1); border:1px solid rgba(224,168,46,0.3); color:#ffd77a;}
   .md-src-planning{background:var(--panel-2); border:1px solid var(--border); color:var(--text-dim);}
+
+  /* ---- well autocomplete dropdown ---- */
+  .well-ac-wrap{position:relative;}
+  .well-ac-dropdown{
+    position:relative;
+    margin-top:-4px;
+    margin-bottom:4px;
+  }
+  .well-ac-item{
+    display:flex; align-items:center; justify-content:space-between;
+    width:100%;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-top:none;
+    color:var(--text);
+    font-family:var(--sans); font-size:13.5px;
+    padding:9px 11px;
+    cursor:pointer;
+    text-align:left;
+  }
+  .well-ac-item:first-child{border-top:1px solid var(--border); border-radius:0 0 0 0;}
+  .well-ac-item:last-child{border-radius:0 0 7px 7px;}
+  .well-ac-item:hover, .well-ac-item:active{background:var(--panel-2);}
+  .well-ac-name{font-family:var(--mono); font-weight:700;}
+  .well-ac-field{font-family:var(--mono); font-size:10.5px; color:var(--text-dim); text-transform:uppercase;}
 
   .empty{
     text-align:center; padding:60px 20px; color:var(--text-dim);
@@ -1513,6 +1563,8 @@ let abandonFormOpen = {}; // transient UI state, not persisted: `${procId}:${sec
 let missDigData = loadMissDig();
 let missDigFormOpen = {}; // transient UI state, not persisted: procId -> bool
 let missDigStartFormOpen = {}; // transient UI state, not persisted: procId -> bool
+let missDigEditOpen = {}; // transient UI state, not persisted: entryId -> bool
+let missDigLocStatus = {}; // transient UI state, not persisted: procId -> 'locating'|'denied'|'timeout'|'unavailable'|'unsupported'|null
 let query = "";
 
 const iconCheck = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
@@ -1526,6 +1578,8 @@ const iconGlobe = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" s
 const iconPlus = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
 const iconX = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
 const iconRoute = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M6 17V9a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v0"/></svg>`;
+const iconEdit = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>`;
+const iconCrosshair = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/></svg>`;
 
 function highlight(text, q){
   if(!q) return escapeHtml(text);
@@ -1871,8 +1925,16 @@ function renderAbWellsSection(procId, entries){
 
   const addBlock = formOpen ? `
     <div class="ab-add-form" data-section="wells" data-id="${procId}">
-      <input type="text" class="ab-input ab-input-name" placeholder="Well number… e.g. W-208" autocomplete="off">
+      <div class="well-ac-wrap">
+        <input type="text" class="ab-input ab-input-name well-ac-input" placeholder="Well number… e.g. W-208" autocomplete="off">
+        <div class="well-ac-dropdown"></div>
+      </div>
       <input type="date" class="ab-input ab-input-date" aria-label="Date abandoned">
+      <label class="ab-checkbox-row">
+        <input type="checkbox" class="ab-line-checkbox" data-action="ab-line-toggle" checked>
+        <span>Well line was also removed</span>
+      </label>
+      <input type="text" class="ab-input ab-input-line-name" placeholder="Line number… e.g. 51S 8&quot;" autocomplete="off">
       <div class="ab-add-actions">
         <button class="ab-submit-btn" data-action="ab-submit" data-id="${procId}" data-section="wells">Add</button>
         <button class="ab-cancel-btn" data-action="ab-cancel" data-id="${procId}" data-section="wells">Cancel</button>
@@ -1951,7 +2013,10 @@ function renderAbPlannedSection(procId, entries){
 
   const addBlock = formOpen ? `
     <div class="ab-add-form" data-section="planned" data-id="${procId}">
-      <input type="text" class="ab-input ab-input-name" placeholder="Well or line number…" autocomplete="off">
+      <div class="well-ac-wrap">
+        <input type="text" class="ab-input ab-input-name well-ac-input" placeholder="Well or line number…" autocomplete="off">
+        <div class="well-ac-dropdown"></div>
+      </div>
       <div class="ab-toggle-group">
         <button type="button" class="ab-toggle-btn active" data-value="well" data-action="ab-toggle-opt">Well</button>
         <button type="button" class="ab-toggle-btn" data-value="line" data-action="ab-toggle-opt">Line</button>
@@ -1977,6 +2042,30 @@ function renderAbPlannedSection(procId, entries){
 ------------------------------------------------------------------------ */
 // Fixed preset — the address itself can't be geocoded offline, so it's baked in once here.
 const MISSDIG_HOME_BASE = { label: "7950 Partridge Ave (Home Base)", lat: 44.1015538, lon: -85.0576375 };
+
+function wellAutocompleteMatches(raw){
+  const q = (raw||"").trim().toUpperCase().replace(/\s+/g,"");
+  if(!q || q.length < 1) return [];
+  const exact = [], startsWith = [], contains = [];
+  WELLS.forEach(w => {
+    const num = w[0].replace(/^[A-Za-z]+-/,"");
+    const full = w[0].toUpperCase();
+    if(num === q || full === q) exact.push(w);
+    else if(num.indexOf(q) === 0) startsWith.push(w);
+    else if(num.indexOf(q) !== -1) contains.push(w);
+  });
+  return exact.concat(startsWith, contains).slice(0, 6);
+}
+
+function wellAutocompleteDropdownHtml(raw){
+  const matches = wellAutocompleteMatches(raw);
+  if(matches.length === 0) return "";
+  const fieldLabel = { winterfield:"Winterfield", cranberry:"Cranberry" };
+  return matches.map(w => `<button type="button" class="well-ac-item" data-action="well-ac-select" data-value="${escapeHtml(w[0])}">
+    <span class="well-ac-name">${escapeHtml(w[0])}</span>
+    <span class="well-ac-field">${fieldLabel[w[1]]||w[1]}</span>
+  </button>`).join("");
+}
 
 function parseMissDigInput(raw){
   const trimmed = (raw||"").trim();
@@ -2198,6 +2287,21 @@ function renderMissDigsCard(proc, isOpen){
   const rows = orderedList.length === 0
     ? `<p class="ab-empty">No miss digs added yet today.</p>`
     : orderedList.map(e => {
+        if(missDigEditOpen[e.id]){
+          return `
+          <div class="md-row md-row-editing">
+            <input type="text" class="ab-input md-edit-ticket" placeholder="Miss Dig # (ticket number)" value="${escapeHtml(e.ticketNumber||'')}" autocomplete="off">
+            <div class="well-ac-wrap">
+              <input type="text" class="ab-input md-edit-value well-ac-input" placeholder="Well number or coordinates…" value="${escapeHtml(e.label)}" autocomplete="off">
+              <div class="well-ac-dropdown"></div>
+            </div>
+            <input type="date" class="ab-input md-edit-exp" value="${escapeHtml(e.expDate||'')}" aria-label="Expiration date">
+            <div class="ab-add-actions">
+              <button class="ab-submit-btn" data-action="md-edit-save" data-id="${proc.id}" data-entry="${e.id}">Save</button>
+              <button class="ab-cancel-btn" data-action="md-edit-cancel" data-id="${proc.id}" data-entry="${e.id}">Cancel</button>
+            </div>
+          </div>`;
+        }
         const routeIdx = routedSet.has(e.id) ? routedIds.indexOf(e.id) + 1 : null;
         const gMapsUrl = `https://www.google.com/maps/search/?api=1&query=${e.lat},${e.lon}`;
         const aMapsUrl = `https://maps.apple.com/?ll=${e.lat},${e.lon}&q=${encodeURIComponent(e.label)}`;
@@ -2216,6 +2320,7 @@ function renderMissDigsCard(proc, isOpen){
             <a class="well-open-btn" href="${gMapsUrl}" target="_blank" rel="noopener">${iconPin} Google Maps</a>
             <a class="well-open-btn well-open-btn-earth" href="${aMapsUrl}" target="_blank" rel="noopener">${iconPin} Apple Maps</a>
             <button class="md-complete-btn ${e.completed?'md-complete-btn-undo':''}" data-action="md-toggle-complete" data-id="${proc.id}" data-entry="${e.id}">${iconCheck} ${e.completed?'Undo':'Complete'}</button>
+            <button class="md-edit-btn" data-action="md-edit-toggle" data-entry="${e.id}" aria-label="Edit">${iconEdit}</button>
             <button class="ab-remove" data-action="md-remove" data-id="${proc.id}" data-entry="${e.id}" aria-label="Remove">${iconX}</button>
           </div>
         </div>`;
@@ -2224,7 +2329,10 @@ function renderMissDigsCard(proc, isOpen){
   const addBlock = formOpen ? `
     <div class="md-add-form" data-id="${proc.id}">
       <input type="text" class="ab-input md-input-ticket" placeholder="Miss Dig # (ticket number)" autocomplete="off">
-      <input type="text" class="ab-input md-input-value" placeholder="Well number or coordinates… e.g. W-208 or 44.086, -85.090" autocomplete="off">
+      <div class="well-ac-wrap">
+        <input type="text" class="ab-input md-input-value well-ac-input" placeholder="Well number or coordinates… e.g. W-208 or 44.086, -85.090" autocomplete="off">
+        <div class="well-ac-dropdown"></div>
+      </div>
       <input type="date" class="ab-input md-input-exp" aria-label="Expiration date">
       <div class="ab-add-actions">
         <button class="ab-submit-btn" data-action="md-submit" data-id="${proc.id}">Add</button>
@@ -2254,7 +2362,10 @@ function renderMissDigsCard(proc, isOpen){
   } else if(startFormOpen){
     startBlock = `
     <div class="md-add-form">
-      <input type="text" class="ab-input md-input-start" placeholder="Well number or coordinates…" autocomplete="off">
+      <div class="well-ac-wrap">
+        <input type="text" class="ab-input md-input-start well-ac-input" placeholder="Well number or coordinates…" autocomplete="off">
+        <div class="well-ac-dropdown"></div>
+      </div>
       <div class="ab-toggle-group">
         <button type="button" class="ab-toggle-btn active" data-value="start" data-action="ab-toggle-opt">Start Here</button>
         <button type="button" class="ab-toggle-btn" data-value="end" data-action="ab-toggle-opt">End Here</button>
@@ -2265,10 +2376,20 @@ function renderMissDigsCard(proc, isOpen){
       </div>
     </div>`;
   } else {
+    const locStatus = missDigLocStatus[proc.id];
+    const locStatusMsg = {
+      "locating": { text: "Getting your location…", cls: "md-src-planning" },
+      "denied": { text: "Location permission denied. Check your browser/device Settings → Privacy → Location Services and allow access for this site, then try again.", cls: "md-src-warn" },
+      "timeout": { text: "Location request timed out. Try again, ideally with a clear view of the sky.", cls: "md-src-warn" },
+      "unavailable": { text: "Location unavailable right now. Try again in a moment.", cls: "md-src-warn" },
+      "unsupported": { text: "This browser doesn't support location access.", cls: "md-src-warn" }
+    }[locStatus];
     startBlock = `
     <div class="md-start-options">
-      <button class="md-start-btn md-start-btn-primary" data-action="md-start-homebase" data-id="${proc.id}">${iconPin} Start/end at ${escapeHtml(MISSDIG_HOME_BASE.label)}</button>
+      <button class="md-start-btn md-start-btn-primary" data-action="md-start-userloc" data-id="${proc.id}">${iconCrosshair} Use my current location</button>
+      <button class="md-start-btn" data-action="md-start-homebase" data-id="${proc.id}">${iconPin} Start/end at ${escapeHtml(MISSDIG_HOME_BASE.label)}</button>
       <button class="md-start-btn" data-action="md-start-toggle" data-id="${proc.id}">Or set a different point</button>
+      ${locStatusMsg ? `<p class="md-src ${locStatusMsg.cls}">${locStatusMsg.text}</p>` : ""}
     </div>`;
   }
 
@@ -2331,6 +2452,24 @@ document.addEventListener("click", (e) => {
     const abSubmit = e.target.closest('[data-action="ab-submit"]');
     const abRemove = e.target.closest('[data-action="ab-remove"]');
     const abGraduate = e.target.closest('[data-action="ab-graduate"]');
+    const wellAcSelect = e.target.closest('[data-action="well-ac-select"]');
+    const abLineToggle = e.target.closest('[data-action="ab-line-toggle"]');
+
+    if(abLineToggle){
+      const form = abLineToggle.closest('.ab-add-form');
+      const lineInput = form.querySelector('.ab-input-line-name');
+      lineInput.classList.toggle('ab-hidden', !abLineToggle.checked);
+      return;
+    }
+
+    if(wellAcSelect){
+      const wrap = wellAcSelect.closest('.well-ac-wrap');
+      const targetInput = wrap ? wrap.querySelector('.well-ac-input') : null;
+      const dropdown = wrap ? wrap.querySelector('.well-ac-dropdown') : null;
+      if(targetInput) targetInput.value = wellAcSelect.dataset.value;
+      if(dropdown) dropdown.innerHTML = "";
+      return;
+    }
     const mdAddToggle = e.target.closest('[data-action="md-add-toggle"]');
     const mdCancel = e.target.closest('[data-action="md-cancel"]');
     const mdSubmit = e.target.closest('[data-action="md-submit"]');
@@ -2338,11 +2477,90 @@ document.addEventListener("click", (e) => {
     const mdToggleComplete = e.target.closest('[data-action="md-toggle-complete"]');
     const mdPlanRoute = e.target.closest('[data-action="md-plan-route"]');
     const mdReset = e.target.closest('[data-action="md-reset"]');
+    const mdEditToggle = e.target.closest('[data-action="md-edit-toggle"]');
+    const mdEditCancel = e.target.closest('[data-action="md-edit-cancel"]');
+    const mdEditSave = e.target.closest('[data-action="md-edit-save"]');
+
+    if(mdEditToggle){
+      missDigEditOpen[mdEditToggle.dataset.entry] = true;
+      render();
+      return;
+    }
+    if(mdEditCancel){
+      missDigEditOpen[mdEditCancel.dataset.entry] = false;
+      render();
+      return;
+    }
+    if(mdEditSave){
+      const id = mdEditSave.dataset.id, entryId = mdEditSave.dataset.entry;
+      const row = mdEditSave.closest(".md-row-editing");
+      const ticketInput = row.querySelector(".md-edit-ticket");
+      const valueInput = row.querySelector(".md-edit-value");
+      const expInput = row.querySelector(".md-edit-exp");
+      const parsed = parseMissDigInput(valueInput.value);
+      if(!parsed){
+        valueInput.focus();
+        valueInput.style.borderColor = "var(--red)";
+        return;
+      }
+      const d = missDigData[id];
+      if(d){
+        const entry = d.entries.find(en => en.id === entryId);
+        if(entry){
+          entry.ticketNumber = (ticketInput.value||"").trim();
+          entry.label = parsed.label;
+          entry.lat = parsed.lat;
+          entry.lon = parsed.lon;
+          entry.expDate = expInput.value || "";
+          saveMissDig(missDigData);
+        }
+      }
+      missDigEditOpen[entryId] = false;
+      // location may have changed — refresh the route if one already exists
+      if(d && d.routeOrder && d.routeOrder.length > 0){
+        planMissDigRoute(id);
+      } else {
+        render();
+      }
+      return;
+    }
     const mdStartToggle = e.target.closest('[data-action="md-start-toggle"]');
     const mdStartCancel = e.target.closest('[data-action="md-start-cancel"]');
     const mdStartSubmit = e.target.closest('[data-action="md-start-submit"]');
     const mdStartClear = e.target.closest('[data-action="md-start-clear"]');
     const mdStartHomebase = e.target.closest('[data-action="md-start-homebase"]');
+    const mdStartUserLoc = e.target.closest('[data-action="md-start-userloc"]');
+
+    if(mdStartUserLoc){
+      const id = mdStartUserLoc.dataset.id;
+      if(!navigator.geolocation){
+        missDigLocStatus[id] = "unsupported";
+        render();
+        return;
+      }
+      missDigLocStatus[id] = "locating";
+      render();
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude, lon = pos.coords.longitude;
+          missDigData[id] = missDigData[id] || { entries: [], routeOrder: [] };
+          missDigData[id].manualStart = { label: `Current location (${lat.toFixed(4)}, ${lon.toFixed(4)})`, lat, lon, mode: "start" };
+          missDigLocStatus[id] = null;
+          saveMissDig(missDigData);
+          if(missDigData[id].routeOrder && missDigData[id].routeOrder.length > 0){
+            planMissDigRoute(id);
+          } else {
+            render();
+          }
+        },
+        (err) => {
+          missDigLocStatus[id] = err && err.code === 1 ? "denied" : err && err.code === 3 ? "timeout" : "unavailable";
+          render();
+        },
+        { timeout: 8000, maximumAge: 0 }
+      );
+      return;
+    }
     const mdStartModeToggle = e.target.closest('[data-action="md-start-mode-toggle"]');
     const mdPriorityToggle = e.target.closest('[data-action="md-priority-toggle"]');
 
@@ -2373,6 +2591,7 @@ document.addEventListener("click", (e) => {
       const id = mdStartHomebase.dataset.id;
       missDigData[id] = missDigData[id] || { entries: [], routeOrder: [] };
       missDigData[id].manualStart = { label: MISSDIG_HOME_BASE.label, lat: MISSDIG_HOME_BASE.lat, lon: MISSDIG_HOME_BASE.lon, mode: "start" };
+      missDigLocStatus[id] = null;
       saveMissDig(missDigData);
       if(missDigData[id].routeOrder && missDigData[id].routeOrder.length > 0){
         planMissDigRoute(id);
@@ -2409,6 +2628,7 @@ document.addEventListener("click", (e) => {
       const mode = modeBtn ? modeBtn.dataset.value : "start";
       missDigData[id] = missDigData[id] || { entries: [], routeOrder: [] };
       missDigData[id].manualStart = { label: parsed.label, lat: parsed.lat, lon: parsed.lon, mode: mode };
+      missDigLocStatus[id] = null;
       saveMissDig(missDigData);
       missDigStartFormOpen[id] = false;
       if(missDigData[id].routeOrder && missDigData[id].routeOrder.length > 0){
@@ -2421,6 +2641,7 @@ document.addEventListener("click", (e) => {
     if(mdStartClear){
       const id = mdStartClear.dataset.id;
       if(missDigData[id]) missDigData[id].manualStart = null;
+      missDigLocStatus[id] = null;
       saveMissDig(missDigData);
       render();
       return;
@@ -2525,6 +2746,14 @@ document.addEventListener("click", (e) => {
       abandonData[id] = abandonData[id] || { wells:[], lines:[], planned:[] };
       if(section === "wells"){
         abandonData[id].wells.push({ id:newAbId(), name, date });
+        const lineCheckbox = form.querySelector('.ab-line-checkbox');
+        if(lineCheckbox && lineCheckbox.checked){
+          const lineNameInput = form.querySelector('.ab-input-line-name');
+          const lineName = (lineNameInput.value || "").trim();
+          if(lineName){
+            abandonData[id].lines.push({ id:newAbId(), name:lineName, status:"abandoned", date });
+          }
+        }
       } else if(section === "lines"){
         const activeBtn = form.querySelector('.ab-toggle-btn.active');
         const status = activeBtn ? activeBtn.dataset.value : "abandoned";
@@ -2619,6 +2848,14 @@ document.addEventListener("input", (e) => {
     const input = e.target.closest('[data-action="field-input"]');
     const wellInput = e.target.closest('[data-action="well-input"]');
     const abDate = e.target.closest('[data-action="ab-date"]');
+    const wellAcInput = e.target.closest('.well-ac-input');
+
+    if(wellAcInput){
+      const wrap = wellAcInput.closest('.well-ac-wrap');
+      const dropdown = wrap ? wrap.querySelector('.well-ac-dropdown') : null;
+      if(dropdown) dropdown.innerHTML = wellAutocompleteDropdownHtml(wellAcInput.value);
+      // don't return — fields like md-input-value still need their own handling below if any
+    }
 
     if(abDate){
       const id = abDate.dataset.id, entryId = abDate.dataset.entry;
@@ -2666,6 +2903,16 @@ document.getElementById("search").addEventListener("input", (e) => {
   } catch(err){
     console.error("search input error:", err);
   }
+});
+
+document.addEventListener("focusout", (e) => {
+  const input = e.target.closest && e.target.closest('.well-ac-input');
+  if(!input) return;
+  const wrap = input.closest('.well-ac-wrap');
+  const dropdown = wrap ? wrap.querySelector('.well-ac-dropdown') : null;
+  if(!dropdown) return;
+  // delay so a tap on a suggestion has time to register before we clear it
+  setTimeout(() => { dropdown.innerHTML = ""; }, 200);
 });
 
 // Auto-open when there's only one procedure loaded, for convenience
