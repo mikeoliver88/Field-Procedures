@@ -1,0 +1,2688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Field Procedures — Valve Board</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#12161A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Field Ops">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<style>
+  :root{
+    --bg: #12161A;
+    --panel: #1B2126;
+    --panel-2: #20272D;
+    --border: #2B333A;
+    --text: #E7E4DC;
+    --text-dim: #8E99A1;
+    --amber: #E0A82E;
+    --amber-dim: #6b5620;
+    --red: #C8372E;
+    --red-glow: rgba(200,55,46,0.45);
+    --green: #3E8E52;
+    --green-glow: rgba(62,142,82,0.4);
+    --yellow: #E0A82E;
+    --yellow-glow: rgba(224,168,46,0.45);
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Roboto Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #1a2128 0%, var(--bg) 55%);
+    color:var(--text);
+    font-family:var(--sans);
+    min-height:100vh;
+    padding-bottom:60px;
+  }
+  /* ---- header / rail ---- */
+  header{
+    position:sticky; top:0; z-index:20;
+    background:linear-gradient(180deg, #10151A 0%, #10151Ae0 85%, transparent);
+    backdrop-filter: blur(6px);
+    border-bottom:1px solid var(--border);
+    padding:18px 18px 14px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:14px;
+  }
+  .brand .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 10px 2px var(--yellow-glow);
+    flex-shrink:0;
+  }
+  .brand h1{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    margin:0;
+    font-weight:600;
+  }
+  .brand h1 b{color:var(--text); font-weight:700;}
+
+  .search-wrap{position:relative;}
+  .search-wrap svg{
+    position:absolute; left:14px; top:50%; transform:translateY(-50%);
+    opacity:.55; pointer-events:none;
+  }
+  #search{
+    width:100%;
+    background:var(--panel);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:16px;
+    padding:13px 14px 13px 42px;
+    border-radius:10px;
+    outline:none;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  #search::placeholder{color:var(--text-dim);}
+  #search:focus{
+    border-color:var(--amber);
+    box-shadow:0 0 0 3px rgba(224,168,46,0.15);
+  }
+  .result-count{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-dim);
+    letter-spacing:.05em;
+    margin-top:8px;
+    padding-left:2px;
+  }
+
+  main{max-width:720px; margin:0 auto; padding:18px;}
+
+  /* ---- procedure card ---- */
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    margin-bottom:14px;
+    overflow:hidden;
+  }
+  .card-head{
+    display:flex; align-items:center; gap:12px;
+    padding:16px 16px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .chevron{
+    width:18px;height:18px;flex-shrink:0;
+    color:var(--text-dim);
+    transition:transform .2s ease;
+  }
+  .card.open .chevron{transform:rotate(90deg); color:var(--amber);}
+  .card-title-wrap{flex:1; min-width:0;}
+  .card-title{
+    font-size:16.5px; font-weight:700; margin:0 0 4px;
+    color:var(--text);
+    letter-spacing:.01em;
+  }
+  .card-title mark{
+    background:rgba(224,168,46,0.28);
+    color:var(--text);
+    border-radius:3px;
+    padding:0 1px;
+  }
+  .tags{display:flex; gap:6px; flex-wrap:wrap;}
+  .tag{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    border:1px solid var(--border);
+    border-radius:5px;
+    padding:2px 6px;
+  }
+  .progress-mini{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-dim);
+    text-align:right;
+    flex-shrink:0;
+    min-width:52px;
+  }
+  .progress-mini b{color:var(--text);}
+
+  .progress-track{
+    height:3px; width:100%;
+    background:var(--border);
+    display:flex; gap:2px;
+  }
+  .progress-track i{
+    flex:1; background:transparent; border-radius:1px;
+    transition:background .2s;
+  }
+  .progress-track i.done{background:var(--amber);}
+
+  .card-body{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .25s ease;
+  }
+  .card.open .card-body{max-height:4000px;}
+
+  .body-inner{padding:6px 16px 18px;}
+
+  .notify-line{
+    display:flex; gap:10px; align-items:flex-start;
+    padding:12px 12px;
+    margin:8px 0 14px;
+    background:rgba(224,168,46,0.08);
+    border:1px solid var(--amber-dim);
+    border-radius:8px;
+    font-size:14px;
+    line-height:1.4;
+  }
+  .notify-line svg{flex-shrink:0; margin-top:1px; color:var(--amber);}
+
+  .step{
+    display:flex; align-items:flex-start; gap:12px;
+    padding:11px 4px;
+    border-top:1px solid var(--border);
+  }
+  .step:first-of-type{border-top:none;}
+  .step.done .step-text{color:var(--text-dim); text-decoration:line-through; text-decoration-color:var(--border);}
+
+  .check{
+    width:22px; height:22px; flex-shrink:0; margin-top:1px;
+    border-radius:50%;
+    border:2px solid var(--border);
+    background:transparent;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:border-color .15s, background .15s;
+    padding:0;
+  }
+  .check:hover{border-color:var(--amber);}
+  .check svg{opacity:0; transition:opacity .12s; width:13px;height:13px;}
+  .step.done .check{background:var(--amber); border-color:var(--amber);}
+  .step.done .check svg{opacity:1; color:#12161A;}
+
+  .step-main{flex:1; min-width:0;}
+  .step-row{display:flex; align-items:flex-start; gap:8px; flex-wrap:wrap;}
+  .step-text{font-size:14.5px; line-height:1.45;}
+  .step-num{
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+    margin-right:2px;
+  }
+  .bell-icon{
+    display:inline-flex; vertical-align:-2px; margin-right:5px; color:var(--amber);
+  }
+  .bell-icon svg{width:13px;height:13px;}
+
+  .badge{
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.05em;
+    text-transform:uppercase; font-weight:700;
+    padding:3px 8px; border-radius:20px;
+    white-space:nowrap;
+    margin-top:2px;
+  }
+  .badge .lamp{width:7px;height:7px;border-radius:50%;}
+  .badge.open{background:rgba(200,55,46,0.14); color:#ff8a80; border:1px solid rgba(200,55,46,0.4);}
+  .badge.open .lamp{background:var(--red); box-shadow:0 0 6px 1px var(--red-glow);}
+  .badge.closed{background:rgba(62,142,82,0.14); color:#8ee6a2; border:1px solid rgba(62,142,82,0.4);}
+  .badge.closed .lamp{background:var(--green); box-shadow:0 0 6px 1px var(--green-glow);}
+  .badge.transition{background:rgba(224,168,46,0.14); color:#ffd77a; border:1px solid rgba(224,168,46,0.4);}
+  .badge.transition .lamp{background:var(--yellow); box-shadow:0 0 6px 1px var(--yellow-glow); animation:pulse 1.4s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+  .warning{
+    display:flex; gap:8px; align-items:flex-start;
+    font-size:12.5px; color:#ffd77a;
+    background:rgba(224,168,46,0.06);
+    border-left:2px solid var(--amber);
+    padding:8px 10px; margin-top:8px; border-radius:0 6px 6px 0;
+    line-height:1.4;
+  }
+  .warning svg{flex-shrink:0; margin-top:1px;}
+
+  .card-footer{
+    display:flex; justify-content:space-between; align-items:center;
+    padding-top:14px; margin-top:6px; border-top:1px solid var(--border);
+  }
+  .footer-note{font-size:11.5px; color:var(--text-dim); font-family:var(--mono);}
+  .reset-btn{
+    display:flex; align-items:center; gap:6px;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    font-family:var(--sans);
+    font-size:12.5px;
+    padding:7px 12px;
+    border-radius:7px;
+    cursor:pointer;
+    transition:border-color .15s, color .15s;
+  }
+  .reset-btn:hover{border-color:var(--amber); color:var(--amber);}
+  .reset-btn svg{width:13px;height:13px;}
+
+  .field-row{
+    padding:14px 4px;
+    border-top:1px solid var(--border);
+  }
+  .field-row:first-of-type{border-top:none;}
+  .field-label{
+    display:block;
+    font-size:14.5px;
+    font-weight:600;
+    margin-bottom:8px;
+    line-height:1.4;
+  }
+  .paren{
+    display:inline-block;
+    color:var(--amber);
+    font-weight:700;
+    background:rgba(224,168,46,0.12);
+    border:1px solid rgba(224,168,46,0.35);
+    border-radius:5px;
+    padding:1px 7px;
+    font-size:12.5px;
+    letter-spacing:.02em;
+  }
+  .field-input{
+    width:100%;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:16px;
+    padding:11px 12px;
+    border-radius:8px;
+    outline:none;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .field-input::placeholder{color:var(--text-dim);}
+  .field-input:focus{
+    border-color:var(--amber);
+    box-shadow:0 0 0 3px rgba(224,168,46,0.15);
+  }
+
+  /* ---- pig in/out table ---- */
+  .pig-body-inner{padding:6px 0 18px;}
+  .pig-table-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:0 16px;
+  }
+  .pig-table{
+    border-collapse:collapse;
+    width:100%;
+    min-width:400px;
+  }
+  .pig-table thead th{
+    position:sticky; top:0; z-index:2;
+    background:var(--panel);
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    font-weight:600;
+    text-align:center;
+    padding:8px 4px 10px;
+    border-bottom:1px solid var(--border);
+    white-space:nowrap;
+  }
+  .pig-line-col{
+    position:sticky; left:0; z-index:1;
+    background:var(--panel);
+    text-align:left !important;
+    padding-left:2px !important;
+    min-width:84px;
+  }
+  .pig-table thead th.pig-line-col{z-index:3;}
+  .pig-section-row td{
+    background:var(--panel-2);
+    padding:7px 10px;
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    position:sticky; left:0;
+  }
+  .pig-section-row.new-group td{padding-top:12px;}
+  .pig-group{
+    display:block;
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--amber);
+    font-weight:700;
+    margin-bottom:2px;
+  }
+  .pig-sub{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .pig-table tbody tr:not(.pig-section-row){border-top:1px solid var(--border);}
+  .pig-line-label{font-size:13.5px; font-weight:700; white-space:nowrap;}
+  .pig-size{font-family:var(--mono); font-size:11px; color:var(--text-dim); font-weight:500;}
+  .pig-tag{
+    display:block;
+    font-family:var(--mono);
+    font-size:9.5px;
+    letter-spacing:.03em;
+    color:var(--amber);
+    background:rgba(224,168,46,0.12);
+    border:1px solid rgba(224,168,46,0.3);
+    border-radius:4px;
+    padding:1px 5px;
+    margin-top:3px;
+    white-space:nowrap;
+    width:fit-content;
+  }
+  .pig-cell{text-align:center; padding:8px 6px; vertical-align:middle;}
+  .pig-bubble{
+    width:24px; height:24px;
+    border-radius:50%;
+    border:2px solid var(--border);
+    background:transparent;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    padding:0; margin:0 auto;
+    transition:border-color .15s, background .15s;
+  }
+  .pig-bubble:hover{border-color:var(--yellow);}
+  .pig-bubble svg{width:12px;height:12px; color:#12161A;}
+  .pig-bubble.filled{background:var(--yellow); border-color:var(--yellow);}
+  .pig-time{
+    font-family:var(--mono);
+    font-size:9px;
+    color:var(--text-dim);
+    margin-top:3px;
+    white-space:nowrap;
+  }
+
+  /* ---- well search ---- */
+  .well-search-box{position:relative; margin:4px 0 12px;}
+  .well-search-box svg{
+    position:absolute; left:12px; top:50%; transform:translateY(-50%);
+    opacity:.5; pointer-events:none;
+  }
+  .well-input{
+    width:100%;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:16px;
+    padding:11px 12px 11px 36px;
+    border-radius:8px;
+    outline:none;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .well-input::placeholder{color:var(--text-dim);}
+  .well-input:focus{
+    border-color:var(--amber);
+    box-shadow:0 0 0 3px rgba(224,168,46,0.15);
+  }
+  .well-hint{
+    font-size:13px; color:var(--text-dim);
+    padding:10px 2px; margin:0;
+    line-height:1.5;
+  }
+  .well-row{
+    padding:12px; margin-bottom:8px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:9px;
+  }
+  .well-row-top{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .well-name{font-family:var(--mono); font-size:15px; font-weight:700;}
+  .well-cat{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.05em; text-transform:uppercase;
+    font-weight:700; padding:2px 7px; border-radius:20px; white-space:nowrap;
+  }
+  .well-cat-active{background:rgba(62,142,82,0.14); color:#8ee6a2; border:1px solid rgba(62,142,82,0.4);}
+  .well-cat-obs{background:rgba(224,168,46,0.14); color:#ffd77a; border:1px solid rgba(224,168,46,0.4);}
+  .well-cat-plugged{background:rgba(142,153,161,0.14); color:var(--text-dim); border:1px solid var(--border);}
+  .well-coords{
+    font-family:var(--mono); font-size:12px; color:var(--text-dim);
+    margin-top:6px;
+  }
+  .well-field{
+    font-family:var(--mono); font-size:10.5px; color:var(--text-dim);
+    letter-spacing:.04em; text-transform:uppercase;
+    margin-top:5px;
+  }
+  .well-btn-row{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;}
+  .well-open-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:var(--sans); font-size:12.5px; font-weight:600;
+    color:#12161A;
+    background:var(--amber);
+    padding:7px 12px;
+    border-radius:7px;
+    text-decoration:none;
+  }
+  .well-open-btn:active{opacity:.85;}
+  .well-open-btn-earth{
+    color:var(--text);
+    background:var(--panel);
+    border:1px solid var(--border);
+  }
+
+  /* ---- abandonment log ---- */
+  .ab-section{margin-bottom:20px;}
+  .ab-section:last-child{margin-bottom:4px;}
+  .ab-heading{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    font-weight:700;
+    margin:0 0 10px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--border);
+  }
+  .ab-rows{margin-bottom:10px;}
+  .ab-empty{
+    font-size:13px; color:var(--text-dim);
+    padding:4px 2px 10px; margin:0;
+  }
+  .ab-row{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px 12px;
+    margin-bottom:8px;
+  }
+  .ab-row-main{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .ab-name{font-family:var(--mono); font-size:14px; font-weight:700;}
+  .ab-date{font-family:var(--mono); font-size:11.5px; color:var(--text-dim);}
+  .ab-tag{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.05em; text-transform:uppercase;
+    font-weight:700; padding:2px 7px; border-radius:20px; white-space:nowrap;
+  }
+  .ab-tag-abandoned{background:rgba(200,55,46,0.14); color:#ff8a80; border:1px solid rgba(200,55,46,0.4);}
+  .ab-tag-left-in-place{background:rgba(142,153,161,0.14); color:var(--text-dim); border:1px solid var(--border);}
+  .ab-tag-type{background:rgba(224,168,46,0.14); color:#ffd77a; border:1px solid rgba(224,168,46,0.4);}
+  .ab-remove{
+    flex-shrink:0;
+    width:26px; height:26px;
+    border-radius:50%;
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--text-dim);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .ab-remove:hover{border-color:var(--red); color:#ff8a80;}
+
+  .ab-row-planned{flex-direction:column; align-items:stretch;}
+  .ab-planned-controls{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    gap:10px; margin-top:10px; padding-top:10px;
+    border-top:1px solid var(--border);
+  }
+  .ab-date-label{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+    text-transform:uppercase; letter-spacing:.04em;
+  }
+  .ab-date-input{
+    background:var(--panel);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:13px;
+    padding:6px 8px;
+    border-radius:6px;
+    outline:none;
+  }
+  .ab-date-input:focus{border-color:var(--amber);}
+  .ab-planned-btns{display:flex; align-items:center; gap:8px;}
+  .ab-graduate-btn{
+    display:flex; align-items:center; gap:6px;
+    font-family:var(--sans); font-size:12px; font-weight:600;
+    color:#12161A;
+    background:var(--green);
+    border:none;
+    padding:6px 10px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  .ab-graduate-btn svg{width:11px;height:11px;}
+
+  .ab-add-btn{
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    width:100%;
+    background:transparent;
+    border:1px dashed var(--border);
+    color:var(--text-dim);
+    font-family:var(--sans); font-size:13px; font-weight:600;
+    padding:10px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:border-color .15s, color .15s;
+  }
+  .ab-add-btn:hover{border-color:var(--amber); color:var(--amber);}
+  .ab-add-form{
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:9px;
+    padding:12px;
+  }
+  .ab-input{
+    width:100%;
+    background:var(--panel);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:15px;
+    padding:10px 11px;
+    border-radius:7px;
+    outline:none;
+    margin-bottom:8px;
+  }
+  .ab-input:focus{border-color:var(--amber); box-shadow:0 0 0 3px rgba(224,168,46,0.15);}
+  .ab-input-date{font-size:14px;}
+  .ab-toggle-group{display:flex; gap:8px; margin-bottom:8px;}
+  .ab-toggle-btn{
+    flex:1;
+    background:var(--panel);
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    font-family:var(--sans); font-size:12.5px; font-weight:600;
+    padding:8px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  .ab-toggle-btn.active{
+    background:rgba(224,168,46,0.14);
+    border-color:var(--amber);
+    color:var(--amber);
+  }
+  .ab-add-actions{display:flex; gap:8px; margin-top:2px;}
+  .ab-submit-btn{
+    flex:1;
+    background:var(--amber);
+    border:none;
+    color:#12161A;
+    font-family:var(--sans); font-size:13.5px; font-weight:700;
+    padding:9px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  .ab-cancel-btn{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    font-family:var(--sans); font-size:13.5px; font-weight:600;
+    padding:9px 14px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+
+  /* ---- miss digs ---- */
+  .md-start-options{margin-bottom:10px;}
+  .md-start-btn{
+    display:flex; align-items:center; justify-content:center; gap:7px;
+    width:100%;
+    background:transparent;
+    border:1px dashed var(--border);
+    color:var(--text-dim);
+    font-family:var(--sans); font-size:12.5px; font-weight:600;
+    padding:9px;
+    border-radius:8px;
+    margin-bottom:8px;
+    cursor:pointer;
+  }
+  .md-start-btn:last-child{margin-bottom:0;}
+  .md-start-btn:hover{border-color:var(--amber); color:var(--amber);}
+  .md-start-btn-primary{
+    background:rgba(224,168,46,0.1);
+    border:1px solid rgba(224,168,46,0.35);
+    color:#ffd77a;
+  }
+  .md-start-chip{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    flex-wrap:wrap;
+    background:rgba(224,168,46,0.1);
+    border:1px solid rgba(224,168,46,0.3);
+    border-radius:8px;
+    padding:9px 11px;
+    margin-bottom:10px;
+    font-size:13px;
+    color:#ffd77a;
+  }
+  .md-start-chip-text{display:flex; align-items:center; gap:6px;}
+  .md-start-chip-actions{display:flex; align-items:center; gap:8px; flex-shrink:0;}
+  .md-start-switch{
+    background:transparent;
+    border:1px solid rgba(224,168,46,0.35);
+    color:#ffd77a;
+    font-family:var(--sans); font-size:11.5px; font-weight:600;
+    padding:5px 9px;
+    border-radius:6px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .md-start-clear{
+    flex-shrink:0;
+    width:22px; height:22px;
+    display:flex; align-items:center; justify-content:center;
+    background:transparent;
+    border:1px solid rgba(224,168,46,0.35);
+    color:#ffd77a;
+    border-radius:50%;
+    cursor:pointer;
+  }
+  .md-priority-toggle{
+    display:flex; align-items:center; gap:10px;
+    width:100%;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    font-family:var(--sans); font-size:13px; font-weight:600;
+    padding:10px 12px;
+    border-radius:9px;
+    margin-bottom:12px;
+    cursor:pointer;
+    text-align:left;
+  }
+  .md-priority-toggle.md-priority-on{border-color:var(--amber); color:var(--text);}
+  .md-priority-switch{
+    flex-shrink:0;
+    width:38px; height:22px;
+    background:var(--border);
+    border-radius:20px;
+    position:relative;
+    transition:background .15s;
+  }
+  .md-priority-on .md-priority-switch{background:var(--amber);}
+  .md-priority-knob{
+    position:absolute; top:2px; left:2px;
+    width:18px; height:18px;
+    background:#fff;
+    border-radius:50%;
+    transition:left .15s;
+  }
+  .md-priority-on .md-priority-knob{left:18px; background:#12161A;}
+  .md-src-priority{background:rgba(224,168,46,0.06); border:1px solid rgba(224,168,46,0.2); color:var(--text-dim); display:flex; align-items:center; gap:7px;}
+  .md-plan-btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%;
+    background:var(--amber);
+    border:none;
+    color:#12161A;
+    font-family:var(--sans); font-size:14px; font-weight:700;
+    padding:12px;
+    border-radius:9px;
+    margin-bottom:14px;
+    cursor:pointer;
+  }
+  .md-plan-btn:active{opacity:.88;}
+  .md-row{
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:9px;
+    padding:12px;
+    margin-bottom:8px;
+  }
+  .md-row.md-done{opacity:.55;}
+  .md-row.md-done .md-name{text-decoration:line-through; text-decoration-color:var(--text-dim);}
+  .md-row-top{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .md-order{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:20px; height:20px; flex-shrink:0;
+    background:var(--amber);
+    color:#12161A;
+    font-family:var(--mono); font-size:11px; font-weight:800;
+    border-radius:50%;
+  }
+  .md-done-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:20px; height:20px; flex-shrink:0;
+    background:var(--green);
+    color:#12161A;
+    border-radius:50%;
+  }
+  .md-done-badge svg{width:11px;height:11px;}
+  .md-name{font-family:var(--mono); font-size:14.5px; font-weight:700;}
+  .md-btn-row{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;}
+  .md-complete-btn{
+    display:flex; align-items:center; gap:6px;
+    background:var(--green);
+    border:none;
+    color:#12161A;
+    font-family:var(--sans); font-size:12.5px; font-weight:700;
+    padding:7px 12px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  .md-complete-btn-undo{background:var(--panel); border:1px solid var(--border); color:var(--text-dim);}
+  .md-add-form{
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:9px;
+    padding:12px;
+  }
+  .md-src{
+    font-size:12.5px;
+    margin:0 0 12px;
+    padding:8px 10px;
+    border-radius:7px;
+    line-height:1.4;
+  }
+  .md-src-gps{background:rgba(62,142,82,0.12); border:1px solid rgba(62,142,82,0.35); color:#8ee6a2;}
+  .md-src-warn{background:rgba(224,168,46,0.1); border:1px solid rgba(224,168,46,0.3); color:#ffd77a;}
+  .md-src-planning{background:var(--panel-2); border:1px solid var(--border); color:var(--text-dim);}
+
+  .empty{
+    text-align:center; padding:60px 20px; color:var(--text-dim);
+  }
+  .empty svg{opacity:.35; margin-bottom:14px;}
+  .empty p{font-size:14px; margin:0;}
+
+  footer.app-footer{
+    max-width:720px; margin:20px auto 0; padding:0 18px;
+    display:flex; justify-content:space-between; align-items:center;
+    color:var(--text-dim); font-family:var(--mono); font-size:10.5px;
+    letter-spacing:.04em;
+  }
+  .legend{display:flex; gap:14px; flex-wrap:wrap;}
+  .legend span{display:flex; align-items:center; gap:5px;}
+  .legend i{width:7px;height:7px;border-radius:50%; display:inline-block;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="dot"></span>
+    <h1><b>FIELD OPS</b> // PROCEDURE BOARD</h1>
+  </div>
+  <div class="search-wrap">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="search" type="text" placeholder="Search procedures, keywords, valve numbers…" autocomplete="off">
+  </div>
+  <div class="result-count" id="resultCount"></div>
+</header>
+
+<main id="main"></main>
+
+<footer class="app-footer">
+  <span>Stored locally on this device · works offline</span>
+  <span class="legend">
+    <span><i style="background:var(--red)"></i>Open</span>
+    <span><i style="background:var(--green)"></i>Closed</span>
+    <span><i style="background:var(--yellow)"></i>Transition</span>
+  </span>
+</footer>
+
+<script>
+/* =====================================================================
+   PROCEDURE DATA
+   Add new procedures here — each one automatically becomes searchable
+   and gets its own interactive checklist.
+   step.type: 'notify' | 'valve' | 'note'
+   step.state (for type 'valve'): 'open' | 'closed' | 'transition'
+===================================================================== */
+/* ---------------------------------------------------------------------
+   PIG IN/OUT — lateral line data
+   Ordered: West end crew (51–55) then East end crew (56–59, meeting in
+   the middle at 59). Within each end: North laterals numeric, then South
+   laterals numeric. 51S/52S/53S run 8" then upsize to 10" to reach the
+   mainline station, so that 10" leg is listed right after its 8" leg.
+------------------------------------------------------------------------ */
+const PIG_SECTIONS = {
+  "west-n": { group:"West End Crew — 51 to 54", sub:"North" },
+  "west-s": { group:"West End Crew — 51 to 54", sub:"South" },
+  "east-n": { group:"East End Crew — 55 to 59", sub:"North" },
+  "east-s": { group:"East End Crew — 55 to 59", sub:"South" },
+  "meet":   { group:"East End Crew — 55 to 59", sub:"59 — Meet Point" }
+};
+const PIG_LINES = [
+  { id:"51N8",  label:"51N", size:"8\"",  section:"west-n" },
+  { id:"52N8",  label:"52N", size:"8\"",  section:"west-n" },
+  { id:"53N10", label:"53N", size:"10\"", section:"west-n" },
+  { id:"54N16", label:"54N", size:"16\"", section:"west-n" },
+
+  { id:"51S8",  label:"51S", size:"8\"",  section:"west-s" },
+  { id:"51S10", label:"51S", size:"10\"", section:"west-s" },
+  { id:"52S8",  label:"52S", size:"8\"",  section:"west-s" },
+  { id:"52S10", label:"52S", size:"10\"", section:"west-s" },
+  { id:"53S4",  label:"53S", size:"4\"",  tag:"ArcGIS valve", section:"west-s" },
+  { id:"53S6",  label:"53S", size:"6\"",  tag:"ArcGIS valve", section:"west-s" },
+  { id:"53S8",  label:"53S", size:"8\"",  section:"west-s" },
+  { id:"53S10", label:"53S", size:"10\"", section:"west-s" },
+  { id:"54S4",  label:"54S", size:"4\"",  tag:"ArcGIS valve", section:"west-s" },
+
+  { id:"55N8",  label:"55N", size:"8\"",  section:"east-n" },
+  { id:"56N4",  label:"56N", size:"4\"",  section:"east-n" },
+  { id:"57N4",  label:"57N", size:"4\"",  section:"east-n" },
+  { id:"58N4",  label:"58N", size:"4\"",  section:"east-n" },
+
+  { id:"55S8",  label:"55S", size:"8\"",  section:"east-s" },
+  { id:"56S8",  label:"56S", size:"8\"",  section:"east-s" },
+  { id:"57S6",  label:"57S", size:"6\"",  section:"east-s" },
+  { id:"58S6",  label:"58S", size:"6\"",  section:"east-s" },
+
+  { id:"59EL4", label:"59",  size:"4\"",  tag:"East leg",   section:"meet" },
+  { id:"59ST4", label:"59",  size:"4\"",  tag:"To station", section:"meet" }
+];
+const PIG_COLUMNS = [
+  { key:"brushIn",  label:"Brush In" },
+  { key:"polyIn",   label:"Poly In" },
+  { key:"brushOut", label:"Brush Out" },
+  { key:"polyOut",  label:"Poly Out" }
+];
+
+/* ---------------------------------------------------------------------
+   WELL SEARCH — Winterfield well locations, from field GIS export.
+   category: 'active' | 'obs' (observation) | 'plugged'
+------------------------------------------------------------------------ */
+const WELLS = [
+["W-200","winterfield","active",44.086224,-85.089913],
+["W-201","winterfield","active",44.086338,-85.094996],
+["W-202","winterfield","active",44.082646,-85.095039],
+["W-203","winterfield","active",44.082651,-85.090007],
+["W-204","winterfield","active",44.086243,-85.100011],
+["W-205","winterfield","active",44.082589,-85.099998],
+["W-206","winterfield","active",44.078981,-85.099992],
+["W-207","winterfield","active",44.079155,-85.094962],
+["W-208","winterfield","active",44.075424,-85.094971],
+["W-209","winterfield","active",44.075708,-85.089843],
+["W-210","winterfield","active",44.093538,-85.084974],
+["W-211","winterfield","active",44.089928,-85.084915],
+["W-212","winterfield","active",44.079030,-85.089977],
+["W-213","winterfield","active",44.093470,-85.090011],
+["W-214","winterfield","active",44.089854,-85.089926],
+["W-215","winterfield","active",44.089891,-85.100075],
+["W-216","winterfield","active",44.093461,-85.100101],
+["W-217","winterfield","active",44.097118,-85.100091],
+["W-218","winterfield","active",44.079131,-85.070818],
+["W-219","winterfield","obs",44.111595,-85.070609],
+["W-220","winterfield","active",44.079258,-85.055770],
+["W-221","winterfield","active",44.079498,-85.050733],
+["W-222","winterfield","active",44.075789,-85.051417],
+["W-223","winterfield","active",44.083331,-85.025960],
+["W-224","winterfield","active",44.104627,-85.050602],
+["W-225","winterfield","active",44.108236,-85.050652],
+["W-226","winterfield","active",44.108159,-85.055648],
+["W-227","winterfield","active",44.079060,-85.080593],
+["W-228","winterfield","active",44.079042,-85.085664],
+["W-229","winterfield","active",44.086220,-85.070816],
+["W-230","winterfield","active",44.082748,-85.070750],
+["W-231","winterfield","active",44.075346,-85.080744],
+["W-232","winterfield","active",44.075338,-85.085835],
+["W-233","winterfield","active",44.079183,-85.075586],
+["W-234","winterfield","active",44.075474,-85.070879],
+["W-235","winterfield","active",44.075537,-85.075506],
+["W-236","winterfield","active",44.082838,-85.055849],
+["W-237","winterfield","active",44.101030,-85.050639],
+["W-238","winterfield","active",44.097290,-85.055513],
+["W-239","winterfield","active",44.104514,-85.055531],
+["W-240","winterfield","active",44.104528,-85.060650],
+["W-241","winterfield","active",44.111823,-85.055594],
+["W-242","winterfield","active",44.093623,-85.070767],
+["W-266","winterfield","active",44.079709,-85.020897],
+["W-267","winterfield","active",44.076117,-85.020827],
+["W-268","winterfield","active",44.072525,-85.020672],
+["W-271","winterfield","active",44.100731,-85.075745],
+["W-272","winterfield","active",44.097136,-85.075690],
+["W-273","winterfield","active",44.072818,-85.001163],
+["W-274","winterfield","active",44.072663,-85.006170],
+["W-275","winterfield","active",44.079677,-85.025853],
+["W-276","winterfield","active",44.079652,-85.030841],
+["W-277","winterfield","active",44.079623,-85.035937],
+["W-278","winterfield","active",44.079584,-85.040897],
+["W-279","winterfield","active",44.086726,-85.045802],
+["W-280","winterfield","active",44.079493,-85.045791],
+["W-281","winterfield","active",44.075695,-85.045663],
+["W-282","winterfield","active",44.076000,-85.040753],
+["W-283","winterfield","active",44.089917,-85.070753],
+["W-284","winterfield","active",44.100948,-85.055662],
+["W-285","winterfield","active",44.097210,-85.060720],
+["W-286","winterfield","active",44.111717,-85.060802],
+["W-287","winterfield","active",44.111566,-85.065638],
+["W-288","winterfield","active",44.097153,-85.065705],
+["W-289","winterfield","active",44.100825,-85.065262],
+["W-290","winterfield","active",44.090176,-85.075772],
+["W-291","winterfield","active",44.089921,-85.080775],
+["W-292","winterfield","active",44.093390,-85.080720],
+["W-293","winterfield","active",44.086240,-85.084930],
+["W-294","winterfield","active",44.082629,-85.085004],
+["W-295","winterfield","active",44.076100,-85.025894],
+["W-296","winterfield","active",44.083321,-85.021006],
+["W-297","winterfield","active",44.083286,-85.031002],
+["W-298","winterfield","active",44.083195,-85.041123],
+["W-299","winterfield","active",44.083167,-85.045797],
+["W-300","winterfield","active",44.086721,-85.040848],
+["W-301","winterfield","obs",44.076033,-85.030918],
+["W-302","winterfield","active",44.075997,-85.035838],
+["W-303","winterfield","active",44.083248,-85.036063],
+["W-304","winterfield","active",44.090157,-85.055850],
+["W-305","winterfield","active",44.083017,-85.051021],
+["W-306","winterfield","active",44.086537,-85.055707],
+["W-307","winterfield","active",44.090294,-85.050634],
+["W-308","winterfield","active",44.093684,-85.060706],
+["W-309","winterfield","active",44.090039,-85.065720],
+["W-310","winterfield","active",44.093610,-85.065784],
+["W-311","winterfield","active",44.108104,-85.060619],
+["W-312","winterfield","active",44.093733,-85.055712],
+["W-313","winterfield","active",44.089782,-85.060811],
+["W-314","winterfield","active",44.101093,-85.060656],
+["W-315","winterfield","active",44.086252,-85.051121],
+["W-316","winterfield","active",44.104381,-85.065664],
+["W-317","winterfield","active",44.108060,-85.065657],
+["W-318","winterfield","active",44.104265,-85.070635],
+["W-319","winterfield","active",44.108076,-85.070656],
+["W-320","winterfield","active",44.107992,-85.075660],
+["W-321","winterfield","active",44.089919,-85.095024],
+["W-322","winterfield","active",44.093444,-85.095065],
+["W-323","winterfield","active",44.097102,-85.095065],
+["W-324","winterfield","active",44.097342,-85.090057],
+["W-325","winterfield","active",44.097118,-85.085017],
+["W-326","winterfield","active",44.097127,-85.080305],
+["W-327","winterfield","active",44.104319,-85.075791],
+["W-328","winterfield","active",44.104295,-85.080787],
+["W-329","winterfield","active",44.100730,-85.070686],
+["W-330","winterfield","active",44.100663,-85.080712],
+["W-331","winterfield","active",44.100790,-85.084789],
+["W-332","winterfield","active",44.082712,-85.075495],
+["W-333","winterfield","active",44.086501,-85.080400],
+["W-334","winterfield","active",44.082585,-85.080766],
+["W-335","winterfield","active",44.115083,-85.070493],
+["W-336","winterfield","active",44.115221,-85.065622],
+["W-337","winterfield","active",44.115325,-85.060596],
+["W-338","winterfield","active",44.093391,-85.076018],
+["W-339","winterfield","active",44.086296,-85.075760],
+["W-374","winterfield","active",44.076235,-85.000865],
+["W-375","winterfield","active",44.100687,-85.095128],
+["W-376","winterfield","active",44.100588,-85.090130],
+["W-377","winterfield","active",44.111508,-85.075699],
+["W-378","winterfield","active",44.097438,-85.046010],
+["W-379","winterfield","active",44.093822,-85.045711],
+["W-380","winterfield","active",44.090577,-85.040834],
+["W-381","winterfield","active",44.104258,-85.090369],
+["W-382","winterfield","active",44.104262,-85.085571],
+["W-384","winterfield","active",44.104700,-85.045569],
+["W-385","winterfield","active",44.115104,-85.075663],
+["W-388","winterfield","active",44.086609,-85.031013],
+["W-394","winterfield","active",44.071834,-85.085431],
+["W-395","winterfield","active",44.071933,-85.080395],
+["W-396","winterfield","active",44.071928,-85.075551],
+["W-397","winterfield","active",44.086327,-85.065777],
+["W-398","winterfield","active",44.086447,-85.060713],
+["W-399","winterfield","active",44.082750,-85.065747],
+["W-400","winterfield","active",44.082859,-85.060812],
+["W-401","winterfield","active",44.079769,-85.005864],
+["W-402","winterfield","active",44.090307,-85.045815],
+["W-403","winterfield","active",44.097376,-85.050718],
+["W-404","winterfield","active",44.093861,-85.050630],
+["W-405","winterfield","active",44.097207,-85.070735],
+["W-427","winterfield","active",44.076166,-85.005948],
+["W-428","winterfield","active",44.076188,-85.010967],
+["W-429","winterfield","active",44.075799,-85.016006],
+["W-430","winterfield","obs",44.072612,-85.010942],
+["W-431","winterfield","active",44.072158,-85.016140],
+["W-432","winterfield","active",44.086759,-85.036021],
+["W-433","winterfield","active",44.101035,-85.046082],
+["W-434","winterfield","active",44.079279,-85.060857],
+["W-435","winterfield","active",44.079163,-85.065797],
+["W-436","winterfield","active",44.071856,-85.070899],
+["W-437","winterfield","active",44.071859,-85.089868],
+["W-438","winterfield","active",44.107916,-85.080703],
+["W-439","winterfield","active",44.100667,-85.100137],
+["W-444","winterfield","active",44.072507,-85.025422],
+["W-456","winterfield","plugged",44.087300,-84.990800],
+["W-457","winterfield","obs",44.063837,-85.013714],
+["W-458","winterfield","obs",44.062788,-85.083316],
+["W-459","winterfield","plugged",44.062800,-85.102700],
+["W-460","winterfield","plugged",44.099600,-85.013400],
+["W-461","winterfield","obs",44.062992,-85.034023],
+["W-462","winterfield","obs",44.071960,-84.982060],
+["W-469","winterfield","obs",44.127624,-85.083439],
+["W-470","winterfield","active",44.091415,-85.078201],
+["W-471","winterfield","active",44.087732,-85.077883],
+["W-475","winterfield","obs",44.137678,-85.076666],
+["W-534","winterfield","active",44.106098,-85.083198],
+["W-537","winterfield","active",44.091894,-85.052470],
+["W-538","winterfield","active",44.098878,-85.092610],
+["W-540","winterfield","active",44.099792,-85.042700],
+["W-541","winterfield","active",44.084593,-85.063287],
+["W-542","winterfield","active",44.091662,-85.092533],
+["W-543","winterfield","active",44.084438,-85.092473],
+["W-544","winterfield","active",44.091612,-85.102501],
+["W-545","winterfield","active",44.077078,-85.092815],
+["W-546","winterfield","active",44.106383,-85.053106],
+["W-547","winterfield","obs",44.070043,-85.092450],
+["W-548","winterfield","active",44.077227,-85.102516],
+["W-587","winterfield","active",44.099420,-85.033194],
+["W-589","winterfield","active",44.113347,-85.073075],
+["W-590","winterfield","active",44.113565,-85.053126],
+["W-598","winterfield","active",44.092031,-85.043262],
+["W-599","winterfield","active",44.084918,-85.043258],
+["W-600","winterfield","active",44.091800,-85.063300],
+["W-603","winterfield","active",44.085020,-85.033518],
+["W-604","winterfield","obs",44.077960,-85.033806],
+["W-605","winterfield","active",44.091713,-85.083236],
+["W-607","winterfield","active",44.113447,-85.063113],
+["W-608","winterfield","active",44.106412,-85.042950],
+["W-609","winterfield","active",44.106206,-85.073219],
+["W-610","winterfield","active",44.092232,-85.033356],
+["W-616","winterfield","active",44.077954,-85.023328],
+["W-617","winterfield","active",44.106224,-85.063096],
+["W-618","winterfield","active",44.120642,-85.073038],
+["W-619","winterfield","active",44.098954,-85.073102],
+["W-620","winterfield","active",44.099010,-85.063167],
+["W-625","winterfield","active",44.099290,-85.053210],
+["W-626","winterfield","active",44.098375,-85.083198],
+["W-627","winterfield","active",44.091651,-85.073229],
+["W-642","winterfield","active",44.120572,-85.063039],
+["W-643","winterfield","active",44.092401,-85.023292],
+["W-644","winterfield","active",44.098635,-85.102584],
+["W-645","winterfield","active",44.084498,-85.102524],
+["W-646","winterfield","active",44.085122,-85.023473],
+["W-648","winterfield","active",44.078052,-85.013484],
+["W-649","winterfield","active",44.106028,-85.092683],
+["W-650","winterfield","obs",44.127651,-85.072932],
+["W-652","winterfield","active",44.084977,-85.053253],
+["W-653","winterfield","active",44.084555,-85.073370],
+["W-654","winterfield","active",44.084564,-85.083251],
+["W-656","winterfield","active",44.106803,-85.033068],
+["W-657","winterfield","active",44.099496,-85.023150],
+["W-658","winterfield","active",44.085187,-85.013337],
+["W-659","winterfield","active",44.077273,-85.082858],
+["W-660","winterfield","active",44.069870,-85.082976],
+["W-664","winterfield","active",44.078005,-85.003434],
+["W-674","winterfield","active",44.070221,-85.073150],
+["W-675","winterfield","active",44.070483,-85.043326],
+["W-676","winterfield","active",44.070875,-85.034173],
+["W-677","winterfield","active",44.077279,-85.073108],
+["W-678","winterfield","active",44.077416,-85.063158],
+["W-679","winterfield","active",44.077512,-85.053441],
+["W-680","winterfield","active",44.077782,-85.043214],
+["W-683","winterfield","active",44.070758,-85.013730],
+["W-691","winterfield","active",44.069666,-85.023042],
+["W-764","winterfield","active",44.070942,-85.003636],
+["W-765","winterfield","active",44.085280,-85.002643],
+["W-790","winterfield","active",44.071899,-84.994111],
+["W-816","winterfield","active",44.077910,-84.993660],
+["W-900","winterfield","active",44.102906,-85.093047],
+["W-901","winterfield","active",44.080576,-85.093150],
+["W-902","winterfield","active",44.102880,-85.087998],
+["W-903","winterfield","active",44.099122,-85.087966],
+["W-904","winterfield","active",44.095528,-85.087924],
+["W-905","winterfield","active",44.084691,-85.087850],
+["W-906","winterfield","active",44.095567,-85.082893],
+["W-907","winterfield","active",44.095591,-85.078629],
+["W-908","winterfield","active",44.120630,-85.068494],
+["W-909","winterfield","active",44.113612,-85.068513],
+["W-910","winterfield","active",44.109908,-85.068546],
+["W-911","winterfield","active",44.106441,-85.068515],
+["W-912","winterfield","active",44.118870,-85.065563],
+["W-913","winterfield","active",44.110110,-85.063495],
+["W-914","winterfield","active",44.115312,-85.055432],
+["W-915","winterfield","active",44.103278,-85.038507],
+["W-916","winterfield","active",44.099349,-85.038550],
+["W-917","winterfield","active",44.095472,-85.037877],
+["W-918","winterfield","active",44.092280,-85.038529],
+["W-919","winterfield","active",44.088881,-85.038970],
+["W-920","winterfield","active",44.095949,-85.028638],
+["W-921","winterfield","active",44.092339,-85.028753],
+["W-922","winterfield","active",44.088940,-85.028872],
+["W-923","winterfield","active",44.085305,-85.028877],
+["W-924","winterfield","active",44.088957,-85.023899],
+["W-925","winterfield","active",44.088478,-85.018405],
+["W-926","winterfield","active",44.068943,-85.016023],
+["W-927","winterfield","active",44.069005,-85.011058],
+["W-928","winterfield","active",44.078253,-85.008850],
+["W-929","winterfield","active",44.074742,-84.998735],
+["W-933","winterfield","active",44.120734,-85.052824],
+["W-934","winterfield","active",44.112532,-85.043146],
+["W-947","winterfield","active",44.088498,-85.083102],
+["W-948","winterfield","active",44.081094,-85.083009],
+["W-949","winterfield","active",44.084484,-85.077764],
+["W-950","winterfield","active",44.081024,-85.078507],
+["W-951","winterfield","active",44.087688,-85.073473],
+["W-952","winterfield","active",44.109479,-85.072748],
+["W-953","winterfield","active",44.103277,-85.068550],
+["W-954","winterfield","active",44.081137,-85.072877],
+["W-955","winterfield","active",44.109674,-85.058756],
+["W-956","winterfield","active",44.106420,-85.058695],
+["W-957","winterfield","active",44.088663,-85.053693],
+["W-958","winterfield","active",44.084931,-85.047548],
+["W-959","winterfield","active",44.081613,-85.043282],
+["W-960","winterfield","obs",44.138778,-85.083034],
+["W-961","winterfield","obs",44.134760,-85.067557],
+["W-962","winterfield","obs",44.141239,-85.070881],
+["W-963","winterfield","obs",44.092384,-85.067860],
+["W-964","winterfield","obs",44.135212,-85.053017],
+["W-965","winterfield","obs",44.153198,-85.096948],
+["W-966","winterfield","obs",44.150903,-85.063950],
+["W-967","winterfield","obs",44.131640,-85.077361],
+["W-968","winterfield","obs",44.110191,-85.109234],
+["W-969","winterfield","obs",44.110954,-84.996765],
+["W-970","winterfield","obs",44.071647,-85.126887],
+["W-971","winterfield","obs",44.068092,-84.957860],
+["W-972","winterfield","obs",44.052775,-85.090452],
+["W-973","winterfield","obs",44.053598,-85.017562],
+["W-974","winterfield","obs",44.093514,-85.078418],
+["W-975","winterfield","obs",44.087196,-85.074509],
+["W-976","winterfield","obs",44.097324,-85.051955],
+["W-977","winterfield","active",44.093784,-85.061990],
+["W-978","winterfield","active",44.091499,-85.058880],
+["W-979","winterfield","active",44.091496,-85.058828],
+["W-980","winterfield","active",44.092539,-85.066338],
+["W-981","winterfield","active",44.092266,-85.066340],
+["W-982","winterfield","active",44.092580,-85.065967],
+["W-983","winterfield","active",44.092307,-85.065964],
+["W-984","winterfield","active",44.092700,-85.079682],
+["W-985","winterfield","active",44.092430,-85.079683],
+["W-986","winterfield","active",44.092701,-85.080024],
+["W-987","winterfield","active",44.092431,-85.080022],
+["W-988","winterfield","active",44.092703,-85.080368],
+["W-989","winterfield","active",44.092431,-85.080374],
+["W-994","winterfield","active",44.092553,-85.092185],
+["W-995","winterfield","active",44.092555,-85.092339],
+["W-996","winterfield","active",44.092829,-85.092179],
+["W-997","winterfield","active",44.092828,-85.092337],
+["W-998","winterfield","active",44.093180,-85.092175],
+["W-999","winterfield","active",44.093172,-85.092341],
+["C-243","cranberry","active",44.130836,-84.945982],
+["C-244","cranberry","active",44.130873,-84.940918],
+["C-245","cranberry","active",44.138113,-84.945778],
+["C-246","cranberry","active",44.134460,-84.946675],
+["C-247","cranberry","active",44.134445,-84.941147],
+["C-248","cranberry","active",44.134390,-84.951077],
+["C-249","cranberry","active",44.152448,-84.960627],
+["C-250","cranberry","active",44.152534,-84.965505],
+["C-251","cranberry","active",44.156243,-84.965947],
+["C-252","cranberry","active",44.145271,-84.970518],
+["C-253","cranberry","active",44.145306,-84.975485],
+["C-254","cranberry","plugged",44.176000,-85.029700],
+["C-255","cranberry","active",44.123442,-84.921541],
+["C-256","cranberry","active",44.123348,-84.926173],
+["C-257","cranberry","plugged",44.156000,-84.985400],
+["C-258","cranberry","active",44.156186,-84.980387],
+["C-259","cranberry","active",44.152343,-84.995331],
+["C-260","cranberry","active",44.165209,-85.014447],
+["C-261","cranberry","active",44.159107,-84.990457],
+["C-262","cranberry","active",44.160149,-84.995915],
+["C-263","cranberry","active",44.155946,-84.995401],
+["C-264","cranberry","active",44.156125,-84.990352],
+["C-265","cranberry","active",44.155614,-85.010500],
+["C-269","cranberry","active",44.168829,-85.009575],
+["C-270","cranberry","active",44.165728,-85.009481],
+["C-340","cranberry","active",44.119762,-84.926423],
+["C-341","cranberry","active",44.119797,-84.921384],
+["C-342","cranberry","active",44.119816,-84.916370],
+["C-343","cranberry","active",44.155413,-85.015416],
+["C-344","cranberry","obs",44.116199,-84.916216],
+["C-345","cranberry","active",44.127292,-84.940849],
+["C-346","cranberry","active",44.138002,-84.951067],
+["C-347","cranberry","active",44.141745,-84.945778],
+["C-348","cranberry","active",44.145341,-84.946221],
+["C-349","cranberry","active",44.141685,-84.956203],
+["C-350","cranberry","active",44.148900,-84.951288],
+["C-351","cranberry","active",44.145304,-84.956250],
+["C-352","cranberry","active",44.145248,-84.960579],
+["C-353","cranberry","active",44.148915,-84.960390],
+["C-354","cranberry","active",44.148872,-84.970529],
+["C-355","cranberry","active",44.152487,-84.970560],
+["C-356","cranberry","active",44.156070,-84.975644],
+["C-357","cranberry","active",44.152453,-84.975630],
+["C-358","cranberry","active",44.148813,-84.980358],
+["C-359","cranberry","active",44.152451,-84.985371],
+["C-360","cranberry","active",44.148780,-84.985433],
+["C-361","cranberry","active",44.145271,-84.980442],
+["C-362","cranberry","active",44.145070,-84.985428],
+["C-363","cranberry","active",44.155707,-85.005506],
+["C-364","cranberry","active",44.148769,-84.990431],
+["C-365","cranberry","active",44.155417,-85.000804],
+["C-366","cranberry","active",44.159801,-85.000969],
+["C-367","cranberry","active",44.159334,-85.005633],
+["C-368","cranberry","active",44.159047,-85.015435],
+["C-369","cranberry","active",44.159159,-85.010654],
+["C-370","cranberry","active",44.169065,-84.994152],
+["C-371","cranberry","active",44.172655,-85.009351],
+["C-372","cranberry","active",44.172252,-85.014823],
+["C-373","cranberry","active",44.168563,-85.013567],
+["C-383","cranberry","active",44.152498,-85.005235],
+["C-386","cranberry","active",44.152226,-85.000675],
+["C-387","cranberry","active",44.156075,-84.970664],
+["C-389","cranberry","active",44.156556,-84.960897],
+["C-390","cranberry","active",44.152677,-84.980292],
+["C-391","cranberry","active",44.148849,-84.975567],
+["C-392","cranberry","active",44.148892,-84.965521],
+["C-393","cranberry","active",44.145239,-84.965591],
+["C-406","cranberry","plugged",44.157500,-84.943900],
+["C-407","cranberry","active",44.145228,-84.951252],
+["C-408","cranberry","active",44.141640,-84.951037],
+["C-409","cranberry","active",44.150251,-84.924534],
+["C-410","cranberry","active",44.145476,-84.941092],
+["C-411","cranberry","active",44.141873,-84.941025],
+["C-412","cranberry","active",44.138164,-84.941111],
+["C-413","cranberry","active",44.133844,-84.935853],
+["C-414","cranberry","active",44.130321,-84.935449],
+["C-415","cranberry","active",44.130511,-84.930433],
+["C-416","cranberry","active",44.126730,-84.935174],
+["C-417","cranberry","active",44.123373,-84.930615],
+["C-418","cranberry","active",44.119838,-84.906359],
+["C-419","cranberry","active",44.123415,-84.916390],
+["C-420","cranberry","active",44.127050,-84.920316],
+["C-421","cranberry","active",44.114516,-84.884613],
+["C-422","cranberry","active",44.122439,-84.891148],
+["C-423","cranberry","active",44.172384,-85.019646],
+["C-424","cranberry","plugged",44.114200,-84.863600],
+["C-425","cranberry","active",44.168760,-85.019600],
+["C-426","cranberry","active",44.126813,-84.925089],
+["C-440","cranberry","active",44.165383,-85.004475],
+["C-441","cranberry","active",44.172468,-85.004356],
+["C-442","cranberry","active",44.169405,-85.004781],
+["C-443","cranberry","active",44.126710,-84.930459],
+["C-445","cranberry","active",44.152064,-84.927226],
+["C-446","cranberry","obs",44.157529,-84.925169],
+["C-447","cranberry","active",44.144912,-84.926594],
+["C-448","cranberry","active",44.116243,-84.900954],
+["C-449","cranberry","active",44.116175,-84.890817],
+["C-450","cranberry","obs",44.164187,-84.959591],
+["C-451","cranberry","plugged",44.144998,-84.911202],
+["C-452","cranberry","plugged",44.123840,-84.955950],
+["C-453","cranberry","active",44.144570,-85.020493],
+["C-454","cranberry","plugged",44.155500,-85.030700],
+["C-455","cranberry","obs",44.181006,-85.017643],
+["C-463","cranberry","active",44.148907,-84.946284],
+["C-464","cranberry","active",44.148363,-84.937050],
+["C-465","cranberry","active",44.148494,-84.922020],
+["C-466","cranberry","active",44.137493,-84.935934],
+["C-467","cranberry","obs",44.137503,-84.999917],
+["C-468","cranberry","obs",44.181870,-84.996868],
+["C-472","cranberry","plugged",44.135400,-85.023100],
+["C-473","cranberry","obs",44.148315,-85.020439],
+["C-474","cranberry","obs",44.142637,-85.033284],
+["C-700","cranberry","active",44.157824,-84.992839],
+["C-701","cranberry","active",44.158042,-84.982975],
+["C-702","cranberry","active",44.150660,-84.963004],
+["C-703","cranberry","active",44.157997,-84.973132],
+["C-704","cranberry","active",44.143576,-84.953718],
+["C-705","cranberry","active",44.136286,-84.943555],
+["C-706","cranberry","active",44.128614,-84.932849],
+["C-707","cranberry","active",44.135696,-84.933377],
+["C-708","cranberry","active",44.150814,-84.982146],
+["C-709","cranberry","active",44.136184,-84.953606],
+["C-710","cranberry","active",44.143244,-84.943694],
+["C-711","cranberry","active",44.150866,-84.973043],
+["C-712","cranberry","active",44.150485,-84.992880],
+["C-713","cranberry","active",44.157619,-85.003326],
+["C-714","cranberry","active",44.157768,-84.963162],
+["C-715","cranberry","active",44.150716,-84.953847],
+["C-716","cranberry","active",44.143391,-84.962953],
+["C-717","cranberry","active",44.129048,-84.922908],
+["C-718","cranberry","active",44.129027,-84.943434],
+["C-719","cranberry","active",44.167207,-84.996580],
+["C-720","cranberry","active",44.143017,-84.933989],
+["C-724","cranberry","active",44.143479,-84.993005],
+["C-725","cranberry","active",44.150343,-85.002566],
+["C-726","cranberry","active",44.121599,-84.923969],
+["C-727","cranberry","active",44.129045,-84.953959],
+["C-728","cranberry","active",44.143659,-84.973036],
+["C-729","cranberry","active",44.157263,-85.012469],
+["C-730","cranberry","active",44.167153,-85.007026],
+["C-731","cranberry","active",44.174648,-84.996705],
+["C-732","cranberry","active",44.157911,-84.953976],
+["C-733","cranberry","active",44.150655,-84.944122],
+["C-734","cranberry","active",44.150241,-84.934637],
+["C-735","cranberry","active",44.121672,-84.933114],
+["C-791","cranberry","active",44.121681,-84.913917],
+["C-792","cranberry","active",44.150148,-85.012877],
+["C-806","cranberry","active",44.157243,-85.022539],
+["C-815","cranberry","active",44.143484,-84.983065],
+["C-820","cranberry","obs",44.188570,-85.012241],
+["C-821","cranberry","obs",44.185783,-85.032102],
+["C-822","cranberry","obs",44.177597,-85.032925],
+["C-823","cranberry","obs",44.150075,-85.043158],
+["C-824","cranberry","obs",44.148124,-85.030018],
+["C-825","cranberry","obs",44.135796,-85.027518],
+["C-826","cranberry","obs",44.125381,-84.889006],
+["C-827","cranberry","obs",44.115835,-84.873863],
+["C-828","cranberry","obs",44.195462,-85.017145],
+["C-829","cranberry","obs",44.182529,-85.046298],
+["C-831","cranberry","obs",44.146184,-85.047532],
+["C-832","cranberry","obs",44.153487,-84.981593],
+["C-833","cranberry","obs",44.153471,-84.985192],
+["C-930","cranberry","active",44.176175,-85.019818],
+["C-931","cranberry","active",44.133792,-84.930922],
+["C-932","cranberry","active",44.148607,-84.926871],
+["C-933","cranberry","active",44.119576,-84.911300],
+["C-934","cranberry","obs",44.121949,-84.899841],
+["C-935","cranberry","active",44.170694,-85.017483],
+["C-936","cranberry","active",44.153580,-85.002605],
+["C-937","cranberry","active",44.155031,-84.993310],
+["C-938","cranberry","active",44.154033,-84.978715],
+["C-939","cranberry","active",44.150883,-84.978509],
+["C-940","cranberry","active",44.154070,-84.973387],
+["C-941","cranberry","active",44.147319,-84.972725],
+["C-942","cranberry","active",44.150694,-84.968296],
+["C-943","cranberry","active",44.147238,-84.968353],
+["C-944","cranberry","active",44.132697,-84.943154],
+["C-945","cranberry","active",44.132667,-84.938153],
+["C-946","cranberry","active",44.131951,-84.932713],
+["C-990","cranberry","active",44.156977,-84.991756],
+["C-991","cranberry","active",44.156775,-84.991729],
+["C-992","cranberry","active",44.156968,-84.992076],
+["C-993","cranberry","active",44.156779,-84.992042]
+];
+
+const PROCEDURES = [
+  {
+    id: "flush-ktech",
+    title: "Flushing K-Tech",
+    type: "checklist",
+    keywords: ["K-Tech","Ktech","flush","Muskegon River","compressor station","slug catcher","307","304","312","305","308","306"],
+    steps: [
+      { type:"notify", text:"Let Muskegon River Compressor Station know you're going to flush the K-Tech." },
+      { type:"valve",  text:"Open 307", valve:"307", state:"open" },
+      { type:"valve",  text:"Close 304", valve:"304", state:"closed" },
+      { type:"valve",  text:"Crack Open 312 to flush out bottom line, then close.", valve:"312", state:"closed" },
+      { type:"valve",  text:"Open 304", valve:"304", state:"open" },
+      { type:"valve",  text:"Close 305", valve:"305", state:"closed" },
+      { type:"valve",  text:"Crack open 312 again to flush out top line, then close.", valve:"312", state:"closed" },
+      { type:"valve",  text:"Open 305", valve:"305", state:"open" },
+      { type:"valve",  text:"Flush K-Tech at 308 (crack open), then close.", valve:"308", state:"closed" },
+      { type:"valve",  text:"Crack open 306 to flush out bypass line, then close.", valve:"306", state:"closed",
+        note:"Don't let the slug catcher get below 18\". Block valves close automatically at 16\" — if that happens you'll have to reset everything." },
+      { type:"valve",  text:"Close 307", valve:"307", state:"closed" }
+    ]
+  },
+  {
+    id: "disposal-reads",
+    title: "Disposal Reads",
+    type: "reads",
+    keywords: ["disposal","injection pressure","annulus pressure","tubing","casing","weekly cumulative","pump house","meter","gas tank","diesel tank","methanol tank","inches"],
+    fields: [
+      { label:"Injection pressure", paren:"tubing" },
+      { label:"Annulus pressure", paren:"casing" },
+      { label:"Weekly cumulative pressure", paren:"Meter in pump house from route" },
+      { label:"Gas tank", paren:"inches" },
+      { label:"Diesel tank", paren:"inches" },
+      { label:"Methanol tank", paren:"inches" }
+    ]
+  },
+  {
+    id: "pig-in-out",
+    title: "Winterfield Pig In/Out",
+    type: "pigging",
+    keywords: ["pig","pigging","brush pig","poly pig","lateral","west end","east end","51","52","53","54","55","56","57","58","59","arcgis"],
+    lines: PIG_LINES,
+    columns: PIG_COLUMNS
+  },
+  {
+    id: "well-search",
+    title: "Well Search",
+    type: "wellsearch",
+    keywords: ["well","wells","locate","find well","W-","C-","winterfield","cranberry"]
+  },
+  {
+    id: "abandonment-log",
+    title: "Abandonment Log",
+    type: "abandonment",
+    keywords: ["abandoned","abandonment","plugged","left in place","planned","well lines"]
+  },
+  {
+    id: "miss-digs",
+    title: "Miss Digs",
+    type: "missdigs",
+    keywords: ["miss dig","miss digs","811","locate","dig request"]
+  }
+];
+
+/* ---------------------------------------------------------------- */
+const STORAGE_KEY = "fieldProcedures.completedSteps.v1";
+const OPEN_KEY = "fieldProcedures.openCards.v1";
+const READS_KEY = "fieldProcedures.readsValues.v1";
+const PIG_KEY = "fieldProcedures.pigStatus.v1";
+const ABANDON_KEY = "fieldProcedures.abandonData.v1";
+const MISSDIG_KEY = "fieldProcedures.missDigData.v1";
+
+function loadCompleted(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function saveCompleted(data){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
+}
+function loadOpenCards(){
+  try{ return JSON.parse(localStorage.getItem(OPEN_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function saveOpenCards(data){
+  try{ localStorage.setItem(OPEN_KEY, JSON.stringify(data)); }catch(e){}
+}
+function loadReads(){
+  try{ return JSON.parse(localStorage.getItem(READS_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function saveReads(data){
+  try{ localStorage.setItem(READS_KEY, JSON.stringify(data)); }catch(e){}
+}
+function loadPig(){
+  try{ return JSON.parse(localStorage.getItem(PIG_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function savePig(data){
+  try{ localStorage.setItem(PIG_KEY, JSON.stringify(data)); }catch(e){}
+}
+function loadAbandon(){
+  try{ return JSON.parse(localStorage.getItem(ABANDON_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function saveAbandon(data){
+  try{ localStorage.setItem(ABANDON_KEY, JSON.stringify(data)); }catch(e){}
+}
+function newAbId(){
+  return 'ab_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+}
+function loadMissDig(){
+  try{ return JSON.parse(localStorage.getItem(MISSDIG_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function saveMissDig(data){
+  try{ localStorage.setItem(MISSDIG_KEY, JSON.stringify(data)); }catch(e){}
+}
+function newMdId(){
+  return 'md_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+}
+
+let completed = loadCompleted();
+let openCards = loadOpenCards();
+let readsValues = loadReads();
+let pigStatus = loadPig();
+let abandonData = loadAbandon();
+let abandonFormOpen = {}; // transient UI state, not persisted: `${procId}:${section}` -> bool
+let missDigData = loadMissDig();
+let missDigFormOpen = {}; // transient UI state, not persisted: procId -> bool
+let missDigStartFormOpen = {}; // transient UI state, not persisted: procId -> bool
+let query = "";
+
+const iconCheck = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+const iconChevron = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`;
+const iconBell = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`;
+const iconWarn = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+const iconReset = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>`;
+const iconEmpty = `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`;
+const iconPin = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`;
+const iconGlobe = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a13.5 13.5 0 0 1 0 18a13.5 13.5 0 0 1 0-18Z"/></svg>`;
+const iconPlus = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
+const iconX = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+const iconRoute = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M6 17V9a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v0"/></svg>`;
+
+function highlight(text, q){
+  if(!q) return escapeHtml(text);
+  const esc = escapeHtml(text);
+  const escQ = escapeHtml(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  return esc.replace(new RegExp(escQ,"ig"), m => `<mark>${m}</mark>`);
+}
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function matches(proc, q){
+  if(!q) return true;
+  let content;
+  if(proc.type === "reads"){
+    content = proc.fields.map(f => `${f.label} ${f.paren||""}`);
+  } else if(proc.type === "pigging"){
+    content = proc.lines.map(l => `${l.label} ${l.size} ${l.tag||""} ${PIG_SECTIONS[l.section].group} ${PIG_SECTIONS[l.section].sub}`);
+  } else if(proc.type === "wellsearch"){
+    content = WELLS.map(w => w[0]);
+  } else if(proc.type === "abandonment"){
+    const d = abandonData[proc.id] || { wells:[], lines:[], planned:[] };
+    content = [
+      ...d.wells.map(e => `${e.name} ${e.date||""}`),
+      ...d.lines.map(e => `${e.name} ${e.status} ${e.date||""}`),
+      ...d.planned.map(e => `${e.name} ${e.type} ${e.date||""}`)
+    ];
+  } else if(proc.type === "missdigs"){
+    const d = missDigData[proc.id] || { entries:[] };
+    content = d.entries.map(e => `${e.label} ${e.expDate||""}`);
+  } else {
+    content = proc.steps.map(s=>s.text);
+  }
+  const hay = [proc.title, ...(proc.keywords||[]), ...content].join(" ").toLowerCase();
+  return hay.includes(q.toLowerCase());
+}
+
+function badgeHtml(step, isDone){
+  if(step.type !== "valve" || !isDone) return "";
+  const labelMap = { open:"Open", closed:"Closed", transition:"Transition" };
+  return `<span class="badge ${step.state}"><span class="lamp"></span>${step.valve} · ${labelMap[step.state]}</span>`;
+}
+
+function render(){
+  try{
+    const main = document.getElementById("main");
+    const filtered = PROCEDURES.filter(p => matches(p, query));
+
+    document.getElementById("resultCount").textContent =
+      query ? `${filtered.length} procedure${filtered.length===1?"":"s"} found` : `${PROCEDURES.length} procedure${PROCEDURES.length===1?"":"s"} loaded`;
+
+    if(filtered.length === 0){
+      main.innerHTML = `<div class="empty">${iconEmpty}<p>No procedures match “${escapeHtml(query)}.”</p></div>`;
+      return;
+    }
+
+    main.innerHTML = filtered.map(proc => {
+      try{
+        const isOpen = !!openCards[proc.id];
+
+        if(proc.type === "reads"){
+          return renderReadsCard(proc, isOpen);
+        }
+        if(proc.type === "pigging"){
+          return renderPiggingCard(proc, isOpen);
+        }
+        if(proc.type === "wellsearch"){
+          return renderWellSearchCard(proc, isOpen);
+        }
+        if(proc.type === "abandonment"){
+          return renderAbandonmentCard(proc, isOpen);
+        }
+        if(proc.type === "missdigs"){
+          return renderMissDigsCard(proc, isOpen);
+        }
+        return renderChecklistCard(proc, isOpen);
+      } catch(cardErr){
+        console.error("card render error:", proc.id, cardErr);
+        return `<div class="card open"><div class="body-inner"><p class="well-hint">Couldn't load "${escapeHtml(proc.title)}": ${escapeHtml(String(cardErr && cardErr.message || cardErr))}</p></div></div>`;
+      }
+    }).join("");
+  } catch(err){
+    console.error("render error:", err);
+    const main = document.getElementById("main");
+    if(main) main.innerHTML = `<div class="empty"><p>Something went wrong loading the board: ${escapeHtml(String(err && err.message || err))}</p></div>`;
+  }
+}
+
+function renderChecklistCard(proc, isOpen){
+    const doneMap = completed[proc.id] || {};
+    const total = proc.steps.length;
+    const doneCount = proc.steps.filter((_,i)=>doneMap[i]).length;
+
+    const stepsHtml = proc.steps.map((step, i) => {
+      const isDone = !!doneMap[i];
+      return stepRow(step, i, isDone, proc.id);
+    }).join("");
+
+    return `
+    <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
+      <div class="card-head" data-action="toggle" data-id="${proc.id}">
+        <span class="chevron">${iconChevron}</span>
+        <div class="card-title-wrap">
+          <p class="card-title">${highlight(proc.title, query)}</p>
+          <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+        </div>
+        <div class="progress-mini"><b>${doneCount}</b>/${total}</div>
+      </div>
+      <div class="progress-track">${proc.steps.map((_,i)=>`<i class="${doneMap[i]?'done':''}"></i>`).join("")}</div>
+      <div class="card-body">
+        <div class="body-inner">
+          ${stepsHtml}
+          <div class="card-footer">
+            <span class="footer-note">${doneCount === total ? "Procedure complete" : `${total - doneCount} step${total-doneCount===1?'':'s'} remaining`}</span>
+            <button class="reset-btn" data-action="reset" data-id="${proc.id}">${iconReset} Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderReadsCard(proc, isOpen){
+    const values = readsValues[proc.id] || {};
+    const total = proc.fields.length;
+    const filledCount = proc.fields.filter((_,i)=> (values[i]||"").trim() !== "").length;
+
+    const fieldsHtml = proc.fields.map((field, i) => {
+      const val = values[i] || "";
+      return `
+      <div class="field-row">
+        <label class="field-label">${highlight(field.label, query)}${field.paren ? ` <span class="paren">(${highlight(field.paren, query)})</span>` : ""}${field.paren ? "" : ":"}</label>
+        <input class="field-input" type="text" inputmode="decimal" placeholder="Enter reading…"
+          data-action="field-input" data-id="${proc.id}" data-idx="${i}" value="${escapeHtml(val)}">
+      </div>`;
+    }).join("");
+
+    return `
+    <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
+      <div class="card-head" data-action="toggle" data-id="${proc.id}">
+        <span class="chevron">${iconChevron}</span>
+        <div class="card-title-wrap">
+          <p class="card-title">${highlight(proc.title, query)}</p>
+          <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+        </div>
+        <div class="progress-mini"><b>${filledCount}</b>/${total}</div>
+      </div>
+      <div class="progress-track">${proc.fields.map((_,i)=>`<i class="${(values[i]||"").trim()?'done':''}"></i>`).join("")}</div>
+      <div class="card-body">
+        <div class="body-inner">
+          ${fieldsHtml}
+          <div class="card-footer">
+            <span class="footer-note">${filledCount === total ? "All readings entered" : `${total - filledCount} reading${total-filledCount===1?'':'s'} remaining`}</span>
+            <button class="reset-btn" data-action="reset" data-id="${proc.id}">${iconReset} Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderPiggingCard(proc, isOpen){
+    const status = pigStatus[proc.id] || {};
+    const totalCells = proc.lines.length * proc.columns.length;
+    let filledCells = 0;
+    proc.lines.forEach(line => {
+      const cell = status[line.id] || {};
+      proc.columns.forEach(col => { if(cell[col.key]) filledCells++; });
+    });
+
+    let lastSection = null;
+    const rowsHtml = proc.lines.map(line => {
+      const meta = PIG_SECTIONS[line.section];
+      let sectionHeadHtml = "";
+      if(line.section !== lastSection){
+        const groupChanged = !lastSection || PIG_SECTIONS[lastSection].group !== meta.group;
+        sectionHeadHtml = `<tr class="pig-section-row ${groupChanged ? 'new-group' : ''}">
+          <td colspan="${proc.columns.length+1}">
+            ${groupChanged ? `<span class="pig-group">${escapeHtml(meta.group)}</span>` : ""}
+            <span class="pig-sub">${escapeHtml(meta.sub)}</span>
+          </td>
+        </tr>`;
+        lastSection = line.section;
+      }
+      const cell = status[line.id] || {};
+      const cellsHtml = proc.columns.map(col => {
+        const val = cell[col.key];
+        return `<td class="pig-cell">
+          <button class="pig-bubble ${val ? 'filled' : ''}" data-action="pig-toggle" data-id="${proc.id}" data-line="${line.id}" data-col="${col.key}" aria-label="${line.label} ${line.size} ${col.label}">${val ? iconCheck : ""}</button>
+          ${val ? `<div class="pig-time">${escapeHtml(val)}</div>` : ""}
+        </td>`;
+      }).join("");
+      return `${sectionHeadHtml}
+      <tr>
+        <td class="pig-line-col">
+          <span class="pig-line-label">${highlight(line.label, query)} <span class="pig-size">${escapeHtml(line.size)}</span></span>
+          ${line.tag ? `<span class="pig-tag">${highlight(line.tag, query)}</span>` : ""}
+        </td>
+        ${cellsHtml}
+      </tr>`;
+    }).join("");
+
+    const headerCells = proc.columns.map(c => `<th>${escapeHtml(c.label)}</th>`).join("");
+
+    return `
+    <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
+      <div class="card-head" data-action="toggle" data-id="${proc.id}">
+        <span class="chevron">${iconChevron}</span>
+        <div class="card-title-wrap">
+          <p class="card-title">${highlight(proc.title, query)}</p>
+          <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+        </div>
+        <div class="progress-mini"><b>${filledCells}</b>/${totalCells}</div>
+      </div>
+      <div class="card-body">
+        <div class="body-inner pig-body-inner">
+          <div class="pig-table-wrap">
+            <table class="pig-table">
+              <thead>
+                <tr>
+                  <th class="pig-line-col">Line</th>
+                  ${headerCells}
+                </tr>
+              </thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+            </table>
+          </div>
+          <div class="card-footer">
+            <span class="footer-note">${filledCells === totalCells ? "All lines complete" : `${totalCells - filledCells} mark${totalCells-filledCells===1?'':'s'} remaining`}</span>
+            <button class="reset-btn" data-action="reset" data-id="${proc.id}">${iconReset} Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderWellSearchCard(proc, isOpen){
+    return `
+    <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
+      <div class="card-head" data-action="toggle" data-id="${proc.id}">
+        <span class="chevron">${iconChevron}</span>
+        <div class="card-title-wrap">
+          <p class="card-title">${highlight(proc.title, query)}</p>
+          <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+        </div>
+        <div class="progress-mini">${WELLS.length}</div>
+      </div>
+      <div class="card-body">
+        <div class="body-inner">
+          <div class="well-search-box">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="well-input" type="text" inputmode="numeric" placeholder="Type a well number… e.g. 200" autocomplete="off" data-action="well-input" data-id="${proc.id}">
+          </div>
+          <div class="well-results" id="wellResults-${proc.id}">${wellResultsHtml("")}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function wellResultsHtml(rawQuery){
+  try{
+    const q = (rawQuery||"").replace(/[^0-9]/g, "");
+    if(!q){
+      return `<p class="well-hint">Start typing a well number to find it — coordinates and a map link will show up here.</p>`;
+    }
+    const exact = [], startsWith = [], contains = [];
+    WELLS.forEach(w => {
+      const num = String(w[0]).replace(/^[A-Za-z]+-/,"");
+      if(num === q) exact.push(w);
+      else if(num.indexOf(q) === 0) startsWith.push(w);
+      else if(num.indexOf(q) !== -1) contains.push(w);
+    });
+    const matchesArr = exact.concat(startsWith, contains).slice(0, 12);
+    if(matchesArr.length === 0){
+      return `<p class="well-hint">No well matches “${escapeHtml(q)}.”</p>`;
+    }
+    const catLabel = { active:"Active", obs:"Observation", plugged:"Plugged" };
+    const fieldLabel = { winterfield:"Winterfield", cranberry:"Cranberry" };
+    return matchesArr.map(w => {
+      const name = w[0], field = w[1], cat = w[2], lat = w[3], lon = w[4];
+      const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+      const earthUrl = `https://earth.google.com/web/search/${lat},${lon}`;
+      return `
+      <div class="well-row">
+        <div class="well-row-top">
+          <span class="well-name">${highlight(name, query)}</span>
+          <span class="well-cat well-cat-${cat}">${catLabel[cat]||cat}</span>
+        </div>
+        <div class="well-field">${fieldLabel[field]||field}</div>
+        <div class="well-coords">${lat.toFixed(6)}, ${lon.toFixed(6)}</div>
+        <div class="well-btn-row">
+          <a class="well-open-btn" href="${mapsUrl}" target="_blank" rel="noopener">${iconPin} Maps</a>
+          <a class="well-open-btn well-open-btn-earth" href="${earthUrl}" target="_blank" rel="noopener">${iconGlobe} Google Earth</a>
+        </div>
+      </div>`;
+    }).join("");
+  } catch(err){
+    return `<p class="well-hint">Something went wrong searching wells: ${escapeHtml(String(err && err.message || err))}</p>`;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   ABANDONMENT LOG
+------------------------------------------------------------------------ */
+function renderAbandonmentCard(proc, isOpen){
+  const data = abandonData[proc.id] || { wells:[], lines:[], planned:[] };
+  const total = data.wells.length + data.lines.length + data.planned.length;
+
+  return `
+  <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
+    <div class="card-head" data-action="toggle" data-id="${proc.id}">
+      <span class="chevron">${iconChevron}</span>
+      <div class="card-title-wrap">
+        <p class="card-title">${highlight(proc.title, query)}</p>
+        <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+      </div>
+      <div class="progress-mini">${total}</div>
+    </div>
+    <div class="card-body">
+      <div class="body-inner">
+        ${renderAbWellsSection(proc.id, data.wells)}
+        ${renderAbLinesSection(proc.id, data.lines)}
+        ${renderAbPlannedSection(proc.id, data.planned)}
+      </div>
+    </div>
+  </div>`;
+}
+
+function abFormKey(procId, section){ return `${procId}:${section}`; }
+
+function renderAbWellsSection(procId, entries){
+  const formOpen = !!abandonFormOpen[abFormKey(procId,"wells")];
+  const rows = entries.length === 0
+    ? `<p class="ab-empty">No abandoned wells logged yet.</p>`
+    : entries.map(e => `
+      <div class="ab-row">
+        <div class="ab-row-main">
+          <span class="ab-name">${highlight(e.name, query)}</span>
+          ${e.date ? `<span class="ab-date">${escapeHtml(e.date)}</span>` : ""}
+        </div>
+        <button class="ab-remove" data-action="ab-remove" data-id="${procId}" data-section="wells" data-entry="${e.id}" aria-label="Remove">${iconX}</button>
+      </div>`).join("");
+
+  const addBlock = formOpen ? `
+    <div class="ab-add-form" data-section="wells" data-id="${procId}">
+      <input type="text" class="ab-input ab-input-name" placeholder="Well number… e.g. W-208" autocomplete="off">
+      <input type="date" class="ab-input ab-input-date" aria-label="Date abandoned">
+      <div class="ab-add-actions">
+        <button class="ab-submit-btn" data-action="ab-submit" data-id="${procId}" data-section="wells">Add</button>
+        <button class="ab-cancel-btn" data-action="ab-cancel" data-id="${procId}" data-section="wells">Cancel</button>
+      </div>
+    </div>`
+    : `<button class="ab-add-btn" data-action="ab-add-toggle" data-id="${procId}" data-section="wells">${iconPlus} Add abandoned well</button>`;
+
+  return `
+  <div class="ab-section">
+    <h3 class="ab-heading">Abandoned Wells</h3>
+    <div class="ab-rows">${rows}</div>
+    ${addBlock}
+  </div>`;
+}
+
+function renderAbLinesSection(procId, entries){
+  const formOpen = !!abandonFormOpen[abFormKey(procId,"lines")];
+  const statusLabel = { abandoned:"Abandoned", "left-in-place":"Left in Place" };
+  const rows = entries.length === 0
+    ? `<p class="ab-empty">No well lines logged yet.</p>`
+    : entries.map(e => `
+      <div class="ab-row">
+        <div class="ab-row-main">
+          <span class="ab-name">${highlight(e.name, query)}</span>
+          <span class="ab-tag ab-tag-${e.status}">${statusLabel[e.status]||e.status}</span>
+          ${e.date ? `<span class="ab-date">${escapeHtml(e.date)}</span>` : ""}
+        </div>
+        <button class="ab-remove" data-action="ab-remove" data-id="${procId}" data-section="lines" data-entry="${e.id}" aria-label="Remove">${iconX}</button>
+      </div>`).join("");
+
+  const addBlock = formOpen ? `
+    <div class="ab-add-form" data-section="lines" data-id="${procId}">
+      <input type="text" class="ab-input ab-input-name" placeholder="Line… e.g. 53S 8&quot;" autocomplete="off">
+      <div class="ab-toggle-group">
+        <button type="button" class="ab-toggle-btn active" data-value="abandoned" data-action="ab-toggle-opt">Abandoned</button>
+        <button type="button" class="ab-toggle-btn" data-value="left-in-place" data-action="ab-toggle-opt">Left in Place</button>
+      </div>
+      <input type="date" class="ab-input ab-input-date" aria-label="Date">
+      <div class="ab-add-actions">
+        <button class="ab-submit-btn" data-action="ab-submit" data-id="${procId}" data-section="lines">Add</button>
+        <button class="ab-cancel-btn" data-action="ab-cancel" data-id="${procId}" data-section="lines">Cancel</button>
+      </div>
+    </div>`
+    : `<button class="ab-add-btn" data-action="ab-add-toggle" data-id="${procId}" data-section="lines">${iconPlus} Add well line</button>`;
+
+  return `
+  <div class="ab-section">
+    <h3 class="ab-heading">Abandoned / Left-in-Place Well Lines</h3>
+    <div class="ab-rows">${rows}</div>
+    ${addBlock}
+  </div>`;
+}
+
+function renderAbPlannedSection(procId, entries){
+  const formOpen = !!abandonFormOpen[abFormKey(procId,"planned")];
+  const typeLabel = { well:"Well", line:"Line" };
+  const sorted = entries.slice().sort((a,b) => (a.date||"9999").localeCompare(b.date||"9999"));
+  const rows = sorted.length === 0
+    ? `<p class="ab-empty">Nothing planned yet.</p>`
+    : sorted.map(e => `
+      <div class="ab-row ab-row-planned">
+        <div class="ab-row-main">
+          <span class="ab-name">${highlight(e.name, query)}</span>
+          <span class="ab-tag ab-tag-type">${typeLabel[e.type]||e.type}</span>
+        </div>
+        <div class="ab-planned-controls">
+          <label class="ab-date-label">Planned
+            <input type="date" class="ab-date-input" value="${e.date||''}" data-action="ab-date" data-id="${procId}" data-entry="${e.id}">
+          </label>
+          <div class="ab-planned-btns">
+            <button class="ab-graduate-btn" data-action="ab-graduate" data-id="${procId}" data-entry="${e.id}">${iconCheck} Mark Abandoned</button>
+            <button class="ab-remove" data-action="ab-remove" data-id="${procId}" data-section="planned" data-entry="${e.id}" aria-label="Remove">${iconX}</button>
+          </div>
+        </div>
+      </div>`).join("");
+
+  const addBlock = formOpen ? `
+    <div class="ab-add-form" data-section="planned" data-id="${procId}">
+      <input type="text" class="ab-input ab-input-name" placeholder="Well or line number…" autocomplete="off">
+      <div class="ab-toggle-group">
+        <button type="button" class="ab-toggle-btn active" data-value="well" data-action="ab-toggle-opt">Well</button>
+        <button type="button" class="ab-toggle-btn" data-value="line" data-action="ab-toggle-opt">Line</button>
+      </div>
+      <input type="date" class="ab-input ab-input-date" aria-label="Planned date">
+      <div class="ab-add-actions">
+        <button class="ab-submit-btn" data-action="ab-submit" data-id="${procId}" data-section="planned">Add</button>
+        <button class="ab-cancel-btn" data-action="ab-cancel" data-id="${procId}" data-section="planned">Cancel</button>
+      </div>
+    </div>`
+    : `<button class="ab-add-btn" data-action="ab-add-toggle" data-id="${procId}" data-section="planned">${iconPlus} Add planned abandonment</button>`;
+
+  return `
+  <div class="ab-section">
+    <h3 class="ab-heading">Planned Abandonments</h3>
+    <div class="ab-rows">${rows}</div>
+    ${addBlock}
+  </div>`;
+}
+
+/* ---------------------------------------------------------------------
+   MISS DIGS
+------------------------------------------------------------------------ */
+// Fixed preset — the address itself can't be geocoded offline, so it's baked in once here.
+const MISSDIG_HOME_BASE = { label: "7950 Partridge Ave (Home Base)", lat: 44.1015538, lon: -85.0576375 };
+
+function parseMissDigInput(raw){
+  const trimmed = (raw||"").trim();
+  if(!trimmed) return null;
+
+  // Try well number lookup first (e.g. "208", "W-208", "w208")
+  const upperCompact = trimmed.toUpperCase().replace(/\s+/g,"");
+  const wellMatch = WELLS.find(w => {
+    const wUpper = w[0].toUpperCase();
+    return wUpper === upperCompact || wUpper === "W-"+upperCompact.replace(/^W-?/,"") || wUpper === "C-"+upperCompact.replace(/^C-?/,"");
+  });
+  if(wellMatch){
+    return { label: wellMatch[0], lat: wellMatch[3], lon: wellMatch[4] };
+  }
+
+  // Try raw coordinates: two numbers separated by comma and/or whitespace
+  const coordMatch = trimmed.match(/(-?\d+\.?\d*)\s*[,\s]\s*(-?\d+\.?\d*)/);
+  if(coordMatch){
+    const lat = parseFloat(coordMatch[1]), lon = parseFloat(coordMatch[2]);
+    if(!isNaN(lat) && !isNaN(lon) && lat>=-90 && lat<=90 && lon>=-180 && lon<=180){
+      return { label: `${lat.toFixed(5)}, ${lon.toFixed(5)}`, lat, lon };
+    }
+  }
+  return null;
+}
+
+function haversineMiles(lat1, lon1, lat2, lon2){
+  const R = 3958.8;
+  const toRad = x => x * Math.PI / 180;
+  const dLat = toRad(lat2-lat1), dLon = toRad(lon2-lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+function nearestNeighborOrder(startLat, startLon, points){
+  // points: [{id, lat, lon}, ...]; returns ordered array of the same point objects
+  const remaining = points.slice();
+  const order = [];
+  let curLat = startLat, curLon = startLon;
+  while(remaining.length){
+    let bestIdx = 0, bestDist = Infinity;
+    remaining.forEach((p,i) => {
+      const d = haversineMiles(curLat, curLon, p.lat, p.lon);
+      if(d < bestDist){ bestDist = d; bestIdx = i; }
+    });
+    const next = remaining.splice(bestIdx,1)[0];
+    order.push(next);
+    curLat = next.lat; curLon = next.lon;
+  }
+  return order;
+}
+
+// 2-opt: repeatedly checks pairs of legs in the route and reverses the segment
+// between them if that's shorter overall. This is what catches routes that go
+// closest-first without checking whether that creates a longer backtrack later —
+// e.g. picking a very close stop first, only to have to drive back past it to
+// reach something farther that would've been more sensible to hit on the way out.
+function twoOptImprove(startLat, startLon, orderedPoints){
+  if(orderedPoints.length < 3) return orderedPoints.slice();
+  const anchor = { lat: startLat, lon: startLon };
+  const route = [anchor].concat(orderedPoints);
+  const n = route.length;
+  const dist = (a,b) => haversineMiles(a.lat, a.lon, b.lat, b.lon);
+
+  let improved = true, iterations = 0;
+  while(improved && iterations < 300){
+    improved = false;
+    iterations++;
+    for(let i=0; i<n-2; i++){
+      for(let j=i+2; j<n-1; j++){
+        const a = route[i], b = route[i+1], c = route[j], d = route[j+1];
+        const before = dist(a,b) + dist(c,d);
+        const after = dist(a,c) + dist(b,d);
+        if(after < before - 1e-9){
+          let lo = i+1, hi = j;
+          while(lo < hi){ const t = route[lo]; route[lo] = route[hi]; route[hi] = t; lo++; hi--; }
+          improved = true;
+        }
+      }
+    }
+  }
+  return route.slice(1); // drop the anchor, which never moves from position 0
+}
+
+function computeNearestNeighborRoute(startLat, startLon, points){
+  // points: [{id, lat, lon}, ...]; returns ordered array of ids, nearest-neighbor + 2-opt cleanup
+  const nn = nearestNeighborOrder(startLat, startLon, points);
+  const improved = twoOptImprove(startLat, startLon, nn);
+  return improved.map(p => p.id);
+}
+
+function daysUntilExpiration(dateStr){
+  if(!dateStr) return Infinity;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d = new Date(dateStr + "T00:00:00");
+  if(isNaN(d.getTime())) return Infinity;
+  return Math.round((d - today) / 86400000);
+}
+
+function expirationBucket(dateStr){
+  const days = daysUntilExpiration(dateStr);
+  if(days <= 0) return 0;   // expired or due today
+  if(days <= 3) return 1;   // expires within 3 days
+  if(days <= 7) return 2;   // expires within a week
+  return 3;                 // later, or no date set
+}
+
+function computeRoute(startLat, startLon, points, prioritizeExpiration){
+  if(!prioritizeExpiration){
+    return computeNearestNeighborRoute(startLat, startLon, points);
+  }
+  // Group into urgency tiers first, then route efficiently within each tier,
+  // chaining from wherever the previous tier's route ended. Guarantees the
+  // most urgent miss digs come first while still avoiding backtracking inside
+  // each tier.
+  const buckets = { 0:[], 1:[], 2:[], 3:[] };
+  points.forEach(p => buckets[expirationBucket(p.expDate)].push(p));
+  let order = [];
+  let curLat = startLat, curLon = startLon;
+  [0,1,2,3].forEach(b => {
+    const group = buckets[b];
+    if(group.length === 0) return;
+    const ids = computeNearestNeighborRoute(curLat, curLon, group);
+    order = order.concat(ids);
+    const last = group.find(p => p.id === ids[ids.length-1]);
+    curLat = last.lat; curLon = last.lon;
+  });
+  return order;
+}
+
+function planMissDigRoute(procId){
+  const data = missDigData[procId];
+  if(!data || data.entries.length === 0) return;
+  const incomplete = data.entries.filter(e => !e.completed);
+  if(incomplete.length === 0){ data.routeOrder = []; data.routeSource = null; saveMissDig(missDigData); render(); return; }
+  const prioritize = !!data.prioritizeExpiration;
+
+  function finish(startLat, startLon, status, label){
+    let order = computeRoute(startLat, startLon, incomplete, prioritize);
+    // "end" mode: the fixed point should be the LAST stop, not the first — so plan
+    // the walk from it as usual, then reverse the resulting order. (Skipped when
+    // prioritizing expiration, since reversing would flip urgent-first to urgent-last.)
+    if(status === "manual" && data.manualStart && data.manualStart.mode === "end" && !prioritize){
+      order = order.slice().reverse();
+    }
+    data.routeOrder = order;
+    data.routeSource = { status: status, at: Date.now(), label: label || null, mode: (status === "manual" && data.manualStart) ? data.manualStart.mode : null };
+    saveMissDig(missDigData);
+    render();
+  }
+
+  // A manually entered start/end point always wins — no GPS/permissions needed at all.
+  if(data.manualStart){
+    finish(data.manualStart.lat, data.manualStart.lon, "manual", data.manualStart.label);
+    return;
+  }
+
+  data.routeSource = { status: "planning" };
+  saveMissDig(missDigData);
+  render();
+
+  if(navigator.geolocation){
+    let done = false;
+    const timer = setTimeout(() => {
+      if(!done){ done = true; finish(incomplete[0].lat, incomplete[0].lon, "fallback-timeout"); }
+    }, 4000);
+    try{
+      navigator.geolocation.getCurrentPosition(
+        (pos) => { if(!done){ done = true; clearTimeout(timer); finish(pos.coords.latitude, pos.coords.longitude, "gps"); } },
+        (err) => {
+          if(!done){
+            done = true; clearTimeout(timer);
+            const reason = err && err.code === 1 ? "fallback-denied" : err && err.code === 3 ? "fallback-timeout" : "fallback-unavailable";
+            finish(incomplete[0].lat, incomplete[0].lon, reason);
+          }
+        },
+        { timeout: 4000, maximumAge: 60000 }
+      );
+    } catch(err){
+      if(!done){ done = true; clearTimeout(timer); finish(incomplete[0].lat, incomplete[0].lon, "fallback-error"); }
+    }
+  } else {
+    finish(incomplete[0].lat, incomplete[0].lon, "fallback-unsupported");
+  }
+}
+
+function missDigSourceLabel(source){
+  if(!source) return null;
+  const manualVerb = source.mode === "end" ? "Ending at" : "Starting from";
+  const map = {
+    "planning": { text: "Locating you…", cls: "md-src-planning" },
+    "gps": { text: "Routed from your current location", cls: "md-src-gps" },
+    "manual": { text: `${manualVerb}${source.label ? ": " + source.label : ""}`, cls: "md-src-gps" },
+    "fallback-denied": { text: "Location permission denied — started from the first miss dig added", cls: "md-src-warn" },
+    "fallback-timeout": { text: "Location timed out — started from the first miss dig added", cls: "md-src-warn" },
+    "fallback-unavailable": { text: "Location unavailable — started from the first miss dig added", cls: "md-src-warn" },
+    "fallback-unsupported": { text: "Location not supported here — started from the first miss dig added", cls: "md-src-warn" },
+    "fallback-error": { text: "Location error — started from the first miss dig added", cls: "md-src-warn" }
+  };
+  return map[source.status] || null;
+}
+
+function renderMissDigsCard(proc, isOpen){
+  const data = missDigData[proc.id] || { entries: [], routeOrder: [] };
+  const total = data.entries.length;
+  const doneCount = data.entries.filter(e => e.completed).length;
+  const formOpen = !!missDigFormOpen[proc.id];
+  const hasRoute = data.routeOrder && data.routeOrder.length > 0;
+
+  // order rows: routed incomplete entries first (in route order), then unrouted incomplete, then completed at the end
+  const byId = {};
+  data.entries.forEach(e => byId[e.id] = e);
+  const routedIds = hasRoute ? data.routeOrder.filter(id => byId[id] && !byId[id].completed) : [];
+  const routedSet = new Set(routedIds);
+  const unroutedIncomplete = data.entries.filter(e => !e.completed && !routedSet.has(e.id));
+  const completedEntries = data.entries.filter(e => e.completed);
+  const orderedList = routedIds.map(id => byId[id]).concat(unroutedIncomplete, completedEntries);
+
+  const rows = orderedList.length === 0
+    ? `<p class="ab-empty">No miss digs added yet today.</p>`
+    : orderedList.map(e => {
+        const routeIdx = routedSet.has(e.id) ? routedIds.indexOf(e.id) + 1 : null;
+        const gMapsUrl = `https://www.google.com/maps/search/?api=1&query=${e.lat},${e.lon}`;
+        const aMapsUrl = `https://maps.apple.com/?ll=${e.lat},${e.lon}&q=${encodeURIComponent(e.label)}`;
+        const primaryName = e.ticketNumber ? e.ticketNumber : e.label;
+        return `
+        <div class="md-row ${e.completed?'md-done':''}">
+          <div class="md-row-top">
+            ${routeIdx ? `<span class="md-order">${routeIdx}</span>` : ""}
+            ${e.completed ? `<span class="md-done-badge">${iconCheck}</span>` : ""}
+            <span class="md-name">${highlight(primaryName, query)}</span>
+            ${e.expDate ? `<span class="ab-date">Exp ${escapeHtml(e.expDate)}</span>` : ""}
+          </div>
+          ${e.ticketNumber ? `<div class="well-field">${highlight(e.label, query)}</div>` : ""}
+          <div class="well-coords">${e.lat.toFixed(6)}, ${e.lon.toFixed(6)}</div>
+          <div class="md-btn-row">
+            <a class="well-open-btn" href="${gMapsUrl}" target="_blank" rel="noopener">${iconPin} Google Maps</a>
+            <a class="well-open-btn well-open-btn-earth" href="${aMapsUrl}" target="_blank" rel="noopener">${iconPin} Apple Maps</a>
+            <button class="md-complete-btn ${e.completed?'md-complete-btn-undo':''}" data-action="md-toggle-complete" data-id="${proc.id}" data-entry="${e.id}">${iconCheck} ${e.completed?'Undo':'Complete'}</button>
+            <button class="ab-remove" data-action="md-remove" data-id="${proc.id}" data-entry="${e.id}" aria-label="Remove">${iconX}</button>
+          </div>
+        </div>`;
+      }).join("");
+
+  const addBlock = formOpen ? `
+    <div class="md-add-form" data-id="${proc.id}">
+      <input type="text" class="ab-input md-input-ticket" placeholder="Miss Dig # (ticket number)" autocomplete="off">
+      <input type="text" class="ab-input md-input-value" placeholder="Well number or coordinates… e.g. W-208 or 44.086, -85.090" autocomplete="off">
+      <input type="date" class="ab-input md-input-exp" aria-label="Expiration date">
+      <div class="ab-add-actions">
+        <button class="ab-submit-btn" data-action="md-submit" data-id="${proc.id}">Add</button>
+        <button class="ab-cancel-btn" data-action="md-cancel" data-id="${proc.id}">Cancel</button>
+      </div>
+    </div>`
+    : `<button class="ab-add-btn" data-action="md-add-toggle" data-id="${proc.id}">${iconPlus} Add miss dig</button>`;
+
+  const sourceInfo = missDigSourceLabel(data.routeSource);
+  const priorityNote = data.prioritizeExpiration ? `<p class="md-src md-src-priority">${iconWarn} Prioritizing by expiration date, then distance within each group</p>` : "";
+  const sourceHtml = (sourceInfo ? `<p class="md-src ${sourceInfo.cls}">${sourceInfo.text}</p>` : "") + priorityNote;
+
+  const startFormOpen = !!missDigStartFormOpen[proc.id];
+  let startBlock;
+  if(data.manualStart){
+    const mode = data.manualStart.mode === "end" ? "end" : "start";
+    const verb = mode === "end" ? "Ending at" : "Starting from";
+    const switchLabel = mode === "end" ? "Switch to start here" : "Switch to end here";
+    startBlock = `
+    <div class="md-start-chip">
+      <span class="md-start-chip-text">${iconPin} ${verb}: <b>${highlight(data.manualStart.label, query)}</b></span>
+      <div class="md-start-chip-actions">
+        <button class="md-start-switch" data-action="md-start-mode-toggle" data-id="${proc.id}">${switchLabel}</button>
+        <button class="md-start-clear" data-action="md-start-clear" data-id="${proc.id}" aria-label="Clear">${iconX}</button>
+      </div>
+    </div>`;
+  } else if(startFormOpen){
+    startBlock = `
+    <div class="md-add-form">
+      <input type="text" class="ab-input md-input-start" placeholder="Well number or coordinates…" autocomplete="off">
+      <div class="ab-toggle-group">
+        <button type="button" class="ab-toggle-btn active" data-value="start" data-action="ab-toggle-opt">Start Here</button>
+        <button type="button" class="ab-toggle-btn" data-value="end" data-action="ab-toggle-opt">End Here</button>
+      </div>
+      <div class="ab-add-actions">
+        <button class="ab-submit-btn" data-action="md-start-submit" data-id="${proc.id}">Set</button>
+        <button class="ab-cancel-btn" data-action="md-start-cancel" data-id="${proc.id}">Cancel</button>
+      </div>
+    </div>`;
+  } else {
+    startBlock = `
+    <div class="md-start-options">
+      <button class="md-start-btn md-start-btn-primary" data-action="md-start-homebase" data-id="${proc.id}">${iconPin} Start/end at ${escapeHtml(MISSDIG_HOME_BASE.label)}</button>
+      <button class="md-start-btn" data-action="md-start-toggle" data-id="${proc.id}">Or set a different point</button>
+    </div>`;
+  }
+
+  const prioritizeOn = !!data.prioritizeExpiration;
+
+  return `
+  <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
+    <div class="card-head" data-action="toggle" data-id="${proc.id}">
+      <span class="chevron">${iconChevron}</span>
+      <div class="card-title-wrap">
+        <p class="card-title">${highlight(proc.title, query)}</p>
+        <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+      </div>
+      <div class="progress-mini"><b>${doneCount}</b>/${total}</div>
+    </div>
+    <div class="card-body">
+      <div class="body-inner">
+        ${startBlock}
+        <button class="md-priority-toggle ${prioritizeOn?'md-priority-on':''}" data-action="md-priority-toggle" data-id="${proc.id}">
+          <span class="md-priority-switch"><span class="md-priority-knob"></span></span>
+          <span>Prioritize expiration dates</span>
+        </button>
+        <button class="md-plan-btn" data-action="md-plan-route" data-id="${proc.id}">${iconRoute} Plan Route</button>
+        ${sourceHtml}
+        <div class="ab-rows">${rows}</div>
+        ${addBlock}
+        <div class="card-footer">
+          <span class="footer-note">${total === 0 ? "Nothing logged yet" : `${doneCount}/${total} complete`}</span>
+          <button class="reset-btn" data-action="md-reset" data-id="${proc.id}">${iconReset} Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function stepRow(step, i, isDone, procId){
+  const bell = step.type === "notify" ? `<span class="bell-icon">${iconBell}</span>` : "";
+  return `
+  <div class="step ${isDone?'done':''}">
+    <button class="check" data-action="toggle-step" data-id="${procId}" data-idx="${i}" aria-label="Mark step ${i+1} complete">${iconCheck}</button>
+    <div class="step-main">
+      <div class="step-row">
+        <span class="step-text"><span class="step-num">${i+1}.</span>${bell}${highlight(step.text, query)}</span>
+        ${badgeHtml(step, isDone)}
+      </div>
+      ${step.note ? `<div class="warning">${iconWarn}<span>${highlight(step.note, query)}</span></div>` : ""}
+    </div>
+  </div>`;
+}
+
+document.addEventListener("click", (e) => {
+  try{
+    const toggle = e.target.closest('[data-action="toggle"]');
+    const stepBtn = e.target.closest('[data-action="toggle-step"]');
+    const resetBtn = e.target.closest('[data-action="reset"]');
+    const pigBtn = e.target.closest('[data-action="pig-toggle"]');
+    const abAddToggle = e.target.closest('[data-action="ab-add-toggle"]');
+    const abToggleOpt = e.target.closest('[data-action="ab-toggle-opt"]');
+    const abCancel = e.target.closest('[data-action="ab-cancel"]');
+    const abSubmit = e.target.closest('[data-action="ab-submit"]');
+    const abRemove = e.target.closest('[data-action="ab-remove"]');
+    const abGraduate = e.target.closest('[data-action="ab-graduate"]');
+    const mdAddToggle = e.target.closest('[data-action="md-add-toggle"]');
+    const mdCancel = e.target.closest('[data-action="md-cancel"]');
+    const mdSubmit = e.target.closest('[data-action="md-submit"]');
+    const mdRemove = e.target.closest('[data-action="md-remove"]');
+    const mdToggleComplete = e.target.closest('[data-action="md-toggle-complete"]');
+    const mdPlanRoute = e.target.closest('[data-action="md-plan-route"]');
+    const mdReset = e.target.closest('[data-action="md-reset"]');
+    const mdStartToggle = e.target.closest('[data-action="md-start-toggle"]');
+    const mdStartCancel = e.target.closest('[data-action="md-start-cancel"]');
+    const mdStartSubmit = e.target.closest('[data-action="md-start-submit"]');
+    const mdStartClear = e.target.closest('[data-action="md-start-clear"]');
+    const mdStartHomebase = e.target.closest('[data-action="md-start-homebase"]');
+    const mdStartModeToggle = e.target.closest('[data-action="md-start-mode-toggle"]');
+    const mdPriorityToggle = e.target.closest('[data-action="md-priority-toggle"]');
+
+    if(mdPriorityToggle){
+      const id = mdPriorityToggle.dataset.id;
+      missDigData[id] = missDigData[id] || { entries: [], routeOrder: [] };
+      missDigData[id].prioritizeExpiration = !missDigData[id].prioritizeExpiration;
+      saveMissDig(missDigData);
+      if(missDigData[id].routeOrder && missDigData[id].routeOrder.length > 0){
+        planMissDigRoute(id);
+      } else {
+        render();
+      }
+      return;
+    }
+
+    if(mdStartToggle){
+      missDigStartFormOpen[mdStartToggle.dataset.id] = true;
+      render();
+      return;
+    }
+    if(mdStartCancel){
+      missDigStartFormOpen[mdStartCancel.dataset.id] = false;
+      render();
+      return;
+    }
+    if(mdStartHomebase){
+      const id = mdStartHomebase.dataset.id;
+      missDigData[id] = missDigData[id] || { entries: [], routeOrder: [] };
+      missDigData[id].manualStart = { label: MISSDIG_HOME_BASE.label, lat: MISSDIG_HOME_BASE.lat, lon: MISSDIG_HOME_BASE.lon, mode: "start" };
+      saveMissDig(missDigData);
+      if(missDigData[id].routeOrder && missDigData[id].routeOrder.length > 0){
+        planMissDigRoute(id);
+      } else {
+        render();
+      }
+      return;
+    }
+    if(mdStartModeToggle){
+      const id = mdStartModeToggle.dataset.id;
+      const d = missDigData[id];
+      if(d && d.manualStart){
+        d.manualStart.mode = d.manualStart.mode === "end" ? "start" : "end";
+        saveMissDig(missDigData);
+        if(d.routeOrder && d.routeOrder.length > 0){
+          planMissDigRoute(id);
+        } else {
+          render();
+        }
+      }
+      return;
+    }
+    if(mdStartSubmit){
+      const id = mdStartSubmit.dataset.id;
+      const form = mdStartSubmit.closest(".md-add-form");
+      const input = form.querySelector(".md-input-start");
+      const parsed = parseMissDigInput(input.value);
+      if(!parsed){
+        input.focus();
+        input.style.borderColor = "var(--red)";
+        return;
+      }
+      const modeBtn = form.querySelector(".ab-toggle-btn.active");
+      const mode = modeBtn ? modeBtn.dataset.value : "start";
+      missDigData[id] = missDigData[id] || { entries: [], routeOrder: [] };
+      missDigData[id].manualStart = { label: parsed.label, lat: parsed.lat, lon: parsed.lon, mode: mode };
+      saveMissDig(missDigData);
+      missDigStartFormOpen[id] = false;
+      if(missDigData[id].routeOrder && missDigData[id].routeOrder.length > 0){
+        planMissDigRoute(id);
+      } else {
+        render();
+      }
+      return;
+    }
+    if(mdStartClear){
+      const id = mdStartClear.dataset.id;
+      if(missDigData[id]) missDigData[id].manualStart = null;
+      saveMissDig(missDigData);
+      render();
+      return;
+    }
+
+    if(mdAddToggle){
+      missDigFormOpen[mdAddToggle.dataset.id] = true;
+      render();
+      return;
+    }
+    if(mdCancel){
+      missDigFormOpen[mdCancel.dataset.id] = false;
+      render();
+      return;
+    }
+    if(mdSubmit){
+      const id = mdSubmit.dataset.id;
+      const form = mdSubmit.closest(".md-add-form");
+      const ticketInput = form.querySelector(".md-input-ticket");
+      const valueInput = form.querySelector(".md-input-value");
+      const expInput = form.querySelector(".md-input-exp");
+      const parsed = parseMissDigInput(valueInput.value);
+      if(!parsed){
+        valueInput.focus();
+        valueInput.style.borderColor = "var(--red)";
+        return;
+      }
+      missDigData[id] = missDigData[id] || { entries: [], routeOrder: [] };
+      const entry = { id: newMdId(), ticketNumber: (ticketInput.value||"").trim(), label: parsed.label, lat: parsed.lat, lon: parsed.lon, expDate: expInput.value || "", completed: false };
+      missDigData[id].entries.push(entry);
+      saveMissDig(missDigData);
+      missDigFormOpen[id] = false;
+      // if a route already exists, fold the new entry straight into it
+      if(missDigData[id].routeOrder && missDigData[id].routeOrder.length > 0){
+        planMissDigRoute(id);
+      } else {
+        render();
+      }
+      return;
+    }
+    if(mdToggleComplete){
+      const id = mdToggleComplete.dataset.id, entryId = mdToggleComplete.dataset.entry;
+      const d = missDigData[id];
+      if(d){
+        const entry = d.entries.find(e => e.id === entryId);
+        if(entry){
+          entry.completed = !entry.completed;
+          saveMissDig(missDigData);
+          render();
+        }
+      }
+      return;
+    }
+    if(mdRemove){
+      const id = mdRemove.dataset.id, entryId = mdRemove.dataset.entry;
+      const d = missDigData[id];
+      if(d){
+        d.entries = d.entries.filter(e => e.id !== entryId);
+        if(d.routeOrder) d.routeOrder = d.routeOrder.filter(rid => rid !== entryId);
+        saveMissDig(missDigData);
+        render();
+      }
+      return;
+    }
+    if(mdPlanRoute){
+      planMissDigRoute(mdPlanRoute.dataset.id);
+      return;
+    }
+    if(mdReset){
+      missDigData[mdReset.dataset.id] = { entries: [], routeOrder: [], routeSource: null, manualStart: null, prioritizeExpiration: false };
+      saveMissDig(missDigData);
+      render();
+      return;
+    }
+
+    if(abToggleOpt){
+      const group = abToggleOpt.closest('.ab-toggle-group');
+      group.querySelectorAll('.ab-toggle-btn').forEach(b => b.classList.remove('active'));
+      abToggleOpt.classList.add('active');
+      return;
+    }
+    if(abAddToggle){
+      const id = abAddToggle.dataset.id, section = abAddToggle.dataset.section;
+      abandonFormOpen[abFormKey(id, section)] = true;
+      render();
+      return;
+    }
+    if(abCancel){
+      const id = abCancel.dataset.id, section = abCancel.dataset.section;
+      abandonFormOpen[abFormKey(id, section)] = false;
+      render();
+      return;
+    }
+    if(abSubmit){
+      const id = abSubmit.dataset.id, section = abSubmit.dataset.section;
+      const form = abSubmit.closest('.ab-add-form');
+      const nameInput = form.querySelector('.ab-input-name');
+      const dateInput = form.querySelector('.ab-input-date');
+      const name = (nameInput.value || "").trim();
+      if(!name){ nameInput.focus(); return; }
+      const date = dateInput ? dateInput.value : "";
+      abandonData[id] = abandonData[id] || { wells:[], lines:[], planned:[] };
+      if(section === "wells"){
+        abandonData[id].wells.push({ id:newAbId(), name, date });
+      } else if(section === "lines"){
+        const activeBtn = form.querySelector('.ab-toggle-btn.active');
+        const status = activeBtn ? activeBtn.dataset.value : "abandoned";
+        abandonData[id].lines.push({ id:newAbId(), name, status, date });
+      } else if(section === "planned"){
+        const activeBtn = form.querySelector('.ab-toggle-btn.active');
+        const type = activeBtn ? activeBtn.dataset.value : "well";
+        abandonData[id].planned.push({ id:newAbId(), name, type, date });
+      }
+      saveAbandon(abandonData);
+      abandonFormOpen[abFormKey(id, section)] = false;
+      render();
+      return;
+    }
+    if(abRemove){
+      const id = abRemove.dataset.id, section = abRemove.dataset.section, entryId = abRemove.dataset.entry;
+      if(abandonData[id] && abandonData[id][section]){
+        abandonData[id][section] = abandonData[id][section].filter(e => e.id !== entryId);
+        saveAbandon(abandonData);
+        render();
+      }
+      return;
+    }
+    if(abGraduate){
+      const id = abGraduate.dataset.id, entryId = abGraduate.dataset.entry;
+      const d = abandonData[id];
+      if(d){
+        const idx = d.planned.findIndex(e => e.id === entryId);
+        if(idx !== -1){
+          const entry = d.planned[idx];
+          const today = new Date().toISOString().slice(0,10);
+          if(entry.type === "line"){
+            d.lines.push({ id:newAbId(), name:entry.name, status:"abandoned", date:today });
+          } else {
+            d.wells.push({ id:newAbId(), name:entry.name, date:today });
+          }
+          d.planned.splice(idx,1);
+          saveAbandon(abandonData);
+          render();
+        }
+      }
+      return;
+    }
+
+    if(stepBtn){
+      const id = stepBtn.dataset.id, idx = stepBtn.dataset.idx;
+      completed[id] = completed[id] || {};
+      completed[id][idx] = !completed[id][idx];
+      saveCompleted(completed);
+      render();
+      return;
+    }
+    if(pigBtn){
+      const id = pigBtn.dataset.id, lineId = pigBtn.dataset.line, col = pigBtn.dataset.col;
+      pigStatus[id] = pigStatus[id] || {};
+      pigStatus[id][lineId] = pigStatus[id][lineId] || {};
+      const cell = pigStatus[id][lineId];
+      if(cell[col]){
+        delete cell[col];
+      } else {
+        cell[col] = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit', hour12:false });
+      }
+      savePig(pigStatus);
+      render();
+      return;
+    }
+    if(resetBtn){
+      const id = resetBtn.dataset.id;
+      delete completed[id];
+      delete readsValues[id];
+      delete pigStatus[id];
+      saveCompleted(completed);
+      saveReads(readsValues);
+      savePig(pigStatus);
+      render();
+      return;
+    }
+    if(toggle){
+      const id = toggle.dataset.id;
+      openCards[id] = !openCards[id];
+      saveOpenCards(openCards);
+      render();
+      return;
+    }
+  } catch(err){
+    console.error("click handler error:", err);
+  }
+});
+
+document.addEventListener("input", (e) => {
+  try{
+    const input = e.target.closest('[data-action="field-input"]');
+    const wellInput = e.target.closest('[data-action="well-input"]');
+    const abDate = e.target.closest('[data-action="ab-date"]');
+
+    if(abDate){
+      const id = abDate.dataset.id, entryId = abDate.dataset.entry;
+      const d = abandonData[id];
+      if(d){
+        const entry = d.planned.find(e => e.id === entryId);
+        if(entry){
+          entry.date = abDate.value;
+          saveAbandon(abandonData);
+        }
+      }
+      return;
+    }
+    if(wellInput){
+      const id = wellInput.dataset.id;
+      const results = document.getElementById(`wellResults-${id}`);
+      if(results) results.innerHTML = wellResultsHtml(wellInput.value);
+      return;
+    }
+    if(!input) return;
+    const id = input.dataset.id, idx = input.dataset.idx;
+    readsValues[id] = readsValues[id] || {};
+    readsValues[id][idx] = input.value;
+    saveReads(readsValues);
+    // update only the progress dots/count/footer without a full re-render, so focus isn't lost
+    const card = input.closest(".card");
+    const proc = PROCEDURES.find(p => p.id === id);
+    const values = readsValues[id] || {};
+    const total = proc.fields.length;
+    const filledCount = proc.fields.filter((_,i)=> (values[i]||"").trim() !== "").length;
+    card.querySelector(".progress-mini").innerHTML = `<b>${filledCount}</b>/${total}`;
+    card.querySelectorAll(".progress-track i").forEach((el,i)=>{
+      el.classList.toggle("done", !!(values[i]||"").trim());
+    });
+    card.querySelector(".footer-note").textContent = filledCount === total ? "All readings entered" : `${total - filledCount} reading${total-filledCount===1?'':'s'} remaining`;
+  } catch(err){
+    console.error("input handler error:", err);
+  }
+});
+
+document.getElementById("search").addEventListener("input", (e) => {
+  try{
+    query = e.target.value.trim();
+    render();
+  } catch(err){
+    console.error("search input error:", err);
+  }
+});
+
+// Auto-open when there's only one procedure loaded, for convenience
+if(PROCEDURES.length === 1){
+  openCards[PROCEDURES[0].id] = true;
+}
+
+render();
+</script>
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch((err) => {
+      console.error("Service worker registration failed:", err);
+    });
+  });
+}
+</script>
+</body>
+</html>
