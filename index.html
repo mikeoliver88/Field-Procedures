@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
 <title>Field Procedures — Valve Board</title>
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="index.json">
 <meta name="theme-color" content="#12161A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -29,12 +29,55 @@
     --yellow-glow: rgba(224,168,46,0.45);
     --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Roboto Mono", monospace;
     --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    /* text-on-tint colors and surfaces that differ between night and daylight */
+    --amber-ink: #E0A82E;
+    --amber-text: #ffd77a;
+    --red-text: #ff8a80;
+    --green-text: #8ee6a2;
+    --on-amber: #12161A;
+    --bg-glow: #1a2128;
+    --header-bg: #10151A;
+    --header-bg-fade: #10151Ae0;
+    --raised: #1B2126;
+    --lit-amber-bd: rgba(224,168,46,0.60); --lit-amber-a: rgba(224,168,46,0.16); --lit-amber-b: rgba(224,168,46,0.04);
+    --lit-red-bd: rgba(224,71,60,0.75);    --lit-red-a: rgba(200,55,46,0.26);    --lit-red-b: rgba(200,55,46,0.07);
+    --lit-green-bd: rgba(62,142,82,0.60);  --lit-green-a: rgba(62,142,82,0.18);  --lit-green-b: rgba(62,142,82,0.04);
+    color-scheme: dark;
+  }
+  /* Daylight: brushed-steel background, engraved-black text. Built for direct sun. */
+  html[data-theme="light"]{
+    --bg: #D7DDE1;
+    --panel: #F8F9F9;
+    --panel-2: #EBEEF0;
+    --border: #A7B2BA;
+    --text: #0D1317;
+    --text-dim: #44515A;
+    --amber: #C98A0C;
+    --amber-dim: #C9A24A;
+    --amber-ink: #7A4E00;
+    --amber-text: #6B4400;
+    --red: #B3261E;
+    --red-text: #981D17;
+    --red-glow: rgba(179,38,30,0.25);
+    --green: #1F7A3D;
+    --green-text: #145C2B;
+    --green-glow: rgba(31,122,61,0.25);
+    --yellow: #C98A0C;
+    --yellow-glow: rgba(201,138,12,0.30);
+    --bg-glow: #E8ECEF;
+    --header-bg: #D7DDE1;
+    --header-bg-fade: #D7DDE1e0;
+    --raised: #F8F9F9;
+    --lit-amber-bd: #C98A0C; --lit-amber-a: rgba(224,160,30,0.30); --lit-amber-b: rgba(224,160,30,0.10);
+    --lit-red-bd: #B3261E;   --lit-red-a: rgba(200,55,46,0.22);   --lit-red-b: rgba(200,55,46,0.07);
+    --lit-green-bd: #1F7A3D; --lit-green-a: rgba(31,122,61,0.20); --lit-green-b: rgba(31,122,61,0.06);
+    color-scheme: light;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
     background:
-      radial-gradient(1200px 600px at 50% -10%, #1a2128 0%, var(--bg) 55%);
+      radial-gradient(1200px 600px at 50% -10%, var(--bg-glow) 0%, var(--bg) 55%);
     color:var(--text);
     font-family:var(--sans);
     min-height:100vh;
@@ -43,10 +86,16 @@
   /* ---- header / rail ---- */
   header{
     position:sticky; top:0; z-index:20;
-    background:linear-gradient(180deg, #10151A 0%, #10151Ae0 85%, transparent);
+    background:linear-gradient(180deg, var(--header-bg) 0%, var(--header-bg-fade) 100%);
     backdrop-filter: blur(6px);
     border-bottom:1px solid var(--border);
-    padding:18px 18px 14px;
+    padding:calc(18px + env(safe-area-inset-top, 0px)) calc(18px + env(safe-area-inset-right, 0px)) 14px calc(18px + env(safe-area-inset-left, 0px));
+  }
+  /* A dark strip behind the phone's status bar, so the clock and battery stay readable in daylight mode too. */
+  header::before{
+    content:""; position:absolute; top:0; left:0; right:0;
+    height:env(safe-area-inset-top, 0px);
+    background:#0B0E11;
   }
   .brand{
     display:flex; align-items:center; gap:10px;
@@ -121,7 +170,7 @@
     color:var(--text-dim);
     transition:transform .2s ease;
   }
-  .card.open .chevron{transform:rotate(90deg); color:var(--amber);}
+  .card.open .chevron{transform:rotate(90deg); color:var(--amber-ink);}
   .card-title-wrap{flex:1; min-width:0;}
   .card-title{
     font-size:16.5px; font-weight:700; margin:0 0 4px;
@@ -185,7 +234,7 @@
     font-size:14px;
     line-height:1.4;
   }
-  .notify-line svg{flex-shrink:0; margin-top:1px; color:var(--amber);}
+  .notify-line svg{flex-shrink:0; margin-top:1px; color:var(--amber-ink);}
 
   .step{
     display:flex; align-items:flex-start; gap:12px;
@@ -208,7 +257,7 @@
   .check:hover{border-color:var(--amber);}
   .check svg{opacity:0; transition:opacity .12s; width:13px;height:13px;}
   .step.done .check{background:var(--amber); border-color:var(--amber);}
-  .step.done .check svg{opacity:1; color:#12161A;}
+  .step.done .check svg{opacity:1; color:var(--on-amber);}
 
   .step-main{flex:1; min-width:0;}
   .step-row{display:flex; align-items:flex-start; gap:8px; flex-wrap:wrap;}
@@ -218,7 +267,7 @@
     margin-right:2px;
   }
   .bell-icon{
-    display:inline-flex; vertical-align:-2px; margin-right:5px; color:var(--amber);
+    display:inline-flex; vertical-align:-2px; margin-right:5px; color:var(--amber-ink);
   }
   .bell-icon svg{width:13px;height:13px;}
 
@@ -231,17 +280,17 @@
     margin-top:2px;
   }
   .badge .lamp{width:7px;height:7px;border-radius:50%;}
-  .badge.open{background:rgba(200,55,46,0.14); color:#ff8a80; border:1px solid rgba(200,55,46,0.4);}
+  .badge.open{background:rgba(200,55,46,0.14); color:var(--red-text); border:1px solid rgba(200,55,46,0.4);}
   .badge.open .lamp{background:var(--red); box-shadow:0 0 6px 1px var(--red-glow);}
-  .badge.closed{background:rgba(62,142,82,0.14); color:#8ee6a2; border:1px solid rgba(62,142,82,0.4);}
+  .badge.closed{background:rgba(62,142,82,0.14); color:var(--green-text); border:1px solid rgba(62,142,82,0.4);}
   .badge.closed .lamp{background:var(--green); box-shadow:0 0 6px 1px var(--green-glow);}
-  .badge.transition{background:rgba(224,168,46,0.14); color:#ffd77a; border:1px solid rgba(224,168,46,0.4);}
+  .badge.transition{background:rgba(224,168,46,0.14); color:var(--amber-text); border:1px solid rgba(224,168,46,0.4);}
   .badge.transition .lamp{background:var(--yellow); box-shadow:0 0 6px 1px var(--yellow-glow); animation:pulse 1.4s infinite;}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
 
   .warning{
     display:flex; gap:8px; align-items:flex-start;
-    font-size:12.5px; color:#ffd77a;
+    font-size:12.5px; color:var(--amber-text);
     background:rgba(224,168,46,0.06);
     border-left:2px solid var(--amber);
     padding:8px 10px; margin-top:8px; border-radius:0 6px 6px 0;
@@ -266,7 +315,7 @@
     cursor:pointer;
     transition:border-color .15s, color .15s;
   }
-  .reset-btn:hover{border-color:var(--amber); color:var(--amber);}
+  .reset-btn:hover{border-color:var(--amber); color:var(--amber-ink);}
   .reset-btn svg{width:13px;height:13px;}
 
   .field-row{
@@ -283,7 +332,7 @@
   }
   .paren{
     display:inline-block;
-    color:var(--amber);
+    color:var(--amber-ink);
     font-weight:700;
     background:rgba(224,168,46,0.12);
     border:1px solid rgba(224,168,46,0.35);
@@ -358,7 +407,7 @@
     font-size:10.5px;
     letter-spacing:.06em;
     text-transform:uppercase;
-    color:var(--amber);
+    color:var(--amber-ink);
     font-weight:700;
     margin-bottom:2px;
   }
@@ -377,7 +426,7 @@
     font-family:var(--mono);
     font-size:9.5px;
     letter-spacing:.03em;
-    color:var(--amber);
+    color:var(--amber-ink);
     background:rgba(224,168,46,0.12);
     border:1px solid rgba(224,168,46,0.3);
     border-radius:4px;
@@ -398,7 +447,7 @@
     transition:border-color .15s, background .15s;
   }
   .pig-bubble:hover{border-color:var(--yellow);}
-  .pig-bubble svg{width:12px;height:12px; color:#12161A;}
+  .pig-bubble svg{width:12px;height:12px; color:var(--on-amber);}
   .pig-bubble.filled{background:var(--yellow); border-color:var(--yellow);}
   .pig-time{
     font-family:var(--mono);
@@ -448,8 +497,8 @@
     font-family:var(--mono); font-size:9.5px; letter-spacing:.05em; text-transform:uppercase;
     font-weight:700; padding:2px 7px; border-radius:20px; white-space:nowrap;
   }
-  .well-cat-active{background:rgba(62,142,82,0.14); color:#8ee6a2; border:1px solid rgba(62,142,82,0.4);}
-  .well-cat-obs{background:rgba(224,168,46,0.14); color:#ffd77a; border:1px solid rgba(224,168,46,0.4);}
+  .well-cat-active{background:rgba(62,142,82,0.14); color:var(--green-text); border:1px solid rgba(62,142,82,0.4);}
+  .well-cat-obs{background:rgba(224,168,46,0.14); color:var(--amber-text); border:1px solid rgba(224,168,46,0.4);}
   .well-cat-plugged{background:rgba(142,153,161,0.14); color:var(--text-dim); border:1px solid var(--border);}
   .well-coords{
     font-family:var(--mono); font-size:12px; color:var(--text-dim);
@@ -464,7 +513,7 @@
   .well-open-btn{
     display:inline-flex; align-items:center; gap:6px;
     font-family:var(--sans); font-size:12.5px; font-weight:600;
-    color:#12161A;
+    color:var(--on-amber);
     background:var(--amber);
     padding:7px 12px;
     border-radius:7px;
@@ -511,10 +560,10 @@
     font-family:var(--mono); font-size:9.5px; letter-spacing:.05em; text-transform:uppercase;
     font-weight:700; padding:2px 7px; border-radius:20px; white-space:nowrap;
   }
-  .ab-tag-abandoned{background:rgba(200,55,46,0.14); color:#ff8a80; border:1px solid rgba(200,55,46,0.4);}
+  .ab-tag-abandoned{background:rgba(200,55,46,0.14); color:var(--red-text); border:1px solid rgba(200,55,46,0.4);}
   .ab-tag-left-in-place{background:rgba(142,153,161,0.14); color:var(--text-dim); border:1px solid var(--border);}
-  .ab-tag-type{background:rgba(224,168,46,0.14); color:#ffd77a; border:1px solid rgba(224,168,46,0.4);}
-  .ab-tag-found{background:rgba(224,168,46,0.14); color:#ffd77a; border:1px solid rgba(224,168,46,0.4);}
+  .ab-tag-type{background:rgba(224,168,46,0.14); color:var(--amber-text); border:1px solid rgba(224,168,46,0.4);}
+  .ab-tag-found{background:rgba(224,168,46,0.14); color:var(--amber-text); border:1px solid rgba(224,168,46,0.4);}
   .ab-row-content{flex:1; min-width:0;}
   .ab-line-sub{
     display:flex; align-items:center; gap:8px; flex-wrap:wrap;
@@ -544,7 +593,7 @@
     display:flex; align-items:center; justify-content:center;
     cursor:pointer;
   }
-  .ab-edit-btn:hover{border-color:var(--amber); color:var(--amber);}
+  .ab-edit-btn:hover{border-color:var(--amber); color:var(--amber-ink);}
   .ab-confirm-group{
     display:flex; align-items:center; gap:6px; flex-shrink:0;
   }
@@ -593,7 +642,7 @@
     display:flex; align-items:center; justify-content:center;
     cursor:pointer;
   }
-  .ab-remove:hover{border-color:var(--red); color:#ff8a80;}
+  .ab-remove:hover{border-color:var(--red); color:var(--red-text);}
 
   .ab-row-planned{flex-direction:column; align-items:stretch;}
   .ab-planned-controls{
@@ -621,7 +670,7 @@
   .ab-graduate-btn{
     display:flex; align-items:center; gap:6px;
     font-family:var(--sans); font-size:12px; font-weight:600;
-    color:#12161A;
+    color:var(--on-amber);
     background:var(--green);
     border:none;
     padding:6px 10px;
@@ -642,7 +691,7 @@
     cursor:pointer;
     transition:border-color .15s, color .15s;
   }
-  .ab-add-btn:hover{border-color:var(--amber); color:var(--amber);}
+  .ab-add-btn:hover{border-color:var(--amber); color:var(--amber-ink);}
   .ab-add-form{
     background:var(--panel-2);
     border:1px solid var(--border);
@@ -689,14 +738,14 @@
   .ab-toggle-btn.active{
     background:rgba(224,168,46,0.14);
     border-color:var(--amber);
-    color:var(--amber);
+    color:var(--amber-ink);
   }
   .ab-add-actions{display:flex; gap:8px; margin-top:2px;}
   .ab-submit-btn{
     flex:1;
     background:var(--amber);
     border:none;
-    color:#12161A;
+    color:var(--on-amber);
     font-family:var(--sans); font-size:13.5px; font-weight:700;
     padding:9px;
     border-radius:7px;
@@ -727,11 +776,11 @@
     cursor:pointer;
   }
   .md-start-btn:last-child{margin-bottom:0;}
-  .md-start-btn:hover{border-color:var(--amber); color:var(--amber);}
+  .md-start-btn:hover{border-color:var(--amber); color:var(--amber-ink);}
   .md-start-btn-primary{
     background:rgba(224,168,46,0.1);
     border:1px solid rgba(224,168,46,0.35);
-    color:#ffd77a;
+    color:var(--amber-text);
   }
   .md-start-chip{
     display:flex; align-items:center; justify-content:space-between; gap:8px;
@@ -742,14 +791,14 @@
     padding:9px 11px;
     margin-bottom:10px;
     font-size:13px;
-    color:#ffd77a;
+    color:var(--amber-text);
   }
   .md-start-chip-text{display:flex; align-items:center; gap:6px;}
   .md-start-chip-actions{display:flex; align-items:center; gap:8px; flex-shrink:0;}
   .md-start-switch{
     background:transparent;
     border:1px solid rgba(224,168,46,0.35);
-    color:#ffd77a;
+    color:var(--amber-text);
     font-family:var(--sans); font-size:11.5px; font-weight:600;
     padding:5px 9px;
     border-radius:6px;
@@ -762,7 +811,7 @@
     display:flex; align-items:center; justify-content:center;
     background:transparent;
     border:1px solid rgba(224,168,46,0.35);
-    color:#ffd77a;
+    color:var(--amber-text);
     border-radius:50%;
     cursor:pointer;
   }
@@ -796,14 +845,14 @@
     border-radius:50%;
     transition:left .15s;
   }
-  .md-priority-on .md-priority-knob{left:18px; background:#12161A;}
+  .md-priority-on .md-priority-knob{left:18px; background:var(--on-amber);}
   .md-src-priority{background:rgba(224,168,46,0.06); border:1px solid rgba(224,168,46,0.2); color:var(--text-dim); display:flex; align-items:center; gap:7px;}
   .md-plan-btn{
     display:flex; align-items:center; justify-content:center; gap:8px;
     width:100%;
     background:var(--amber);
     border:none;
-    color:#12161A;
+    color:var(--on-amber);
     font-family:var(--sans); font-size:14px; font-weight:700;
     padding:12px;
     border-radius:9px;
@@ -825,7 +874,7 @@
     display:inline-flex; align-items:center; justify-content:center;
     width:20px; height:20px; flex-shrink:0;
     background:var(--amber);
-    color:#12161A;
+    color:var(--on-amber);
     font-family:var(--mono); font-size:11px; font-weight:800;
     border-radius:50%;
   }
@@ -833,7 +882,7 @@
     display:inline-flex; align-items:center; justify-content:center;
     width:20px; height:20px; flex-shrink:0;
     background:var(--green);
-    color:#12161A;
+    color:var(--on-amber);
     border-radius:50%;
   }
   .md-done-badge svg{width:11px;height:11px;}
@@ -843,7 +892,7 @@
     display:flex; align-items:center; gap:6px;
     background:var(--green);
     border:none;
-    color:#12161A;
+    color:var(--on-amber);
     font-family:var(--sans); font-size:12.5px; font-weight:700;
     padding:7px 12px;
     border-radius:7px;
@@ -860,7 +909,7 @@
     border-radius:7px;
     cursor:pointer;
   }
-  .md-edit-btn:hover{border-color:var(--amber); color:var(--amber);}
+  .md-edit-btn:hover{border-color:var(--amber); color:var(--amber-ink);}
   .md-row-editing{display:flex; flex-direction:column;}
   .md-row-editing .ab-input{margin-bottom:8px;}
   .md-add-form{
@@ -876,8 +925,8 @@
     border-radius:7px;
     line-height:1.4;
   }
-  .md-src-gps{background:rgba(62,142,82,0.12); border:1px solid rgba(62,142,82,0.35); color:#8ee6a2;}
-  .md-src-warn{background:rgba(224,168,46,0.1); border:1px solid rgba(224,168,46,0.3); color:#ffd77a;}
+  .md-src-gps{background:rgba(62,142,82,0.12); border:1px solid rgba(62,142,82,0.35); color:var(--green-text);}
+  .md-src-warn{background:rgba(224,168,46,0.1); border:1px solid rgba(224,168,46,0.3); color:var(--amber-text);}
   .md-src-planning{background:var(--panel-2); border:1px solid var(--border); color:var(--text-dim);}
 
   /* ---- reference card ---- */
@@ -887,7 +936,7 @@
     border-left:2px solid var(--border);
   }
   .ref-section{margin-bottom:18px;}
-  .ref-section-warn .ab-heading{color:#ffd77a; border-bottom-color:rgba(224,168,46,0.35);}
+  .ref-section-warn .ab-heading{color:var(--amber-text); border-bottom-color:rgba(224,168,46,0.35);}
   .ref-items{display:flex; flex-direction:column; gap:8px;}
   .ref-item{
     display:grid; grid-template-columns:96px 1fr; gap:10px;
@@ -897,10 +946,10 @@
     font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; text-transform:uppercase;
     color:var(--text-dim); font-weight:700; padding-top:2px;
   }
-  .ref-label-open{color:#ff8a80;}
-  .ref-label-closed{color:#8ee6a2;}
+  .ref-label-open{color:var(--red-text);}
+  .ref-label-closed{color:var(--green-text);}
   .ref-value{color:var(--text);}
-  .ref-section-warn .ref-value{color:#ffd77a;}
+  .ref-section-warn .ref-value{color:var(--amber-text);}
   .ref-ladder{display:flex; flex-direction:column; gap:6px;}
   .ref-rung{
     border-left:3px solid var(--border);
@@ -912,8 +961,8 @@
   .ref-rung-amber{border-left-color:var(--amber);}
   .ref-rung-head{display:flex; align-items:baseline; gap:10px; margin-bottom:3px;}
   .ref-rung-level{font-family:var(--mono); font-size:15px; font-weight:800;}
-  .ref-rung-red .ref-rung-level{color:#ff8a80;}
-  .ref-rung-amber .ref-rung-level{color:#ffd77a;}
+  .ref-rung-red .ref-rung-level{color:var(--red-text);}
+  .ref-rung-amber .ref-rung-level{color:var(--amber-text);}
   .ref-rung-name{
     font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; text-transform:uppercase;
     color:var(--text-dim); font-weight:700;
@@ -938,8 +987,8 @@
     font-family:var(--mono); font-size:9.5px; letter-spacing:.06em; text-transform:uppercase;
     font-weight:800; padding:2px 7px; border-radius:20px; white-space:nowrap;
   }
-  .alarm-sev-interlock{background:rgba(200,55,46,0.16); color:#ff8a80; border:1px solid rgba(200,55,46,0.45);}
-  .alarm-sev-warn{background:rgba(224,168,46,0.14); color:#ffd77a; border:1px solid rgba(224,168,46,0.4);}
+  .alarm-sev-interlock{background:rgba(200,55,46,0.16); color:var(--red-text); border:1px solid rgba(200,55,46,0.45);}
+  .alarm-sev-warn{background:rgba(224,168,46,0.14); color:var(--amber-text); border:1px solid rgba(224,168,46,0.4);}
   .alarm-sev-fault{background:rgba(91,107,120,0.2); color:var(--text-dim); border:1px solid var(--border);}
   .alarm-text{
     font-family:var(--mono); font-size:11.5px; letter-spacing:.02em;
@@ -965,7 +1014,7 @@
   .alarm-il-result{color:var(--text-dim);}
   .alarm-il-reset{
     display:flex; align-items:flex-start; gap:7px;
-    font-size:12.5px; color:#ffd77a; line-height:1.45;
+    font-size:12.5px; color:var(--amber-text); line-height:1.45;
     margin:10px 0 0;
   }
   .alarm-il-reset svg{flex-shrink:0; margin-top:2px;}
@@ -978,7 +1027,7 @@
     margin:0 0 12px; padding:9px 11px;
     background:var(--panel-2); border:1px dashed var(--border); border-radius:8px;
   }
-  .scn-hint svg{flex-shrink:0; margin-top:2px; color:var(--amber);}
+  .scn-hint svg{flex-shrink:0; margin-top:2px; color:var(--amber-ink);}
   .scn-tray{
     background:var(--panel-2); border:1px solid var(--amber); border-radius:9px;
     padding:10px 12px; margin-bottom:12px;
@@ -996,7 +1045,7 @@
     padding:4px 9px; border-radius:20px;
     background:var(--panel); border:1px solid var(--border); color:var(--text-dim);
   }
-  .scn-chip-on{background:rgba(224,168,46,0.14); border-color:rgba(224,168,46,0.45); color:#ffd77a;}
+  .scn-chip-on{background:rgba(224,168,46,0.14); border-color:rgba(224,168,46,0.45); color:var(--amber-text);}
   .scn-chip-x{cursor:pointer; font-family:var(--mono);}
   .scn-chip-x svg{width:11px;height:11px;}
   .scn-unexplained{margin-top:10px;}
@@ -1014,13 +1063,13 @@
     padding:6px 11px; border-radius:7px; cursor:pointer;
   }
   .scn-track svg{width:12px;height:12px;}
-  .scn-track:hover{border-color:var(--amber); color:var(--amber);}
-  .scn-track-on{background:rgba(62,142,82,0.14); border-color:rgba(62,142,82,0.45); color:#8ee6a2;}
+  .scn-track:hover{border-color:var(--amber); color:var(--amber-ink);}
+  .scn-track-on{background:rgba(62,142,82,0.14); border-color:rgba(62,142,82,0.45); color:var(--green-text);}
   .scn-track-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
   .scn-goto{
     margin-top:9px;
     background:transparent; border:none; padding:6px 2px;
-    color:var(--amber); font-family:var(--sans); font-size:12px; font-weight:700;
+    color:var(--amber-ink); font-family:var(--sans); font-size:12px; font-weight:700;
     cursor:pointer; text-decoration:underline; text-underline-offset:3px;
   }
   .scn-diagnosis{scroll-margin-top:150px;}
@@ -1032,7 +1081,7 @@
     display:flex; align-items:center; gap:7px;
     font-size:13.5px; font-weight:700; margin-bottom:6px;
   }
-  .scn-howto-title svg{color:var(--amber); flex-shrink:0;}
+  .scn-howto-title svg{color:var(--amber-ink); flex-shrink:0;}
   .scn-howto-steps{margin:0; padding-left:20px; font-size:12.5px; line-height:1.5; color:var(--text-dim);}
   .scn-howto-steps li{margin-bottom:2px;}
   .scn-rank{position:relative;}
@@ -1056,6 +1105,7 @@
     cursor:pointer;
   }
   .scn-fab svg{width:15px;height:15px;flex-shrink:0;}
+  .scn-fab.scn-fab-hidden{display:none;}
   .scn-fab-arrow{font-size:15px;}
 
   /* ---- well autocomplete dropdown ---- */
@@ -1089,6 +1139,74 @@
   .empty svg{opacity:.35; margin-bottom:14px;}
   .empty p{font-size:14px; margin:0;}
 
+
+  /* ---- header controls ---- */
+  .brand h1{flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  @media (max-width:480px){ .brand-tail{display:none;} }
+  .theme-btn{
+    width:40px; height:40px; margin:-10px -4px -10px 0; padding:0; flex-shrink:0;
+    border-radius:10px; border:1px solid var(--border);
+    background:var(--panel); color:var(--text-dim);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .theme-btn:active{border-color:var(--amber); color:var(--amber-ink);}
+  .meta-row{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:8px; min-height:30px;}
+  .meta-row[hidden]{display:none;}
+  .meta-row .result-count{margin-top:0;}
+  .collapse-btn{
+    margin-left:auto;
+    background:transparent; border:1px solid var(--border); color:var(--text-dim);
+    font-family:var(--sans); font-size:12.5px; font-weight:600;
+    padding:6px 12px; border-radius:8px; cursor:pointer;
+  }
+  .collapse-btn[hidden]{display:none;}
+
+  /* ---- home screen: groups, icon tile, live status line ---- */
+  .group-h{
+    font-family:var(--sans); font-size:13px; font-weight:700; letter-spacing:.01em;
+    color:var(--text-dim); margin:22px 2px 9px;
+  }
+  .group-h:first-child{margin-top:2px;}
+  .card{margin-bottom:10px;}
+  .card-head{padding:13px 14px;}
+  .card-ico{
+    width:38px; height:38px; flex-shrink:0;
+    border-radius:10px; background:var(--panel-2); border:1px solid var(--border);
+    color:var(--text-dim);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .card.open .card-ico{color:var(--amber-ink); border-color:var(--amber-dim);}
+  .card-title{margin:0 0 3px;}
+  .card-sub{
+    margin:0; display:flex; align-items:center; gap:7px;
+    font-size:13px; line-height:1.35; color:var(--text-dim);
+  }
+  .card-sub.sub-amber{color:var(--amber-text);}
+  .card-sub.sub-red{color:var(--red-text);}
+  .card-sub.sub-green{color:var(--green-text);}
+  .st-lamp{
+    width:8px; height:8px; border-radius:50%; flex-shrink:0;
+    border:1.5px solid var(--text-dim); opacity:.65;
+  }
+  .st-amber{background:var(--amber); border-color:var(--amber); opacity:1; box-shadow:0 0 6px 1px var(--yellow-glow);}
+  .st-green{background:var(--green); border-color:var(--green); opacity:1;}
+  .st-red{background:var(--red); border-color:var(--red); opacity:1; box-shadow:0 0 6px 1px var(--red-glow); animation:pulse 1.4s infinite;}
+  .progress-mini{min-width:0;}
+  .progress-mini:empty{display:none;}
+  .step{cursor:pointer;}
+
+  /* ---- larger tap areas without changing the layout ---- */
+  .check, .pig-bubble, .ab-remove, .ab-edit-btn, .ab-confirm-yes, .ab-confirm-no, .md-start-clear{position:relative;}
+  .check::after, .pig-bubble::after, .md-start-clear::after{content:""; position:absolute; inset:-9px;}
+  .ab-remove::after, .ab-edit-btn::after{content:""; position:absolute; inset:-7px -10px;}
+  .ab-confirm-yes::after, .ab-confirm-no::after{content:""; position:absolute; inset:-10px -8px;}
+  .ab-row-actions{gap:14px;}
+  .ab-confirm-group{gap:16px;}
+
+  @media (prefers-reduced-motion: reduce){
+    .st-red, .badge.transition .lamp{animation:none;}
+    .chevron{transition:none;}
+  }
   footer.app-footer{
     max-width:720px; margin:20px auto 0; padding:0 18px;
     display:flex; justify-content:space-between; align-items:center;
@@ -1098,6 +1216,327 @@
   .legend{display:flex; gap:14px; flex-wrap:wrap;}
   .legend span{display:flex; align-items:center; gap:5px;}
   .legend i{width:7px;height:7px;border-radius:50%; display:inline-block;}
+
+  /* ---- toast (undo) ---- */
+  .toast{
+    position:fixed; left:50%; transform:translateX(-50%);
+    bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+    z-index:60;
+    display:flex; align-items:center; gap:14px;
+    max-width:calc(100% - 28px);
+    background:var(--text); color:var(--bg);
+    border-radius:12px; padding:10px 10px 10px 16px;
+    font-size:14px; font-weight:600;
+    box-shadow:0 10px 28px rgba(0,0,0,0.45);
+  }
+  .toast[hidden]{display:none;}
+  .toast-msg{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .toast-btn{
+    flex-shrink:0;
+    background:var(--amber); color:var(--on-amber);
+    border:none; border-radius:8px;
+    font-family:var(--sans); font-size:14px; font-weight:800;
+    padding:9px 16px; cursor:pointer;
+  }
+  .toast-btn[hidden]{display:none;}
+  .toast:has(.toast-btn[hidden]){padding:12px 18px;}
+
+  /* ---- disposal reads: last-time hint, save row, history ---- */
+  .field-prev{margin-top:7px; font-size:12.5px; color:var(--text-dim);}
+  .field-prev b{color:var(--text); font-weight:700;}
+  .reads-actions{display:flex; gap:10px; margin:6px 0 4px;}
+  .reads-actions .reads-save{flex:1;}
+  .reads-actions button:disabled, .ab-submit-btn:disabled, .ab-cancel-btn:disabled{opacity:.45; cursor:default;}
+  .reads-hist-h{margin-top:20px;}
+  .reads-hist-row{
+    background:var(--panel-2); border:1px solid var(--border); border-radius:9px;
+    padding:10px 12px; margin-bottom:8px;
+  }
+  .reads-hist-top{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;}
+  .reads-hist-date{font-size:13.5px; font-weight:700;}
+  .reads-hist-actions{display:flex; gap:6px; flex-shrink:0;}
+  .reads-mini-btn{
+    background:transparent; border:1px solid var(--border); color:var(--text-dim);
+    font-family:var(--sans); font-size:12px; font-weight:600;
+    padding:6px 10px; border-radius:7px; cursor:pointer;
+  }
+  .reads-hist-vals{display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; margin:0;}
+  .reads-hist-vals div{min-width:0;}
+  .reads-hist-vals dt{font-size:11.5px; color:var(--text-dim); line-height:1.3;}
+  .reads-hist-vals dd{margin:0; font-family:var(--mono); font-size:14px; font-weight:700;}
+
+  /* ---- backup card ---- */
+  .tools-lead{font-size:14px; line-height:1.5; margin:8px 0 10px;}
+  .tools-onphone{font-size:13px; line-height:1.45; color:var(--text-dim); margin:0 0 12px;}
+  .tools-onphone b{color:var(--text);}
+  .tools-msg{
+    font-size:13.5px; line-height:1.45; margin:0 0 12px; padding:9px 11px;
+    background:rgba(62,142,82,0.12); border:1px solid rgba(62,142,82,0.4); border-radius:8px;
+    color:var(--green-text);
+  }
+  .tools-btns{display:flex; flex-direction:column; gap:10px; margin-bottom:12px;}
+  .tools-btns .ab-submit-btn, .tools-btns .ab-cancel-btn{width:100%; text-align:center; padding:13px 14px; font-size:15px;}
+  .tools-file-btn{display:block; cursor:pointer; position:relative; overflow:hidden;}
+  .tools-file-input{position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; font-size:0;}
+  .tools-panel{
+    background:var(--panel-2); border:1px solid var(--amber); border-radius:9px;
+    padding:12px; margin-bottom:12px;
+  }
+  .tools-panel-title{margin:0 0 8px; font-size:15px; font-weight:700;}
+  .tools-panel-line{margin:0 0 6px; font-size:13px; line-height:1.45; color:var(--text-dim);}
+  .tools-panel-line b{color:var(--text);}
+  .tools-panel .ab-add-actions{margin-top:10px;}
+  .tools-panel-warn{display:flex; gap:8px; align-items:flex-start; border-color:var(--red); color:var(--red-text); font-size:13.5px; line-height:1.45;}
+  .tools-panel-warn svg{flex-shrink:0; margin-top:2px;}
+  .tools-details{margin:6px 0 4px; font-size:13px; color:var(--text-dim);}
+  .tools-details summary{cursor:pointer; padding:8px 0; font-weight:600;}
+  .tools-details > button{margin:6px 0;}
+  .tools-paste{display:block; width:100%; margin:8px 0 6px;}
+  .tools-version{margin:14px 0 0; padding-top:12px; border-top:1px solid var(--border); font-size:12px; color:var(--text-dim);}
+
+  /* ---- footer ---- */
+  footer.app-footer{gap:14px; flex-wrap:wrap;}
+  #buildStamp{margin-left:auto;}
+
+  /* daylight: white text on the darker green fills */
+  html[data-theme="light"] .ab-graduate-btn,
+  html[data-theme="light"] .md-done-badge,
+  html[data-theme="light"] .md-complete-btn:not(.md-complete-btn-undo){color:#fff;}
+
+  /* ---- navigation: board <-> one card filling the screen ---- */
+  .search-row{display:flex; align-items:center; gap:10px;}
+  .search-row .search-wrap{flex:1; min-width:0;}
+  .back-btn{
+    width:46px; height:46px; flex-shrink:0; padding:0;
+    border-radius:10px; border:1px solid var(--border);
+    background:var(--panel); color:var(--text);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .back-btn[hidden]{display:none;}
+  .back-btn:active{border-color:var(--amber); color:var(--amber-ink);}
+  #search{padding-right:42px;}
+  .search-clear{
+    position:absolute; right:6px; top:50%; transform:translateY(-50%);
+    width:34px; height:34px; padding:0; border:none; border-radius:50%;
+    background:transparent; color:var(--text-dim);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .search-clear[hidden]{display:none;}
+  body.in-card .brand{display:none;}
+  body.in-card header{padding-top:calc(12px + env(safe-area-inset-top, 0px)); padding-bottom:12px;}
+  body.in-card main{padding-top:12px;}
+  body.in-card .card-head{cursor:default;}
+  body.in-card .chevron{display:none;}
+  /* sticky table headers inside an open card need the card not to clip */
+  body.in-card .card, body.in-card .card.open .card-body{overflow:visible;}
+  body.in-card .card{margin-bottom:0;}
+  body.in-card footer.app-footer{display:none;}
+  .row-progress{height:3px; background:var(--border);}
+  .row-progress i{display:block; height:100%; background:var(--amber); border-radius:0 2px 2px 0;}
+  .card-head:focus-visible, .back-btn:focus-visible, .theme-btn:focus-visible{outline:2px solid var(--amber); outline-offset:2px;}
+
+  /* ---- checklist: bigger checks, the next step stands out ---- */
+  .check{width:26px; height:26px;}
+  .check svg{width:15px; height:15px;}
+  .step-text{font-size:15px;}
+  .step-next{
+    margin:0 -16px; padding-left:20px; padding-right:20px;
+    background:linear-gradient(90deg, rgba(224,168,46,0.12), rgba(224,168,46,0) 75%);
+    box-shadow:inset 3px 0 0 var(--amber);
+  }
+  .step-next .check{border-color:var(--amber);}
+  .next-tag{
+    font-size:11px; font-weight:800; line-height:1;
+    color:var(--on-amber); background:var(--amber);
+    border-radius:20px; padding:4px 9px; margin-top:2px;
+  }
+  .reset-btn:disabled{opacity:.4; cursor:default;}
+
+  /* ---- pig table: all four columns fit, header stays put while you scroll ---- */
+  .pig-table-wrap{overflow:visible; padding:0 12px;}
+  .pig-table{min-width:0; table-layout:fixed;}
+  .pig-table col.pig-c-line{width:31%;}
+  .pig-table thead th{
+    top:var(--header-h, 0px);
+    white-space:normal; line-height:1.2; padding:9px 2px;
+    font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:0; text-transform:none;
+  }
+  .pig-line-col{position:static; min-width:0;}
+  .pig-section-row td{position:static;}
+  .pig-cell{padding:8px 2px;}
+  .pig-bubble{width:28px; height:28px;}
+  .pig-bubble svg{width:14px; height:14px;}
+  .pig-group{display:flex; justify-content:space-between; align-items:baseline; gap:8px;}
+  .pig-group-count{color:var(--text-dim); font-weight:700; letter-spacing:0; text-transform:none; flex-shrink:0;}
+  .pig-tag{white-space:normal;}
+  .pig-body-inner .card-footer{margin:6px 16px 0;}
+
+  /* ---- miss digs: urgency on each row, compact route planner ---- */
+  .md-exp{font-size:12.5px; font-weight:600; color:var(--text-dim); margin-left:auto; white-space:nowrap;}
+  .md-exp-red{color:var(--red-text); background:rgba(200,55,46,0.14); border:1px solid rgba(200,55,46,0.4); border-radius:20px; padding:2px 9px;}
+  .md-exp-amber{color:var(--amber-text); background:rgba(224,168,46,0.14); border:1px solid rgba(224,168,46,0.4); border-radius:20px; padding:2px 9px;}
+  .md-row-red{box-shadow:inset 3px 0 0 var(--red);}
+  .md-row-amber{box-shadow:inset 3px 0 0 var(--amber);}
+  .md-planner{margin:2px 0 12px;}
+  .md-planner .md-plan-btn{margin:0;}
+  .md-opts-toggle{
+    width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:transparent; border:none; padding:10px 2px 4px; cursor:pointer;
+    font-family:var(--sans); font-size:13px; color:var(--text-dim); text-align:left;
+  }
+  .md-opts-summary{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .md-opts-change{flex-shrink:0; font-weight:700; color:var(--amber-ink); text-decoration:underline; text-underline-offset:3px;}
+  .md-opts{margin-top:8px; padding:12px; background:var(--panel-2); border:1px solid var(--border); border-radius:10px;}
+  .md-opts > :last-child{margin-bottom:0;}
+  .card-body .ab-add-btn + .md-planner{margin-top:12px;}
+
+  /* ---- shared: visible labels on date fields ---- */
+  .ab-field-label{display:block; font-size:12.5px; font-weight:600; color:var(--text-dim); margin:2px 0 8px;}
+  .ab-field-label .ab-input{display:block; width:100%; margin-top:5px;}
+  .ab-filter-note{font-size:12.5px; color:var(--amber-text); margin:0 0 10px; line-height:1.4;}
+  .ab-section > .ab-add-btn, .ab-section > .ab-add-form{margin-bottom:10px;}
+
+  /* ---- well search: compact rows ---- */
+  .well-row{display:flex; align-items:center; gap:10px;}
+  .well-row-main{flex:1; min-width:0;}
+  .well-row .well-row-top{justify-content:flex-start; align-items:baseline; gap:8px;}
+  .well-fieldname{font-size:12.5px; color:var(--text-dim);}
+  .well-row .well-btn-row{margin-top:0; flex-wrap:nowrap; flex-shrink:0; gap:6px;}
+  .well-row .well-open-btn{padding:9px 10px;}
+  .well-chips{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;}
+  .well-cat-removed{background:rgba(200,55,46,0.14); color:var(--red-text); border:1px solid rgba(200,55,46,0.4);}
+
+  /* ---- overview: jump straight to a section ---- */
+  .ref-jump{
+    position:sticky; top:var(--header-h, 0px); z-index:5;
+    display:flex; gap:6px; overflow-x:auto; -webkit-overflow-scrolling:touch;
+    margin:0 -16px 12px; padding:10px 16px;
+    background:var(--panel); border-bottom:1px solid var(--border);
+    scrollbar-width:none;
+  }
+  .ref-jump::-webkit-scrollbar{display:none;}
+  .ref-jump-btn{
+    flex-shrink:0;
+    background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+    font-family:var(--sans); font-size:13px; font-weight:600;
+    padding:7px 12px; border-radius:20px; cursor:pointer;
+  }
+  .ref-section{scroll-margin-top:calc(var(--header-h, 0px) + 62px);}
+  .ref-source{margin:18px 0 0;}
+
+  /* touch screens: a "hover" look sticks after a tap and reads as half-selected — turn it off there */
+  @media (hover: none){
+    .pig-bubble:not(.filled):hover{border-color:var(--border);}
+    .step:not(.done):not(.step-next) .check:hover{border-color:var(--border);}
+    .reset-btn:hover{border-color:var(--border); color:var(--text-dim);}
+    .ab-edit-btn:hover{border-color:var(--border); color:var(--text-dim);}
+  }
+  .well-row .well-coords{font-size:11px; letter-spacing:0; white-space:nowrap;}
+
+  .search-row .theme-btn{width:46px; height:46px; margin:0;}
+  .brand{margin-bottom:12px;}
+
+  /* ---- alarm lookup: an open list can be closed from anywhere inside it ---- */
+  .alarm-sec{margin-top:10px;}
+  .alarm-sec-head{
+    position:sticky; top:var(--header-h, 0px); z-index:4;
+    scroll-margin-top:var(--header-h, 0px);
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    width:calc(100% + 32px); margin:0 -16px 10px; padding:12px 16px;
+    background:var(--panel); border:none;
+    border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+    color:var(--text); font-family:var(--sans); font-size:14.5px; font-weight:700;
+    text-align:left; cursor:pointer;
+  }
+  .alarm-sec-hide{
+    flex-shrink:0; color:var(--amber-ink); font-weight:700;
+    text-decoration:underline; text-underline-offset:3px;
+  }
+
+  /* =====================================================================
+     APPEARANCE — "Panel"
+     The board is an annunciator: idle windows are dark, a window lights
+     when it needs you. Inside a card, the card IS the page (no box in a box).
+     Color means state and nothing else.
+  ===================================================================== */
+  main{padding:14px 16px;}
+  .group-h{margin:16px 2px 8px;}
+  .group-h:first-child{margin-top:0;}
+  .tiles{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .tile{
+    margin:0; border-radius:14px; position:relative;
+    display:flex; flex-direction:column; min-height:118px;
+    transition:transform .08s ease;
+  }
+  .tile:active{transform:scale(.98);}
+  .tile .card-head{flex:1; flex-direction:column; align-items:stretch; gap:9px; padding:13px 13px 12px;}
+  .tile .card-ico{width:auto; height:auto; background:none; border:none; justify-content:flex-start; color:var(--text-dim);}
+  .tile .card-ico svg{width:24px; height:24px;}
+  .tile .card-title-wrap{display:flex; flex-direction:column; flex:1;}
+  .tile .card-title{font-size:16.5px; font-weight:800; line-height:1.18; letter-spacing:-.005em; margin:0;}
+  .tile .card-sub{margin-top:auto; padding-top:8px; font-size:12.5px; line-height:1.3;}
+  .tile .progress-mini{position:absolute; top:14px; right:13px; font-size:12.5px;}
+  .tile .row-progress{position:absolute; left:0; right:0; bottom:0; background:transparent;}
+  .tile.lit-amber{border-color:var(--lit-amber-bd); background:linear-gradient(180deg, var(--lit-amber-a), var(--lit-amber-b) 70%), var(--panel);}
+  .tile.lit-red{border-color:var(--lit-red-bd); background:linear-gradient(180deg, var(--lit-red-a), var(--lit-red-b) 70%), var(--panel);}
+  .tile.lit-green{border-color:var(--lit-green-bd); background:linear-gradient(180deg, var(--lit-green-a), var(--lit-green-b) 70%), var(--panel);}
+  .tile.lit-amber .card-ico{color:var(--amber-ink);}
+  .tile.lit-red .card-ico{color:var(--red-text);}
+  .tile.lit-green .card-ico{color:var(--green-text);}
+  .tile.lit-green .row-progress i{background:var(--green);}
+  .tile-wide{grid-column:1/-1; min-height:0;}
+  .tile-wide .card-head{flex-direction:row; align-items:center; gap:12px;}
+  .tile-wide .card-sub{margin-top:2px; padding-top:0;}
+  .tile-wide .progress-mini{position:static;}
+  .tile .card-head:focus-visible{outline:2px solid var(--amber); outline-offset:-2px; border-radius:14px;}
+  footer.app-footer .legend{display:none;}
+  footer.app-footer{justify-content:center;}
+  #buildStamp{margin:0;}
+
+  /* ---- inside a card ---- */
+  body.in-card main{padding:14px 16px 48px; --panel:var(--bg); --panel-2:var(--raised);}
+  body.in-card .card{background:transparent; border:none; border-radius:0;}
+  body.in-card .card-head{padding:2px 0 14px; gap:14px;}
+  body.in-card .card-ico{width:46px; height:46px; border-radius:13px; background:var(--raised);}
+  body.in-card .card-title{font-size:23px; font-weight:800; letter-spacing:-.015em; line-height:1.15; margin-bottom:4px;}
+  body.in-card .card-sub{font-size:14.5px;}
+  body.in-card .progress-mini{font-size:14px; align-self:flex-start; padding-top:6px;}
+  body.in-card .progress-track{height:4px; border-radius:3px; overflow:hidden; margin-bottom:4px;}
+  body.in-card .body-inner{padding:8px 0 18px;}
+  body.in-card .pig-table-wrap{padding:0;}
+  body.in-card .pig-body-inner .card-footer{margin:6px 0 0;}
+  /* headings are plain words with real weight, not tiny capitals */
+  .ab-heading{
+    font-family:var(--sans); font-size:16px; font-weight:800; letter-spacing:-.005em; text-transform:none;
+    color:var(--text); border-bottom:none; padding-bottom:0; margin:26px 0 10px;
+  }
+  .ab-section:first-child .ab-heading, .body-inner > .ab-heading:first-child{margin-top:6px;}
+  .ab-row, .md-row, .well-row, .alarm-row, .reads-hist-row, .ab-row-editing{border-radius:12px;}
+  .ab-row{padding:12px 14px;}
+  /* buttons and fields: one height, one shape */
+  .ab-add-btn{
+    border:1px solid var(--border); background:var(--panel-2); color:var(--text);
+    font-size:15px; font-weight:700; min-height:50px; border-radius:12px;
+  }
+  .ab-submit-btn, .ab-cancel-btn, .md-plan-btn{min-height:50px; border-radius:12px; font-size:15.5px;}
+  .ab-input, .field-input{min-height:50px; border-radius:12px; font-size:16px;}
+  .well-input{font-size:16px;}
+  .reset-btn{min-height:42px; border-radius:10px; font-size:13.5px; padding:8px 14px;}
+  .step{padding:14px 4px;}
+  .step-text{font-size:16px; line-height:1.4;}
+  .footer-note{font-family:var(--sans); font-size:13px;}
+  .field-label{font-size:15.5px;}
+  @media (prefers-reduced-motion: reduce){ .tile{transition:none;} .tile:active{transform:none;} }
+
+  /* small labels follow the same plain-word style as the headings */
+  .scn-clear{min-height:36px; font-size:13px; border-radius:9px; padding:6px 12px;}
+  .scn-sub{font-family:var(--sans); font-size:13.5px; font-weight:800; letter-spacing:0; text-transform:none; color:var(--text); margin:12px 0 4px;}
+  .scn-chips-label{font-family:var(--sans); font-size:12.5px; font-weight:700; letter-spacing:0; text-transform:none;}
+  .ref-label{font-family:var(--sans); font-size:13px; font-weight:700; letter-spacing:0; text-transform:none; padding-top:1px;}
+  .ref-rung-name{font-family:var(--sans); font-size:13px; font-weight:700; letter-spacing:0; text-transform:none;}
+  .pig-group{font-family:var(--sans); font-size:14px; font-weight:800; letter-spacing:0; text-transform:none;}
+  .pig-sub{font-family:var(--sans); font-size:12.5px; font-weight:600; letter-spacing:0; text-transform:none;}
+  .ab-date-label{font-family:var(--sans); font-size:13px; font-weight:600; letter-spacing:0; text-transform:none;}
 </style>
 </head>
 <body>
@@ -1105,25 +1544,41 @@
 <header>
   <div class="brand">
     <span class="dot"></span>
-    <h1><b>FIELD OPS</b> // PROCEDURE BOARD</h1>
+    <h1><b>FIELD OPS</b><span class="brand-tail"> // PROCEDURE BOARD</span></h1>
   </div>
-  <div class="search-wrap">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input id="search" type="text" placeholder="Search procedures, keywords, valve numbers…" autocomplete="off">
+  <div class="search-row">
+    <button class="back-btn" id="backBtn" type="button" aria-label="Back to the board" hidden>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="search" type="text" placeholder="Search valves, wells, alarms…" autocomplete="off" enterkeyhint="search">
+      <button class="search-clear" id="searchClear" type="button" aria-label="Clear search" hidden>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch to daylight mode"></button>
   </div>
-  <div class="result-count" id="resultCount"></div>
+  <div class="meta-row" hidden>
+    <div class="result-count" id="resultCount"></div>
+  </div>
 </header>
 
 <main id="main"></main>
 
 <footer class="app-footer">
-  <span>Stored locally on this device · works offline</span>
   <span class="legend">
     <span><i style="background:var(--red)"></i>Open</span>
     <span><i style="background:var(--green)"></i>Closed</span>
-    <span><i style="background:var(--yellow)"></i>Transition</span>
+    <span><i style="background:var(--yellow)"></i>In transition</span>
   </span>
+  <span id="buildStamp"></span>
 </footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden>
+  <span class="toast-msg"></span>
+  <button class="toast-btn" type="button" data-action="undo">Undo</button>
+</div>
 
 <script>
 /* =====================================================================
@@ -1746,7 +2201,7 @@ const PROCEDURES = [
   /* ---------------- TANK BATTERY / SLUG CATCHER (from Ops Procedures, rev 6-22-11) ---------------- */
   {
     id: "tb-overview",
-    title: "Tank Battery — Slug Catcher Overview",
+    title: "Slug Catcher Overview",
     type: "reference",
     keywords: ["tank battery","slug catcher","setpoints","levels","LT-304","PT-306","normal valve positions","MRCS","Gasunie"],
     sections: [
@@ -1796,9 +2251,15 @@ const PROCEDURES = [
   },
   {
     id: "tb-alarms",
-    title: "Tank Battery — Alarm Lookup",
+    title: "Alarm Lookup",
     type: "alarms",
     keywords: ["alarm","alarms","interlock","MRCS","faulted","deviation","position indication","failed to close","failed to open"]
+  },
+  {
+    id: "backup",
+    title: "Backup",
+    type: "tools",
+    keywords: ["backup","back up","restore","export","import","save file","new phone","transfer","share"]
   }
 ];
 
@@ -2228,6 +2689,7 @@ let missDigData = loadMissDig();
 let missDigFormOpen = {}; // transient UI state, not persisted: procId -> bool
 let missDigStartFormOpen = {}; // transient UI state, not persisted: procId -> bool
 let missDigEditOpen = {}; // transient UI state, not persisted: entryId -> bool
+let missDigOptionsOpen = {}; // transient UI state, not persisted: procId -> bool (route options expanded)
 let missDigLocStatus = {}; // transient UI state, not persisted: procId -> 'locating'|'denied'|'timeout'|'unavailable'|'unsupported'|null
 let query = "";
 
@@ -2267,12 +2729,12 @@ function matches(proc, q){
   } else if(proc.type === "abandonment"){
     const d = abandonData[proc.id] || { removals:[], planned:[] };
     content = [
-      ...d.removals.map(e => `${e.wellName||""} ${e.lineName||""} ${e.lineStatus||""} ${e.date||""}`),
+      ...d.removals.map(e => `${e.wellName||""} ${e.lineName||""} ${e.lineStatus||""} ${e.date||""} ${e.comments||""}`),
       ...d.planned.map(e => `${e.name} ${e.type} ${e.date||""}`)
     ];
   } else if(proc.type === "missdigs"){
     const d = missDigData[proc.id] || { entries:[] };
-    content = d.entries.map(e => `${e.label} ${e.expDate||""}`);
+    content = d.entries.map(e => `${e.ticketNumber||""} ${e.label} ${e.expDate||""}`);
   } else if(proc.type === "reference"){
     content = [];
     (proc.sections||[]).forEach(s => {
@@ -2282,6 +2744,8 @@ function matches(proc, q){
     });
   } else if(proc.type === "alarms"){
     content = TB_ALARMS.map(a => `${a.device} ${a.alarm} ${a.meaning} ${a.io}`).concat(TB_INTERLOCKS.map(i => `${i.cause} ${i.result}`));
+  } else if(proc.type === "tools"){
+    content = [];
   } else {
     content = proc.steps.map(s=>s.text);
   }
@@ -2295,50 +2759,519 @@ function badgeHtml(step, isDone){
   return `<span class="badge ${step.state}"><span class="lamp"></span>${step.valve} · ${labelMap[step.state]}</span>`;
 }
 
+/* ---------------------------------------------------------------------
+   HOME SCREEN — grouping, icons, and the live status line on each card
+------------------------------------------------------------------------ */
+const APP_BUILD = "2026-11-11";
+const APP_REV = 4;   // bump when more than one build goes out on the same day
+const PROC_GROUPS = [
+  { label:"Tank battery and disposal", ids:["flush-ktech","disposal-reads","tb-overview","tb-alarms"] },
+  { label:"Field and wells",           ids:["pig-in-out","well-search","miss-digs","abandonment-log"] },
+  { label:"This phone",                ids:["backup"] }
+];
+
+const READS_HISTORY_KEY = "fieldProcedures.readsHistory.v1";
+const BACKUP_META_KEY = "fieldProcedures.backupMeta.v1";
+const THEME_KEY = "fieldProcedures.theme.v1";
+function loadJson(key, fallback){
+  try{ const v = JSON.parse(localStorage.getItem(key)); return v == null ? fallback : v; } catch(e){ return fallback; }
+}
+function saveJson(key, value){
+  try{ localStorage.setItem(key, JSON.stringify(value)); } catch(e){}
+}
+const LAST_DONE_KEY = "fieldProcedures.lastDone.v1";
+let lastDone = loadJson(LAST_DONE_KEY, {});            // procId -> ISO time the checklist was last finished
+let readsHistory = loadJson(READS_HISTORY_KEY, {});   // procId -> [{ at: ISO string, values: [..] }], newest first
+let backupMeta = loadJson(BACKUP_META_KEY, {});        // { lastBackupAt: ISO string }
+
+function svgIcon(inner){
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+}
+const CARD_ICONS = {
+  checklist:   svgIcon('<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 3.5V10M12 14v6.5M3.5 12H10M14 12h6.5"/>'),   // valve handwheel
+  reads:       svgIcon('<path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4.2-5.2"/><circle cx="12" cy="17" r="1.2"/><path d="M3 20.5h18"/>'),          // pressure gauge
+  pigging:     svgIcon('<path d="M2 7.5h20M2 16.5h20"/><rect x="6.5" y="9.5" width="11" height="5" rx="2.5"/>'),                                        // pig in a pipe
+  wellsearch:  svgIcon('<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.2"/>'),                  // map pin
+  abandonment: svgIcon('<circle cx="12" cy="12" r="8.5"/><path d="M6 18L18 6"/>'),                                                                     // taken out of service
+  missdigs:    svgIcon('<path d="M6 21V4"/><path d="M6 5h11l-2.6 3.5L17 12H6"/>'),                                                                      // locate flag
+  reference:   svgIcon('<path d="M5 6h14M5 12h10M5 18h6"/>'),                                                                                          // setpoint ladder
+  alarms:      svgIcon('<path d="M6 16v-5a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>'),                                          // annunciator bell
+  tools:       svgIcon('<path d="M12 4v10"/><path d="M8 10.5l4 4 4-4"/><path d="M5 19h14"/>')                                                          // save to file
+};
+const iconSun = svgIcon('<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"/>');
+const iconMoon = svgIcon('<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>');
+
+function cardIcon(proc){
+  return `<span class="card-ico">${CARD_ICONS[proc.type] || CARD_ICONS.reference}</span>`;
+}
+
+function localDateStr(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function fmtLongDate(s){
+  const d = new Date(String(s).length <= 10 ? s + "T00:00:00" : s);
+  if(isNaN(d.getTime())) return String(s);
+  return d.toLocaleDateString(undefined, { month:"short", day:"numeric", year:"numeric" });
+}
+function fmtShortDate(s){
+  const d = new Date(String(s).length <= 10 ? s + "T00:00:00" : s);
+  if(isNaN(d.getTime())) return String(s);
+  return d.toLocaleDateString(undefined, { month:"short", day:"numeric" });
+}
+function whenText(days){
+  if(days === 0) return "today";
+  if(days === 1) return "tomorrow";
+  if(days === -1) return "yesterday";
+  return days > 0 ? `in ${days} days` : `${-days} days ago`;
+}
+function daysSince(iso){
+  const d = new Date(iso); if(isNaN(d.getTime())) return Infinity;
+  const a = new Date(); a.setHours(0,0,0,0);
+  const b = new Date(d); b.setHours(0,0,0,0);
+  return Math.round((a - b) / 86400000);
+}
+function hasAnyUserData(){
+  const anyKeys = (o) => o && Object.keys(o).some(k => o[k] && (Array.isArray(o[k]) ? o[k].length : Object.keys(o[k]).length));
+  return anyKeys(completed) || anyKeys(readsValues) || anyKeys(pigStatus) || anyKeys(readsHistory) ||
+    Object.values(abandonData||{}).some(d => d && ((d.removals||[]).length || (d.planned||[]).length)) ||
+    Object.values(missDigData||{}).some(d => d && (d.entries||[]).length);
+}
+
+// What each card says about itself on the home screen.
+// lamp: null (no lamp) | "off" | "amber" | "green" | "red".  count: small right-hand progress, or "".
+function cardStatus(proc){
+  if(proc.type === "reads"){
+    const vals = readsValues[proc.id] || {};
+    const total = proc.fields.length;
+    const filled = proc.fields.filter((_,i) => (vals[i]||"").trim() !== "").length;
+    const hist = readsHistory[proc.id] || [];
+    const count = `<b>${filled}</b>/${total}`;
+    if(filled > 0) return { text: filled === total ? "All entered. Save the reading to keep it." : `${filled} of ${total} entered, not saved yet`, lamp:"amber", count, frac: filled/total };
+    if(hist.length){
+      const d = daysSince(hist[0].at);
+      return { text:`Last saved ${d === 0 ? "today" : d === 1 ? "yesterday" : fmtShortDate(hist[0].at)}`, lamp: d === 0 ? "green" : "off", count };
+    }
+    return { text:"No readings saved yet", lamp:"off", count };
+  }
+  if(proc.type === "pigging"){
+    const status = pigStatus[proc.id] || {};
+    const total = proc.lines.length * proc.columns.length;
+    let filled = 0;
+    proc.lines.forEach(line => { const cell = status[line.id] || {}; proc.columns.forEach(col => { if(cell[col.key]) filled++; }); });
+    const count = `<b>${filled}</b>/${total}`;
+    const stale = status.__started && status.__started !== localDateStr() ? `, started ${fmtShortDate(status.__started)}` : "";
+    if(filled === 0) return { text:"No pigs marked", lamp:"off", count };
+    if(filled === total) return { text:"Every line marked" + stale, lamp:"green", count, frac:1 };
+    return { text:`${filled} of ${total} marked` + stale, lamp:"amber", count, frac: filled/total };
+  }
+  if(proc.type === "wellsearch"){
+    return { text:`${WELLS.length} wells, Winterfield and Cranberry`, lamp:null, count:"" };
+  }
+  if(proc.type === "abandonment"){
+    const d = abandonData[proc.id] || { removals:[], planned:[] };
+    const r = d.removals.length, p = d.planned.length;
+    const dated = d.planned.filter(e => e.date).map(e => ({ e, days: daysUntilExpiration(e.date) })).sort((a,b) => a.days - b.days);
+    if(dated.length && dated[0].days <= 7){
+      const { e, days } = dated[0];
+      return { text: days < 0 ? `${e.name} was planned for ${fmtShortDate(e.date)}` : `${e.name} planned ${whenText(days)}`, lamp:"amber", count:"" };
+    }
+    if(!r && !p) return { text:"Nothing logged yet", lamp:"off", count:"" };
+    return { text:[ r ? `${r} logged` : "", p ? `${p} planned` : "" ].filter(Boolean).join(", "), lamp:"off", count:"" };
+  }
+  if(proc.type === "missdigs"){
+    const d = missDigData[proc.id] || { entries:[] };
+    const total = d.entries.length, done = d.entries.filter(e => e.completed).length;
+    const open = d.entries.filter(e => !e.completed);
+    const count = total ? `<b>${done}</b>/${total}` : "";
+    if(!total) return { text:"No tickets", lamp:"off", count };
+    if(!open.length) return { text:"All tickets completed", lamp:"green", count };
+    const withDays = open.map(e => daysUntilExpiration(e.expDate)).sort((a,b) => a - b);
+    const overdue = withDays.filter(x => x < 0).length;
+    const soonest = withDays[0];
+    if(overdue) return { text:`${open.length} open, ${overdue} expired`, lamp:"red", count };
+    if(soonest <= 3) return { text:`Next ticket expires ${whenText(soonest)}`, lamp: soonest === 0 ? "red" : "amber", count };
+    return { text:`${open.length} open` + (isFinite(soonest) ? `, next expires ${whenText(soonest)}` : ""), lamp:"off", count };
+  }
+  if(proc.type === "reference"){
+    return { text:"Setpoints, valve positions, resets", lamp:null, count:"" };
+  }
+  if(proc.type === "alarms"){
+    const n = activeAlarms.size;
+    if(n) return { text:`${n} alarm${n===1?"":"s"} added for diagnosis`, lamp:"amber", count:"" };
+    return { text:`${TB_ALARMS.length} alarms, ${TB_SCENARIOS.length} known combinations`, lamp:null, count:"" };
+  }
+  if(proc.type === "tools"){
+    const last = backupMeta.lastBackupAt;
+    if(!last) return hasAnyUserData()
+      ? { text:"Not backed up yet", lamp:"amber", count:"" }
+      : { text:"Nothing to back up yet", lamp:"off", count:"" };
+    const d = daysSince(last);
+    return { text:`Last backup ${d === 0 ? "today" : d === 1 ? "yesterday" : whenText(-d)}`, lamp: d > 30 ? "amber" : "off", count:"" };
+  }
+  // checklist
+  const doneMap = completed[proc.id] || {};
+  const total = proc.steps.length;
+  const done = proc.steps.filter((_,i) => doneMap[i]).length;
+  const count = `<b>${done}</b>/${total}`;
+  if(done === 0) return { text: lastDone[proc.id] ? `Not started, last done ${fmtShortDate(lastDone[proc.id])}` : "Not started", lamp:"off", count };
+  if(done === total) return { text:"All steps done", lamp:"green", count, frac:1 };
+  return { text:`${done} of ${total} steps done`, lamp:"amber", count, frac: done/total };
+}
+function cardSubInner(proc){
+  const st = cardStatus(proc);
+  return `${st.lamp ? `<span class="st-lamp st-${st.lamp}"></span>` : ""}<span>${escapeHtml(st.text)}</span>`;
+}
+function cardSub(proc){
+  const st = cardStatus(proc);
+  return `<p class="card-sub ${st.lamp ? "sub-" + st.lamp : ""}">${cardSubInner(proc)}</p>`;
+}
+function cardCount(proc){
+  const st = cardStatus(proc);
+  return `<div class="progress-mini">${st.count || ""}</div>`;
+}
+
+/* ---- theme ---- */
+let theme = (function(){ try{ return localStorage.getItem(THEME_KEY) === "light" ? "light" : "dark"; } catch(e){ return "dark"; } })();
+function applyTheme(){
+  if(theme === "light") document.documentElement.setAttribute("data-theme", "light");
+  else document.documentElement.removeAttribute("data-theme");
+  const btn = document.getElementById("themeBtn");
+  if(btn){
+    btn.innerHTML = theme === "light" ? iconMoon : iconSun;
+    btn.setAttribute("aria-label", theme === "light" ? "Switch to night mode" : "Switch to daylight mode");
+    btn.title = theme === "light" ? "Night mode" : "Daylight mode";
+  }
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute("content", theme === "light" ? "#D7DDE1" : "#12161A");
+}
+applyTheme();
+
+/* ---------------------------------------------------------------------
+   UNDO — every Reset and delete can be taken back for ten seconds.
+   A snapshot is simply all saved data as one JSON string.
+------------------------------------------------------------------------ */
+let undoSnapshot = null;
+let toastTimer = null;
+function takeSnapshot(){
+  return JSON.stringify({ completed, readsValues, pigStatus, abandonData, missDigData, readsHistory, activeAlarms: [...activeAlarms] });
+}
+function restoreSnapshot(json){
+  const s = JSON.parse(json);
+  completed = s.completed || {}; readsValues = s.readsValues || {}; pigStatus = s.pigStatus || {};
+  abandonData = s.abandonData || {}; missDigData = s.missDigData || {}; readsHistory = s.readsHistory || {};
+  activeAlarms = new Set(s.activeAlarms || []);
+  saveCompleted(completed); saveReads(readsValues); savePig(pigStatus);
+  saveAbandon(abandonData); saveMissDig(missDigData); saveJson(READS_HISTORY_KEY, readsHistory); saveActiveAlarms();
+}
+function showToast(msg, withUndo){
+  const t = document.getElementById("toast");
+  if(!t) return;
+  clearTimeout(toastTimer);
+  t.querySelector(".toast-msg").textContent = msg;
+  t.querySelector(".toast-btn").hidden = !withUndo;
+  t.hidden = false;
+  toastTimer = setTimeout(() => { t.hidden = true; undoSnapshot = null; }, withUndo ? 10000 : 2500);
+}
+// Run a change; if it actually altered saved data, offer to undo it.
+function withUndo(label, fn){
+  const before = takeSnapshot();
+  fn();
+  if(takeSnapshot() !== before){ undoSnapshot = before; showToast(label, true); }
+}
+
+/* ---------------------------------------------------------------------
+   BACKUP — one small file holding everything logged on this phone.
+------------------------------------------------------------------------ */
+const PRE_RESTORE_KEY = "fieldProcedures.preRestore.v1";
+let pendingRestore = null;     // transient: { backup, error } after a file/paste is read
+let toolsMessage = "";         // transient: last result shown in the Backup card
+function backupKeys(){
+  return [STORAGE_KEY, READS_KEY, PIG_KEY, ABANDON_KEY, MISSDIG_KEY, READS_HISTORY_KEY, ACTIVE_ALARMS_KEY, LAST_DONE_KEY];
+}
+function buildBackup(){
+  const data = {};
+  backupKeys().forEach(k => { try{ const v = localStorage.getItem(k); if(v != null) data[k] = v; } catch(e){} });
+  return { app:"field-procedures", format:1, build:APP_BUILD, savedAt:new Date().toISOString(), data };
+}
+// Plain-language count of what a backup (or this phone) holds.
+function summarizeBackupData(data){
+  const get = (k) => { try{ return JSON.parse(data[k] || "null") || {}; } catch(e){ return {}; } };
+  const parts = [];
+  const ab = get(ABANDON_KEY);
+  const abN = Object.values(ab).reduce((n, d) => n + ((d && d.removals) || []).length + ((d && d.planned) || []).length + ((d && d.wells) || []).length + ((d && d.lines) || []).length, 0);
+  if(abN) parts.push(`${abN} abandonment ${abN === 1 ? "entry" : "entries"}`);
+  const md = get(MISSDIG_KEY);
+  const mdN = Object.values(md).reduce((n, d) => n + ((d && d.entries) || []).length, 0);
+  if(mdN) parts.push(`${mdN} miss dig ticket${mdN === 1 ? "" : "s"}`);
+  const rh = get(READS_HISTORY_KEY);
+  const rhN = Object.values(rh).reduce((n, list) => n + (Array.isArray(list) ? list.length : 0), 0);
+  if(rhN) parts.push(`${rhN} saved reading${rhN === 1 ? "" : "s"}`);
+  const pig = get(PIG_KEY);
+  const pigN = Object.values(pig).reduce((n, lines) => n + Object.values(lines || {}).reduce((m, cell) => m + (cell && typeof cell === "object" ? Object.keys(cell).length : 0), 0), 0);
+  if(pigN) parts.push(`${pigN} pig mark${pigN === 1 ? "" : "s"}`);
+  const done = get(STORAGE_KEY);
+  const doneN = Object.values(done).reduce((n, m) => n + Object.values(m || {}).filter(Boolean).length, 0);
+  if(doneN) parts.push(`${doneN} checked step${doneN === 1 ? "" : "s"}`);
+  return parts.length ? parts.join(", ") : "nothing logged";
+}
+function parseBackupText(text){
+  let obj;
+  try{ obj = JSON.parse(text); } catch(e){ return { error:"That isn't a Field Ops backup. The file couldn't be read." }; }
+  if(!obj || obj.app !== "field-procedures" || !obj.data || typeof obj.data !== "object"){
+    return { error:"That file isn't a Field Ops backup." };
+  }
+  const allowed = new Set(backupKeys());
+  const data = {};
+  Object.keys(obj.data).forEach(k => {
+    if(!allowed.has(k) || typeof obj.data[k] !== "string") return;   // ignore anything we don't recognise
+    try{ JSON.parse(obj.data[k]); data[k] = obj.data[k]; } catch(e){}
+  });
+  return { backup: { savedAt: obj.savedAt || "", data } };
+}
+function reloadStateFromStorage(){
+  completed = loadCompleted(); readsValues = loadReads(); pigStatus = loadPig();
+  abandonData = loadAbandon(); missDigData = loadMissDig(); readsHistory = loadJson(READS_HISTORY_KEY, {});
+  lastDone = loadJson(LAST_DONE_KEY, {});
+  activeAlarms = new Set(loadJson(ACTIVE_ALARMS_KEY, []).map(k => TB_ALARMS.findIndex(a => a.key === k)).filter(i => i >= 0));
+}
+function writeBackupData(data){
+  backupKeys().forEach(k => {
+    try{ if(data[k] != null) localStorage.setItem(k, data[k]); else localStorage.removeItem(k); } catch(e){}
+  });
+  reloadStateFromStorage();
+}
+function applyRestore(backup){
+  saveJson(PRE_RESTORE_KEY, buildBackup());   // keep what was here, so the restore itself can be undone
+  writeBackupData(backup.data);
+}
+async function saveBackupFile(){
+  const json = JSON.stringify(buildBackup(), null, 1);
+  const name = `field-ops-backup-${localDateStr()}.json`;
+  let shared = false;
+  try{
+    const file = new File([json], name, { type:"application/json" });
+    if(navigator.canShare && navigator.canShare({ files:[file] })){
+      await navigator.share({ files:[file], title:"Field Ops backup" });
+      shared = true;
+    }
+  } catch(err){
+    if(err && err.name === "AbortError") return false;   // they closed the share sheet
+  }
+  if(!shared){
+    const url = URL.createObjectURL(new Blob([json], { type:"application/json" }));
+    const a = document.createElement("a");
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+  backupMeta.lastBackupAt = new Date().toISOString();
+  saveJson(BACKUP_META_KEY, backupMeta);
+  return true;
+}
+
+function renderToolsCard(proc, isOpen){
+  const onPhone = summarizeBackupData(buildBackup().data);
+  const pre = loadJson(PRE_RESTORE_KEY, null);
+  let restoreHtml = "";
+  if(pendingRestore && pendingRestore.error){
+    restoreHtml = `<div class="tools-panel tools-panel-warn">${iconWarn}<span>${escapeHtml(pendingRestore.error)}</span></div>`;
+  } else if(pendingRestore && pendingRestore.backup){
+    const b = pendingRestore.backup;
+    restoreHtml = `
+    <div class="tools-panel">
+      <p class="tools-panel-title">Replace what's on this phone?</p>
+      <p class="tools-panel-line"><b>Backup${b.savedAt ? " from " + escapeHtml(fmtDateTime(b.savedAt)) : ""}:</b> ${escapeHtml(summarizeBackupData(b.data))}</p>
+      <p class="tools-panel-line"><b>On this phone now:</b> ${escapeHtml(onPhone)}</p>
+      <div class="ab-add-actions">
+        <button class="ab-submit-btn" data-action="backup-restore-confirm">Replace with backup</button>
+        <button class="ab-cancel-btn" data-action="backup-restore-cancel">Cancel</button>
+      </div>
+    </div>`;
+  }
+  return `
+  <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
+    <div class="card-head" data-action="toggle" data-id="${proc.id}">
+      ${cardIcon(proc)}
+      <div class="card-title-wrap">
+        <p class="card-title">${highlight(proc.title, query)}</p>
+        ${cardSub(proc)}
+      </div>
+      ${cardCount(proc)}<span class="chevron">${iconChevron}</span>
+    </div>
+    <div class="card-body">
+      <div class="body-inner">
+        <p class="tools-lead">Everything you log is stored only on this phone. A backup is one small file you can keep in Files, text to yourself, or send to a coworker so they can load it.</p>
+        <p class="tools-onphone"><b>On this phone:</b> ${escapeHtml(onPhone)}</p>
+        ${toolsMessage ? `<p class="tools-msg">${escapeHtml(toolsMessage)}</p>` : ""}
+        <div class="tools-btns">
+          <button class="ab-submit-btn" data-action="backup-save">Save a backup file</button>
+          <label class="ab-cancel-btn tools-file-btn">Restore from a backup file
+            <input type="file" accept=".json,application/json,text/plain" data-action="backup-file" class="tools-file-input">
+          </label>
+        </div>
+        ${restoreHtml}
+        ${pre ? `<button class="ab-add-btn" data-action="backup-undo-restore">Undo the last restore (put back what was here ${escapeHtml(fmtDateTime(pre.savedAt))})</button>` : ""}
+        <details class="tools-details">
+          <summary>File not working? Copy and paste instead</summary>
+          <button class="ab-cancel-btn" data-action="backup-copy">Copy backup as text</button>
+          <textarea class="ab-input tools-paste" rows="3" placeholder="Paste backup text here to restore it"></textarea>
+          <button class="ab-cancel-btn" data-action="backup-paste">Restore from pasted text</button>
+        </details>
+        <p class="tools-version">Version ${escapeHtml(fmtShortDate(APP_BUILD))}, ${escapeHtml(APP_BUILD.slice(0,4))}, build ${APP_REV}. Works with no signal.</p>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderCard(proc, isOpen){
+  try{
+    if(proc.type === "reads") return renderReadsCard(proc, isOpen);
+    if(proc.type === "pigging") return renderPiggingCard(proc, isOpen);
+    if(proc.type === "wellsearch") return renderWellSearchCard(proc, isOpen);
+    if(proc.type === "abandonment") return renderAbandonmentCard(proc, isOpen);
+    if(proc.type === "missdigs") return renderMissDigsCard(proc, isOpen);
+    if(proc.type === "reference") return renderReferenceCard(proc, isOpen);
+    if(proc.type === "alarms") return renderAlarmsCard(proc, isOpen);
+    if(proc.type === "tools") return renderToolsCard(proc, isOpen);
+    return renderChecklistCard(proc, isOpen);
+  } catch(cardErr){
+    console.error("card render error:", proc.id, cardErr);
+    return `<div class="card open"><div class="body-inner"><p class="well-hint">Couldn't load "${escapeHtml(proc.title)}": ${escapeHtml(String(cardErr && cardErr.message || cardErr))}</p></div></div>`;
+  }
+}
+
+// A window on the board. Idle windows are dark; a window lights when it needs you
+// (amber = in progress or coming due, red = overdue, green = finished).
+function cardRowHtml(proc, wide){
+  try{
+    const st = cardStatus(proc);
+    const lit = st.lamp && st.lamp !== "off" ? ` lit-${st.lamp}` : "";
+    const bar = typeof st.frac === "number" ? `<div class="row-progress"><i style="width:${Math.round(st.frac * 100)}%"></i></div>` : "";
+    return `
+    <div class="card tile${lit}${wide ? " tile-wide" : ""}" data-id="${proc.id}">
+      <div class="card-head" data-action="toggle" data-id="${proc.id}" role="button" tabindex="0">
+        ${cardIcon(proc)}
+        <div class="card-title-wrap">
+          <p class="card-title">${highlight(proc.title, query)}</p>
+          <p class="card-sub ${st.lamp ? "sub-" + st.lamp : ""}"><span>${escapeHtml(st.text)}</span></p>
+        </div>
+        ${cardCount(proc)}
+      </div>
+      ${bar}
+    </div>`;
+  } catch(err){
+    console.error("tile render error:", proc.id, err);
+    return `<div class="card tile"><div class="card-head"><div class="card-title-wrap"><p class="card-title">${escapeHtml(proc.title)}</p></div></div></div>`;
+  }
+}
+// Two windows per row; an odd one out stretches across.
+function tilesHtml(procs){
+  return `<div class="tiles">${procs.map((p, i) => cardRowHtml(p, procs.length % 2 === 1 && i === procs.length - 1)).join("")}</div>`;
+}
+
+/* ---------------------------------------------------------------------
+   NAVIGATION — the board lists every card; opening one fills the screen.
+   Back (button, or the phone's swipe-back) returns to the board where you left it.
+------------------------------------------------------------------------ */
+const ACTIVE_KEY = "fieldProcedures.activeCard.v1";
+let activeId = (function(){
+  // Pick up where you left off, but only if you were here recently.
+  const a = loadJson(ACTIVE_KEY, null);
+  if(a && a.id && PROCEDURES.some(p => p.id === a.id) && Date.now() - (a.at || 0) < 2 * 3600 * 1000) return a.id;
+  return null;
+})();
+let listScrollY = 0;
+let lastActiveWrite = 0;
+function setActive(id){
+  activeId = id || null;
+  lastActiveWrite = Date.now();
+  if(activeId) saveJson(ACTIVE_KEY, { id: activeId, at: lastActiveWrite });
+  else { try{ localStorage.removeItem(ACTIVE_KEY); } catch(e){} }
+}
+// Which card (if any) is filling the screen right now.
+function shownCardId(filtered){
+  if(activeId && filtered.some(p => p.id === activeId)) return activeId;
+  if(query && filtered.length === 1) return filtered[0].id;   // a search with one answer goes straight to it
+  return null;
+}
+function openCard(id){
+  if(!PROCEDURES.some(p => p.id === id)) return;
+  if(!activeId) listScrollY = window.scrollY;
+  setActive(id);
+  try{ history.pushState({ card: id }, ""); } catch(e){}
+  render();
+  window.scrollTo(0, 0);
+}
+function clearSearch(){
+  query = "";
+  const sEl = document.getElementById("search");
+  if(sEl) sEl.value = "";
+}
+// Leave the open card (no history calls here — popstate and the Back button both land in this).
+function closeCardView(){
+  const filtered = PROCEDURES.filter(p => matches(p, query));
+  if(activeId){
+    setActive(null);
+    if(query && filtered.length === 1) clearSearch();   // otherwise the search would reopen the same card
+  } else if(query){
+    clearSearch();
+  }
+  render();
+  window.scrollTo(0, query ? 0 : listScrollY);
+}
+function backPressed(){
+  if(activeId && history.state && history.state.card) history.back();   // popstate does the rest
+  else closeCardView();
+}
+window.addEventListener("popstate", (e) => {
+  const id = e.state && e.state.card;
+  if(id && PROCEDURES.some(p => p.id === id)){ setActive(id); render(); window.scrollTo(0, 0); }
+  else if(activeId || query) closeCardView();
+});
+
 function render(){
   try{
     const main = document.getElementById("main");
     const filtered = PROCEDURES.filter(p => matches(p, query));
+    const shown = shownCardId(filtered);
 
-    document.getElementById("resultCount").textContent =
-      query ? `${filtered.length} procedure${filtered.length===1?"":"s"} found` : `${PROCEDURES.length} procedure${PROCEDURES.length===1?"":"s"} loaded`;
+    // header state
+    document.body.classList.toggle("in-card", !!shown);
+    const backBtn = document.getElementById("backBtn");
+    if(backBtn) backBtn.hidden = !shown;
+    const clearBtn = document.getElementById("searchClear");
+    if(clearBtn) clearBtn.hidden = !query;
+    const showCount = !!query && !shown;
+    document.getElementById("resultCount").textContent = showCount ? `${filtered.length} result${filtered.length===1?"":"s"}` : "";
+    const metaRow = document.querySelector(".meta-row");
+    if(metaRow) metaRow.hidden = !showCount;
 
-    if(filtered.length === 0){
-      main.innerHTML = `<div class="empty">${iconEmpty}<p>No procedures match “${escapeHtml(query)}.”</p></div>`;
-      return;
+    if(shown){
+      main.innerHTML = renderCard(PROCEDURES.find(p => p.id === shown), true);
+      if(activeId && Date.now() - lastActiveWrite > 60000){ lastActiveWrite = Date.now(); saveJson(ACTIVE_KEY, { id: activeId, at: lastActiveWrite }); }
+    } else if(filtered.length === 0){
+      main.innerHTML = `<div class="empty">${iconEmpty}<p>Nothing matches “${escapeHtml(query)}.” Try a valve or well number, or one word from the alarm.</p></div>`;
+    } else if(query){
+      main.innerHTML = tilesHtml(filtered);
+    } else {
+      const used = new Set();
+      let html = "";
+      PROC_GROUPS.forEach(g => {
+        const procs = g.ids.map(id => filtered.find(p => p.id === id)).filter(Boolean);
+        if(!procs.length) return;
+        procs.forEach(p => used.add(p.id));
+        html += `<h2 class="group-h">${escapeHtml(g.label)}</h2>` + tilesHtml(procs);
+      });
+      const rest = filtered.filter(p => !used.has(p.id));
+      if(rest.length) html += `<h2 class="group-h">Other</h2>` + tilesHtml(rest);
+      main.innerHTML = html;
     }
 
-    main.innerHTML = filtered.map(proc => {
-      try{
-        const isOpen = !!openCards[proc.id];
-
-        if(proc.type === "reads"){
-          return renderReadsCard(proc, isOpen);
-        }
-        if(proc.type === "pigging"){
-          return renderPiggingCard(proc, isOpen);
-        }
-        if(proc.type === "wellsearch"){
-          return renderWellSearchCard(proc, isOpen);
-        }
-        if(proc.type === "abandonment"){
-          return renderAbandonmentCard(proc, isOpen);
-        }
-        if(proc.type === "missdigs"){
-          return renderMissDigsCard(proc, isOpen);
-        }
-        if(proc.type === "reference"){
-          return renderReferenceCard(proc, isOpen);
-        }
-        if(proc.type === "alarms"){
-          return renderAlarmsCard(proc, isOpen);
-        }
-        return renderChecklistCard(proc, isOpen);
-      } catch(cardErr){
-        console.error("card render error:", proc.id, cardErr);
-        return `<div class="card open"><div class="body-inner"><p class="well-hint">Couldn't load "${escapeHtml(proc.title)}": ${escapeHtml(String(cardErr && cardErr.message || cardErr))}</p></div></div>`;
-      }
-    }).join("");
+    // sticky things inside cards need to know how tall the header is
+    const header = document.querySelector("header");
+    if(header) document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
+    if(typeof updateFabVisibility === "function") updateFabVisibility();
   } catch(err){
     console.error("render error:", err);
     const main = document.getElementById("main");
@@ -2351,67 +3284,141 @@ function renderChecklistCard(proc, isOpen){
     const total = proc.steps.length;
     const doneCount = proc.steps.filter((_,i)=>doneMap[i]).length;
 
+    const nextIdx = proc.steps.findIndex((_,i) => !doneMap[i]);   // the step to do next
     const stepsHtml = proc.steps.map((step, i) => {
       const isDone = !!doneMap[i];
-      return stepRow(step, i, isDone, proc.id);
+      return stepRow(step, i, isDone, proc.id, i === nextIdx);
     }).join("");
+    const finishedAt = lastDone[proc.id];
+    const footNote = doneCount === total
+      ? (finishedAt ? `Finished ${fmtDateTime(finishedAt)}` : "All steps done")
+      : `${total - doneCount} step${total-doneCount===1?'':'s'} left`;
 
     return `
     <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
       <div class="card-head" data-action="toggle" data-id="${proc.id}">
-        <span class="chevron">${iconChevron}</span>
+        ${cardIcon(proc)}
         <div class="card-title-wrap">
           <p class="card-title">${highlight(proc.title, query)}</p>
-          <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+          ${cardSub(proc)}
         </div>
-        <div class="progress-mini"><b>${doneCount}</b>/${total}</div>
+        ${cardCount(proc)}<span class="chevron">${iconChevron}</span>
       </div>
       <div class="progress-track">${proc.steps.map((_,i)=>`<i class="${doneMap[i]?'done':''}"></i>`).join("")}</div>
       <div class="card-body">
         <div class="body-inner">
           ${stepsHtml}
           <div class="card-footer">
-            <span class="footer-note">${doneCount === total ? "Procedure complete" : `${total - doneCount} step${total-doneCount===1?'':'s'} remaining`}</span>
-            <button class="reset-btn" data-action="reset" data-id="${proc.id}">${iconReset} Reset</button>
+            <span class="footer-note">${escapeHtml(footNote)}</span>
+            <button class="reset-btn" data-action="reset" data-id="${proc.id}" ${doneCount === 0 ? "disabled" : ""}>${iconReset} Start over</button>
           </div>
         </div>
       </div>
     </div>`;
 }
 
+/* ---- Disposal Reads: enter, save with date, compare against last time ---- */
+let readsShowAll = {}; // transient UI state: procId -> bool
+
+function fmtDateTime(iso){
+  const d = new Date(iso);
+  if(isNaN(d.getTime())) return String(iso);
+  return d.toLocaleDateString(undefined, { month:"short", day:"numeric", year:"numeric" }) + ", " +
+         d.toLocaleTimeString([], { hour:"2-digit", minute:"2-digit", hour12:false });
+}
+function readingText(proc, entry){
+  const lines = [`${proc.title}, ${fmtDateTime(entry.at)}`];
+  proc.fields.forEach((f, i) => {
+    const v = ((entry.values||[])[i] || "").trim();
+    lines.push(`${f.label}${f.paren ? ` (${f.paren})` : ""}: ${v || "not entered"}`);
+  });
+  return lines.join("\n");
+}
+function copyText(text){
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(() => showToast("Copied"), () => copyTextFallback(text));
+      return;
+    }
+  } catch(e){}
+  copyTextFallback(text);
+}
+function copyTextFallback(text){
+  try{
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand("copy");
+    ta.remove();
+    showToast(ok ? "Copied" : "Couldn't copy on this phone");
+  } catch(e){ showToast("Couldn't copy on this phone"); }
+}
+function readsFooterNote(filledCount, total){
+  if(filledCount === 0) return "Enter today's readings";
+  return filledCount === total ? "All entered" : `${total - filledCount} left to enter`;
+}
+
 function renderReadsCard(proc, isOpen){
     const values = readsValues[proc.id] || {};
     const total = proc.fields.length;
     const filledCount = proc.fields.filter((_,i)=> (values[i]||"").trim() !== "").length;
+    const hist = readsHistory[proc.id] || [];
+    const last = hist[0];
 
     const fieldsHtml = proc.fields.map((field, i) => {
       const val = values[i] || "";
+      const prev = last ? ((last.values||[])[i] || "").trim() : "";
       return `
       <div class="field-row">
         <label class="field-label">${highlight(field.label, query)}${field.paren ? ` <span class="paren">(${highlight(field.paren, query)})</span>` : ""}${field.paren ? "" : ":"}</label>
         <input class="field-input" type="text" inputmode="decimal" placeholder="Enter reading…"
           data-action="field-input" data-id="${proc.id}" data-idx="${i}" value="${escapeHtml(val)}">
+        ${prev ? `<div class="field-prev">Last time: <b>${escapeHtml(prev)}</b> on ${escapeHtml(fmtShortDate(last.at))}</div>` : ""}
       </div>`;
     }).join("");
+
+    const showAll = !!readsShowAll[proc.id];
+    const shown = showAll ? hist : hist.slice(0, 3);
+    const histHtml = hist.length === 0 ? "" : `
+      <h3 class="ab-heading reads-hist-h">Saved readings</h3>
+      ${shown.map((entry) => `
+      <div class="reads-hist-row">
+        <div class="reads-hist-top">
+          <span class="reads-hist-date">${escapeHtml(fmtDateTime(entry.at))}</span>
+          <span class="reads-hist-actions">
+            <button class="reads-mini-btn" data-action="reads-copy" data-id="${proc.id}" data-at="${escapeHtml(entry.at)}">Copy</button>
+            <button class="reads-mini-btn" data-action="reads-delete" data-id="${proc.id}" data-at="${escapeHtml(entry.at)}">Delete</button>
+          </span>
+        </div>
+        <dl class="reads-hist-vals">
+          ${proc.fields.map((f, i) => `<div><dt>${escapeHtml(f.label)}</dt><dd>${escapeHtml((((entry.values||[])[i]) || "").trim() || "—")}</dd></div>`).join("")}
+        </dl>
+      </div>`).join("")}
+      ${hist.length > 3 ? `<button class="ab-add-btn" data-action="reads-toggle-all" data-id="${proc.id}">${showAll ? "Show fewer" : `Show all ${hist.length} saved readings`}</button>` : ""}`;
 
     return `
     <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
       <div class="card-head" data-action="toggle" data-id="${proc.id}">
-        <span class="chevron">${iconChevron}</span>
+        ${cardIcon(proc)}
         <div class="card-title-wrap">
           <p class="card-title">${highlight(proc.title, query)}</p>
-          <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+          ${cardSub(proc)}
         </div>
-        <div class="progress-mini"><b>${filledCount}</b>/${total}</div>
+        ${cardCount(proc)}<span class="chevron">${iconChevron}</span>
       </div>
       <div class="progress-track">${proc.fields.map((_,i)=>`<i class="${(values[i]||"").trim()?'done':''}"></i>`).join("")}</div>
       <div class="card-body">
         <div class="body-inner">
           ${fieldsHtml}
-          <div class="card-footer">
-            <span class="footer-note">${filledCount === total ? "All readings entered" : `${total - filledCount} reading${total-filledCount===1?'':'s'} remaining`}</span>
-            <button class="reset-btn" data-action="reset" data-id="${proc.id}">${iconReset} Reset</button>
+          <div class="reads-actions">
+            <button class="ab-submit-btn reads-save" data-action="reads-save" data-id="${proc.id}" ${filledCount === 0 ? "disabled" : ""}>Save reading</button>
+            <button class="ab-cancel-btn" data-action="reads-copy-current" data-id="${proc.id}" ${filledCount === 0 ? "disabled" : ""}>Copy</button>
           </div>
+          <div class="card-footer">
+            <span class="footer-note">${readsFooterNote(filledCount, total)}</span>
+            <button class="reset-btn" data-action="reset" data-id="${proc.id}">${iconReset} Clear fields</button>
+          </div>
+          ${histHtml}
         </div>
       </div>
     </div>`;
@@ -2426,6 +3433,14 @@ function renderPiggingCard(proc, isOpen){
       proc.columns.forEach(col => { if(cell[col.key]) filledCells++; });
     });
 
+    const groupCounts = {};
+    proc.lines.forEach(line => {
+      const g = PIG_SECTIONS[line.section].group;
+      const gc = groupCounts[g] = groupCounts[g] || { f:0, t:0 };
+      const cell = status[line.id] || {};
+      proc.columns.forEach(col => { gc.t++; if(cell[col.key]) gc.f++; });
+    });
+
     let lastSection = null;
     const rowsHtml = proc.lines.map(line => {
       const meta = PIG_SECTIONS[line.section];
@@ -2434,7 +3449,7 @@ function renderPiggingCard(proc, isOpen){
         const groupChanged = !lastSection || PIG_SECTIONS[lastSection].group !== meta.group;
         sectionHeadHtml = `<tr class="pig-section-row ${groupChanged ? 'new-group' : ''}">
           <td colspan="${proc.columns.length+1}">
-            ${groupChanged ? `<span class="pig-group">${escapeHtml(meta.group)}</span>` : ""}
+            ${groupChanged ? `<span class="pig-group"><span>${escapeHtml(meta.group)}</span><b class="pig-group-count">${groupCounts[meta.group].f} of ${groupCounts[meta.group].t}</b></span>` : ""}
             <span class="pig-sub">${escapeHtml(meta.sub)}</span>
           </td>
         </tr>`;
@@ -2458,22 +3473,23 @@ function renderPiggingCard(proc, isOpen){
       </tr>`;
     }).join("");
 
-    const headerCells = proc.columns.map(c => `<th>${escapeHtml(c.label)}</th>`).join("");
+    const headerCells = proc.columns.map(c => `<th>${escapeHtml(c.label).replace(" ", "<br>")}</th>`).join("");
 
     return `
     <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
       <div class="card-head" data-action="toggle" data-id="${proc.id}">
-        <span class="chevron">${iconChevron}</span>
+        ${cardIcon(proc)}
         <div class="card-title-wrap">
           <p class="card-title">${highlight(proc.title, query)}</p>
-          <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+          ${cardSub(proc)}
         </div>
-        <div class="progress-mini"><b>${filledCells}</b>/${totalCells}</div>
+        ${cardCount(proc)}<span class="chevron">${iconChevron}</span>
       </div>
       <div class="card-body">
         <div class="body-inner pig-body-inner">
           <div class="pig-table-wrap">
             <table class="pig-table">
+              <colgroup><col class="pig-c-line">${proc.columns.map(() => "<col>").join("")}</colgroup>
               <thead>
                 <tr>
                   <th class="pig-line-col">Line</th>
@@ -2486,8 +3502,8 @@ function renderPiggingCard(proc, isOpen){
             </table>
           </div>
           <div class="card-footer">
-            <span class="footer-note">${filledCells === totalCells ? "All lines complete" : `${totalCells - filledCells} mark${totalCells-filledCells===1?'':'s'} remaining`}</span>
-            <button class="reset-btn" data-action="reset" data-id="${proc.id}">${iconReset} Reset</button>
+            <span class="footer-note">${status.__started ? `Started ${escapeHtml(fmtShortDate(status.__started))}. ` : ""}${filledCells === totalCells ? "Every line marked" : `${totalCells - filledCells} left`}</span>
+            <button class="reset-btn" data-action="reset" data-id="${proc.id}" ${filledCells === 0 ? "disabled" : ""}>${iconReset} Start over</button>
           </div>
         </div>
       </div>
@@ -2504,12 +3520,12 @@ function renderWellSearchCard(proc, isOpen){
     return `
     <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
       <div class="card-head" data-action="toggle" data-id="${proc.id}">
-        <span class="chevron">${iconChevron}</span>
+        ${cardIcon(proc)}
         <div class="card-title-wrap">
           <p class="card-title">${highlight(proc.title, query)}</p>
-          <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+          ${cardSub(proc)}
         </div>
-        <div class="progress-mini">${WELLS.length}</div>
+        ${cardCount(proc)}<span class="chevron">${iconChevron}</span>
       </div>
       <div class="card-body">
         <div class="body-inner">
@@ -2527,11 +3543,62 @@ function renderWellSearchCard(proc, isOpen){
     </div>`;
 }
 
+const RECENT_WELLS_KEY = "fieldProcedures.recentWells.v1";
+let recentWells = loadJson(RECENT_WELLS_KEY, []);   // names of wells whose map was opened, newest first
+
+// "208" in the log means W-208 only if no other well shares that number.
+function sameWell(logged, wellName){
+  const a = String(logged || "").toUpperCase().replace(/\s+/g, ""), b = String(wellName).toUpperCase();
+  if(!a) return false;
+  if(a === b) return true;
+  if(/^\d+$/.test(a)){
+    const num = b.replace(/^[A-Z]+-/, "");
+    return num === a && WELLS.filter(w => String(w[0]).replace(/^[A-Za-z]+-/, "") === a).length === 1;
+  }
+  return false;
+}
+// What the Abandonment Log knows about a well, so the search doesn't send you to one that's gone.
+function wellStatusChip(name){
+  let removed = null, planned = null;
+  Object.values(abandonData || {}).forEach(d => {
+    ((d && d.removals) || []).forEach(e => { if(sameWell(e.wellName, name)) removed = e; });
+    ((d && d.planned) || []).forEach(e => { if(e.type !== "line" && sameWell(e.name, name)) planned = e; });
+  });
+  if(removed) return `<span class="well-cat well-cat-removed">Removed${removed.date ? " " + escapeHtml(fmtShortDate(removed.date)) : ""}</span>`;
+  if(planned) return `<span class="well-cat well-cat-obs">Removal planned${planned.date ? " " + escapeHtml(fmtShortDate(planned.date)) : ""}</span>`;
+  return "";
+}
+function wellRowHtml(w){
+  const name = w[0], field = w[1], cat = w[2], lat = w[3], lon = w[4];
+  const catLabel = { obs:"Observation", plugged:"Plugged" };
+  const fieldLabel = { winterfield:"Winterfield", cranberry:"Cranberry" };
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+  const earthUrl = `https://earth.google.com/web/search/${lat},${lon}`;
+  const chips = wellStatusChip(name) + (catLabel[cat] ? `<span class="well-cat well-cat-${cat}">${catLabel[cat]}</span>` : "");
+  return `
+  <div class="well-row">
+    <div class="well-row-main">
+      <div class="well-row-top">
+        <span class="well-name">${highlight(name, query)}</span>
+        <span class="well-fieldname">${fieldLabel[field]||field}</span>
+      </div>
+      <div class="well-coords">${lat.toFixed(6)}, ${lon.toFixed(6)}</div>
+      ${chips ? `<div class="well-chips">${chips}</div>` : ""}
+    </div>
+    <div class="well-btn-row">
+      <a class="well-open-btn" data-well="${escapeHtml(name)}" href="${mapsUrl}" target="_blank" rel="noopener">${iconPin} Maps</a>
+      <a class="well-open-btn well-open-btn-earth" data-well="${escapeHtml(name)}" href="${earthUrl}" target="_blank" rel="noopener">${iconGlobe} Earth</a>
+    </div>
+  </div>`;
+}
+
 function wellResultsHtml(rawQuery){
   try{
     const q = (rawQuery||"").replace(/[^0-9]/g, "");
     if(!q){
-      return `<p class="well-hint">Start typing a well number to find it — coordinates and a map link will show up here.</p>`;
+      const recent = recentWells.map(n => WELLS.find(w => w[0] === n)).filter(Boolean);
+      return `<p class="well-hint">Type a well number. You only need the digits.</p>` +
+        (recent.length ? `<h3 class="ab-heading">Opened recently</h3>${recent.map(wellRowHtml).join("")}` : "");
     }
     const exact = [], startsWith = [], contains = [];
     WELLS.forEach(w => {
@@ -2544,26 +3611,7 @@ function wellResultsHtml(rawQuery){
     if(matchesArr.length === 0){
       return `<p class="well-hint">No well matches “${escapeHtml(q)}.”</p>`;
     }
-    const catLabel = { active:"Active", obs:"Observation", plugged:"Plugged" };
-    const fieldLabel = { winterfield:"Winterfield", cranberry:"Cranberry" };
-    return matchesArr.map(w => {
-      const name = w[0], field = w[1], cat = w[2], lat = w[3], lon = w[4];
-      const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
-      const earthUrl = `https://earth.google.com/web/search/${lat},${lon}`;
-      return `
-      <div class="well-row">
-        <div class="well-row-top">
-          <span class="well-name">${highlight(name, query)}</span>
-          <span class="well-cat well-cat-${cat}">${catLabel[cat]||cat}</span>
-        </div>
-        <div class="well-field">${fieldLabel[field]||field}</div>
-        <div class="well-coords">${lat.toFixed(6)}, ${lon.toFixed(6)}</div>
-        <div class="well-btn-row">
-          <a class="well-open-btn" href="${mapsUrl}" target="_blank" rel="noopener">${iconPin} Maps</a>
-          <a class="well-open-btn well-open-btn-earth" href="${earthUrl}" target="_blank" rel="noopener">${iconGlobe} Google Earth</a>
-        </div>
-      </div>`;
-    }).join("");
+    return matchesArr.map(wellRowHtml).join("");
   } catch(err){
     return `<p class="well-hint">Something went wrong searching wells: ${escapeHtml(String(err && err.message || err))}</p>`;
   }
@@ -2579,12 +3627,12 @@ function renderAbandonmentCard(proc, isOpen){
   return `
   <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
     <div class="card-head" data-action="toggle" data-id="${proc.id}">
-      <span class="chevron">${iconChevron}</span>
+      ${cardIcon(proc)}
       <div class="card-title-wrap">
         <p class="card-title">${highlight(proc.title, query)}</p>
-        <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+        ${cardSub(proc)}
       </div>
-      <div class="progress-mini">${total}</div>
+      ${cardCount(proc)}<span class="chevron">${iconChevron}</span>
     </div>
     <div class="card-body">
       <div class="body-inner">
@@ -2639,9 +3687,21 @@ function renderAbRemovalEditRow(procId, e){
 
 function renderAbRemovalsSection(procId, entries){
   const formOpen = !!abandonFormOpen[abFormKey(procId,"removals")];
+  // newest first; a search in the top bar narrows the list
+  const sorted = entries.map((e, i) => ({ e, i }))
+    .sort((a, b) => (b.e.date || "").localeCompare(a.e.date || "") || (b.i - a.i)).map(x => x.e);
+  let list = sorted, filterNote = "";
+  if(query){
+    const q = query.toLowerCase();
+    const hits = sorted.filter(e => `${e.wellName||""} ${e.lineName||""} ${e.comments||""} ${e.date||""}`.toLowerCase().includes(q));
+    if(hits.length && hits.length < sorted.length){
+      list = hits;
+      filterNote = `<p class="ab-filter-note">Showing ${hits.length} of ${sorted.length} that match “${escapeHtml(query)}”. Clear the search to see all.</p>`;
+    }
+  }
   const rows = entries.length === 0
-    ? `<p class="ab-empty">Nothing logged yet.</p>`
-    : entries.map(e => {
+    ? `<p class="ab-empty">Nothing logged yet. Add an entry when a well or line comes out, or when you find old pipe.</p>`
+    : list.map(e => {
         if(abRemovalEditOpen[e.id]){
           return renderAbRemovalEditRow(procId, e);
         }
@@ -2661,7 +3721,7 @@ function renderAbRemovalsSection(procId, entries){
             <span class="ab-tag ab-tag-found">Abandoned</span>
           </div>` : "")}
           ${e.comments ? `<div class="ab-comments">${highlight(e.comments, query)}</div>` : ""}
-          ${e.date ? `<div class="ab-date-end">${escapeHtml(e.date)}</div>` : ""}
+          ${e.date ? `<div class="ab-date-end">${escapeHtml(fmtLongDate(e.date))}</div>` : ""}
         </div>
         ${confirming ? `
         <div class="ab-confirm-group">
@@ -2697,7 +3757,7 @@ function renderAbRemovalsSection(procId, entries){
       </div>
       <input type="text" class="ab-input ab-removal-line-input" placeholder="Line number… leave blank to use the well number" autocomplete="off">
 
-      <input type="date" class="ab-input ab-input-date" aria-label="Date">
+      <label class="ab-field-label">Date<input type="date" class="ab-input ab-input-date" value="${localDateStr()}"></label>
       <textarea class="ab-input ab-input-comments" rows="2" placeholder="Comments (optional) — e.g. found 2&quot; abandoned pipe nearby"></textarea>
       <div class="ab-add-actions">
         <button class="ab-submit-btn" data-action="ab-submit" data-id="${procId}" data-section="removals">Add</button>
@@ -2708,9 +3768,10 @@ function renderAbRemovalsSection(procId, entries){
 
   return `
   <div class="ab-section">
-    <h3 class="ab-heading">Abandoned Wells &amp; Lines</h3>
-    <div class="ab-rows">${rows}</div>
+    <h3 class="ab-heading">Abandoned wells and lines${entries.length ? ` (${entries.length})` : ""}</h3>
     ${addBlock}
+    ${filterNote}
+    <div class="ab-rows">${rows}</div>
   </div>`;
 }
 
@@ -2747,7 +3808,7 @@ function renderAbPlannedSection(procId, entries){
         <button type="button" class="ab-toggle-btn active" data-value="well" data-action="ab-toggle-opt">Well</button>
         <button type="button" class="ab-toggle-btn" data-value="line" data-action="ab-toggle-opt">Line</button>
       </div>
-      <input type="date" class="ab-input ab-input-date" aria-label="Planned date">
+      <label class="ab-field-label">Planned for<input type="date" class="ab-input ab-input-date"></label>
       <div class="ab-add-actions">
         <button class="ab-submit-btn" data-action="ab-submit" data-id="${procId}" data-section="planned">Add</button>
         <button class="ab-cancel-btn" data-action="ab-cancel" data-id="${procId}" data-section="planned">Cancel</button>
@@ -2757,9 +3818,9 @@ function renderAbPlannedSection(procId, entries){
 
   return `
   <div class="ab-section">
-    <h3 class="ab-heading">Planned Abandonments</h3>
-    <div class="ab-rows">${rows}</div>
+    <h3 class="ab-heading">Planned abandonments${entries.length ? ` (${entries.length})` : ""}</h3>
     ${addBlock}
+    <div class="ab-rows">${rows}</div>
   </div>`;
 }
 
@@ -2891,6 +3952,22 @@ function daysUntilExpiration(dateStr){
   return Math.round((d - today) / 86400000);
 }
 
+// How a ticket's expiry reads on its row: words and urgency, not a raw date.
+function mdExpiryChip(e){
+  if(!e.expDate) return "";
+  const d = daysUntilExpiration(e.expDate);
+  if(e.completed) return `<span class="md-exp">Expires ${escapeHtml(fmtShortDate(e.expDate))}</span>`;
+  if(d < 0) return `<span class="md-exp md-exp-red">Expired ${whenText(d)}</span>`;
+  if(d === 0) return `<span class="md-exp md-exp-red">Expires today</span>`;
+  if(d <= 3) return `<span class="md-exp md-exp-amber">Expires ${whenText(d)}</span>`;
+  return `<span class="md-exp">Expires ${escapeHtml(fmtShortDate(e.expDate))}</span>`;
+}
+function mdUrgencyClass(e){
+  if(e.completed || !e.expDate) return "";
+  const d = daysUntilExpiration(e.expDate);
+  return d <= 0 ? "md-row-red" : d <= 3 ? "md-row-amber" : "";
+}
+
 function expirationBucket(dateStr){
   const days = daysUntilExpiration(dateStr);
   if(days <= 0) return 0;   // expired or due today
@@ -3006,12 +4083,14 @@ function renderMissDigsCard(proc, isOpen){
   data.entries.forEach(e => byId[e.id] = e);
   const routedIds = hasRoute ? data.routeOrder.filter(id => byId[id] && !byId[id].completed) : [];
   const routedSet = new Set(routedIds);
-  const unroutedIncomplete = data.entries.filter(e => !e.completed && !routedSet.has(e.id));
+  // with no route planned, the ticket that expires soonest comes first
+  const unroutedIncomplete = data.entries.filter(e => !e.completed && !routedSet.has(e.id))
+    .sort((a, b) => { const x = daysUntilExpiration(a.expDate), y = daysUntilExpiration(b.expDate); return x === y ? 0 : x < y ? -1 : 1; });
   const completedEntries = data.entries.filter(e => e.completed);
   const orderedList = routedIds.map(id => byId[id]).concat(unroutedIncomplete, completedEntries);
 
   const rows = orderedList.length === 0
-    ? `<p class="ab-empty">No miss digs added yet today.</p>`
+    ? `<p class="ab-empty">No tickets yet. Add one and this will keep track of when it expires.</p>`
     : orderedList.map(e => {
         if(missDigEditOpen[e.id]){
           return `
@@ -3021,7 +4100,7 @@ function renderMissDigsCard(proc, isOpen){
               <input type="text" class="ab-input md-edit-value well-ac-input" placeholder="Well number or coordinates…" value="${escapeHtml(e.label)}" autocomplete="off">
               <div class="well-ac-dropdown"></div>
             </div>
-            <input type="date" class="ab-input md-edit-exp" value="${escapeHtml(e.expDate||'')}" aria-label="Expiration date">
+            <label class="ab-field-label">Ticket expires<input type="date" class="ab-input md-edit-exp" value="${escapeHtml(e.expDate||'')}"></label>
             <div class="ab-add-actions">
               <button class="ab-submit-btn" data-action="md-edit-save" data-id="${proc.id}" data-entry="${e.id}">Save</button>
               <button class="ab-cancel-btn" data-action="md-edit-cancel" data-id="${proc.id}" data-entry="${e.id}">Cancel</button>
@@ -3033,12 +4112,12 @@ function renderMissDigsCard(proc, isOpen){
         const aMapsUrl = `https://maps.apple.com/?ll=${e.lat},${e.lon}&q=${encodeURIComponent(e.label)}`;
         const primaryName = e.ticketNumber ? e.ticketNumber : e.label;
         return `
-        <div class="md-row ${e.completed?'md-done':''}">
+        <div class="md-row ${e.completed?'md-done':''} ${mdUrgencyClass(e)}">
           <div class="md-row-top">
             ${routeIdx ? `<span class="md-order">${routeIdx}</span>` : ""}
             ${e.completed ? `<span class="md-done-badge">${iconCheck}</span>` : ""}
             <span class="md-name">${highlight(primaryName, query)}</span>
-            ${e.expDate ? `<span class="ab-date">Exp ${escapeHtml(e.expDate)}</span>` : ""}
+            ${mdExpiryChip(e)}
           </div>
           ${e.ticketNumber ? `<div class="well-field">${highlight(e.label, query)}</div>` : ""}
           <div class="well-coords">${e.lat.toFixed(6)}, ${e.lon.toFixed(6)}</div>
@@ -3059,7 +4138,7 @@ function renderMissDigsCard(proc, isOpen){
         <input type="text" class="ab-input md-input-value well-ac-input" placeholder="Well number or coordinates… e.g. W-208 or 44.086, -85.090" autocomplete="off">
         <div class="well-ac-dropdown"></div>
       </div>
-      <input type="date" class="ab-input md-input-exp" aria-label="Expiration date">
+      <label class="ab-field-label">Ticket expires<input type="date" class="ab-input md-input-exp"></label>
       <div class="ab-add-actions">
         <button class="ab-submit-btn" data-action="md-submit" data-id="${proc.id}">Add</button>
         <button class="ab-cancel-btn" data-action="md-cancel" data-id="${proc.id}">Cancel</button>
@@ -3121,30 +4200,48 @@ function renderMissDigsCard(proc, isOpen){
 
   const prioritizeOn = !!data.prioritizeExpiration;
 
+  // Route planning only makes sense with two or more open tickets. It's one button;
+  // where the route starts and how it's ordered are tucked behind "Change".
+  const openCount = data.entries.filter(e => !e.completed).length;
+  const optsOpen = !!missDigOptionsOpen[proc.id] || startFormOpen || !!missDigLocStatus[proc.id];
+  const startSummary = data.manualStart
+    ? `${data.manualStart.mode === "end" ? "Ends at" : "Starts from"} ${data.manualStart.label}`
+    : "Starts from where you are now";
+  const plannerHtml = openCount < 2 ? "" : `
+        <div class="md-planner">
+          <button class="md-plan-btn" data-action="md-plan-route" data-id="${proc.id}">${iconRoute} Plan route</button>
+          <button class="md-opts-toggle" data-action="md-opts-toggle" data-id="${proc.id}" aria-expanded="${optsOpen ? "true" : "false"}">
+            <span class="md-opts-summary">${escapeHtml(startSummary)}${prioritizeOn ? ", most urgent first" : ""}</span>
+            <span class="md-opts-change">${optsOpen ? "Done" : "Change"}</span>
+          </button>
+          ${optsOpen ? `<div class="md-opts">
+            ${startBlock}
+            <button class="md-priority-toggle ${prioritizeOn?'md-priority-on':''}" data-action="md-priority-toggle" data-id="${proc.id}">
+              <span class="md-priority-switch"><span class="md-priority-knob"></span></span>
+              <span>Most urgent tickets first</span>
+            </button>
+          </div>` : ""}
+        </div>`;
+
   return `
   <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
     <div class="card-head" data-action="toggle" data-id="${proc.id}">
-      <span class="chevron">${iconChevron}</span>
+      ${cardIcon(proc)}
       <div class="card-title-wrap">
         <p class="card-title">${highlight(proc.title, query)}</p>
-        <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+        ${cardSub(proc)}
       </div>
-      <div class="progress-mini"><b>${doneCount}</b>/${total}</div>
+      ${cardCount(proc)}<span class="chevron">${iconChevron}</span>
     </div>
     <div class="card-body">
       <div class="body-inner">
-        ${startBlock}
-        <button class="md-priority-toggle ${prioritizeOn?'md-priority-on':''}" data-action="md-priority-toggle" data-id="${proc.id}">
-          <span class="md-priority-switch"><span class="md-priority-knob"></span></span>
-          <span>Prioritize expiration dates</span>
-        </button>
-        <button class="md-plan-btn" data-action="md-plan-route" data-id="${proc.id}">${iconRoute} Plan Route</button>
-        ${sourceHtml}
-        <div class="ab-rows">${rows}</div>
         ${addBlock}
+        ${plannerHtml}
+        ${openCount >= 2 ? sourceHtml : ""}
+        <div class="ab-rows">${rows}</div>
         <div class="card-footer">
-          <span class="footer-note">${total === 0 ? "Nothing logged yet" : `${doneCount}/${total} complete`}</span>
-          <button class="reset-btn" data-action="md-reset" data-id="${proc.id}">${iconReset} Reset</button>
+          <span class="footer-note">${total === 0 ? "" : `${doneCount} of ${total} completed`}</span>
+          <button class="reset-btn" data-action="md-reset" data-id="${proc.id}" ${total === 0 ? "disabled" : ""}>${iconReset} Clear all tickets</button>
         </div>
       </div>
     </div>
@@ -3156,7 +4253,12 @@ function renderMissDigsCard(proc, isOpen){
    ladders, normal positions). Nothing to check off, nothing to reset.
 ------------------------------------------------------------------------ */
 function renderReferenceCard(proc, isOpen){
-  const sections = (proc.sections||[]).map(s => {
+  // what you need on site first; background facts last
+  const secs = (proc.sections||[]).slice().sort((a, b) => (a.title === "What this is") - (b.title === "What this is"));
+  const REF_SHORT = [["What this is","About"],["Before operating","Rules"],["Slug catcher level","Levels"],["Slug catcher pressure","Pressure"],["Pumps","Pumps"],["Normal valve","Valves"],["Interlock reset","Reset"]];
+  const shortOf = (t) => { const m = REF_SHORT.find(x => t.indexOf(x[0]) === 0); return m ? m[1] : t.split(" ")[0]; };
+  const jumpHtml = `<div class="ref-jump">${secs.map((s, si) => `<button class="ref-jump-btn" data-action="ref-jump" data-target="ref-${proc.id}-${si}">${escapeHtml(shortOf(s.title))}</button>`).join("")}</div>`;
+  const sections = secs.map((s, si) => {
     let body = "";
     if(s.items){
       body = `<div class="ref-items">${s.items.map(it => `
@@ -3175,7 +4277,7 @@ function renderReferenceCard(proc, isOpen){
           <div class="ref-rung-text">${highlight(r.text, query)}</div>
         </div>`).join("")}</div>`;
     }
-    return `<div class="ref-section ${s.tone ? 'ref-section-'+s.tone : ''}">
+    return `<div class="ref-section ${s.tone ? 'ref-section-'+s.tone : ''}" id="ref-${proc.id}-${si}">
       <h3 class="ab-heading">${highlight(s.title, query)}</h3>
       ${body}
     </div>`;
@@ -3184,17 +4286,18 @@ function renderReferenceCard(proc, isOpen){
   return `
   <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
     <div class="card-head" data-action="toggle" data-id="${proc.id}">
-      <span class="chevron">${iconChevron}</span>
+      ${cardIcon(proc)}
       <div class="card-title-wrap">
         <p class="card-title">${highlight(proc.title, query)}</p>
-        <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+        ${cardSub(proc)}
       </div>
-      <div class="progress-mini">${(proc.sections||[]).length}</div>
+      ${cardCount(proc)}<span class="chevron">${iconChevron}</span>
     </div>
     <div class="card-body">
       <div class="body-inner">
-        <p class="ref-source">From "Operational Procedures — Winterfield Storage Field — Slug Catcher Tank", rev 6-22-11. Handwritten additions are called out where they differ from the printed sheet.</p>
+        ${jumpHtml}
         ${sections}
+        <p class="ref-source">From "Operational Procedures, Winterfield Storage Field, Slug Catcher Tank", rev 6-22-11. Handwritten additions are called out where they differ from the printed sheet.</p>
       </div>
     </div>
   </div>`;
@@ -3290,8 +4393,19 @@ function diagnose(alarms){
   return out;
 }
 
+// Scenarios match groups of devices with a pattern. Show that group in plain tags,
+// e.g. "CV-301/302" or "any BV", never the pattern itself.
+function deviceGroupLabel(re){
+  const src = re.source.replace(/^\^/, "").replace(/\$$/, "");
+  if(/^[A-Z]+-$/.test(src)) return "any " + src.slice(0, -1);
+  let m = src.match(/^([A-Z]+-)(\d*)\[(\d+)\]$/);          // CV-30[12]  -> CV-301/302
+  if(m) return m[3].split("").map((d, i) => (i === 0 ? m[1] : "") + m[2] + d).join("/");
+  m = src.match(/^([A-Z]+-)\(([\d|]+)\)$/);                 // BV-(308|310) -> BV-308/310
+  if(m) return m[1] + m[2].split("|").join("/");
+  return src.replace(/[\\()\[\]]/g, "").replace(/\|/g, "/");
+}
 function condLabel(c){
-  const dev = c.d instanceof RegExp ? c.d.source.replace(/[\^$\\]/g,"").replace(/\(|\)/g,"").replace(/\|/g,"/") : c.d;
+  const dev = c.d instanceof RegExp ? deviceGroupLabel(c.d) : c.d;
   const kindWords = { hi:"high", hh:"high high", lo:"low", ll:"low low", fault:"fault", dev:"deviation", pos:"position indication", ftc:"failed to close", fto:"failed to open", notopen:"not in open", notclosed:"not in closed", start:"failed to start", lt2open:"<2 open", forces:"forces active", battery:"battery" };
   const ks = (Array.isArray(c.k) ? c.k : [c.k]).map(k => kindWords[k] || k).join(" / ");
   return `${dev} ${ks}`;
@@ -3403,13 +4517,17 @@ function alarmResultsHtml(rawQuery){
     if(!q){
       // Empty search: interlock table always visible, plus two independent expandable sections.
       const scnSection = alarmShowScenarios
-        ? `<h3 class="ab-heading">Known scenarios</h3>${TB_SCENARIOS.map(s => scenarioCardHtml(s, false)).join("")}
-           <button class="ab-add-btn" data-action="alarm-toggle-scenarios">Hide scenarios</button>`
+        ? `<div class="alarm-sec">
+             <button class="alarm-sec-head" data-action="alarm-toggle-scenarios"><span>Known scenarios (${TB_SCENARIOS.length})</span><span class="alarm-sec-hide">Hide</span></button>
+             ${TB_SCENARIOS.map(s => scenarioCardHtml(s, false)).join("")}
+           </div>`
         : `<button class="ab-add-btn" data-action="alarm-toggle-scenarios">Browse all ${TB_SCENARIOS.length} known scenarios</button>`;
       const allSorted = TB_ALARMS.slice().sort((a,b) => order[a.severity]-order[b.severity]);
       const allSection = alarmShowAll
-        ? `<h3 class="ab-heading">All alarms</h3>${allSorted.map(alarmCardHtml).join("")}
-           <button class="ab-add-btn" data-action="alarm-toggle-all">Hide alarms</button>`
+        ? `<div class="alarm-sec">
+             <button class="alarm-sec-head" data-action="alarm-toggle-all"><span>All alarms (${TB_ALARMS.length})</span><span class="alarm-sec-hide">Hide</span></button>
+             ${allSorted.map(alarmCardHtml).join("")}
+           </div>`
         : `<button class="ab-add-btn" data-action="alarm-toggle-all">Show all ${TB_ALARMS.length} alarms</button>`;
       return `
       <p class="well-hint">Type the device tag (e.g. <b>LT-304</b>, <b>BV-310</b>) or any words from the alarm MRCS reads you (e.g. <b>failed to close</b>, <b>high high</b>).</p>
@@ -3454,12 +4572,12 @@ function renderAlarmsCard(proc, isOpen){
   return `
   <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
     <div class="card-head" data-action="toggle" data-id="${proc.id}">
-      <span class="chevron">${iconChevron}</span>
+      ${cardIcon(proc)}
       <div class="card-title-wrap">
         <p class="card-title">${highlight(proc.title, query)}</p>
-        <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+        ${cardSub(proc)}
       </div>
-      <div class="progress-mini">${TB_ALARMS.length}</div>
+      ${cardCount(proc)}<span class="chevron">${iconChevron}</span>
     </div>
     <div class="card-body">
       <div class="body-inner">
@@ -3478,23 +4596,168 @@ function renderAlarmsCard(proc, isOpen){
   </div>`;
 }
 
-function stepRow(step, i, isDone, procId){
+function stepRow(step, i, isDone, procId, isNext){
   const bell = step.type === "notify" ? `<span class="bell-icon">${iconBell}</span>` : "";
   return `
-  <div class="step ${isDone?'done':''}">
-    <button class="check" data-action="toggle-step" data-id="${procId}" data-idx="${i}" aria-label="Mark step ${i+1} complete">${iconCheck}</button>
+  <div class="step ${isDone?'done':''} ${isNext?'step-next':''}" data-action="toggle-step" data-id="${procId}" data-idx="${i}">
+    <button class="check" aria-label="Mark step ${i+1} ${isDone?'not done':'done'}" aria-pressed="${isDone?'true':'false'}">${iconCheck}</button>
     <div class="step-main">
       <div class="step-row">
         <span class="step-text"><span class="step-num">${i+1}.</span>${bell}${highlight(step.text, query)}</span>
         ${badgeHtml(step, isDone)}
+        ${isNext ? `<span class="next-tag">Next</span>` : ""}
       </div>
       ${step.note ? `<div class="warning">${iconWarn}<span>${highlight(step.note, query)}</span></div>` : ""}
     </div>
   </div>`;
 }
 
+// Hide the floating "What's going on?" pill while the diagnosis it points to is already on screen.
+function updateFabVisibility(){
+  try{
+    const fab = document.querySelector(".scn-fab");
+    if(!fab) return;
+    const diag = fab.closest(".scn-diagnosis");
+    if(!diag) return;
+    const header = document.querySelector("header");
+    const top = header ? header.offsetHeight : 0;
+    const r = diag.getBoundingClientRect();
+    const onScreen = r.bottom > top + 60 && r.top < window.innerHeight - 140;
+    fab.classList.toggle("scn-fab-hidden", onScreen);
+  } catch(e){}
+}
+let fabTick = false;
+window.addEventListener("scroll", () => {
+  if(fabTick) return;
+  fabTick = true;
+  requestAnimationFrame(() => { fabTick = false; updateFabVisibility(); });
+}, { passive:true });
+
+function scrollCardIntoView(id){
+  try{
+    const el = [...document.querySelectorAll(".card")].find(c => c.dataset.id === id);
+    if(!el) return;
+    const header = document.querySelector("header");
+    const top = el.getBoundingClientRect().top + window.scrollY - (header ? header.offsetHeight : 0) - 10;
+    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+  } catch(e){}
+}
+
 document.addEventListener("click", (e) => {
   try{
+    if(e.target.closest("#themeBtn")){
+      theme = theme === "light" ? "dark" : "light";
+      try{ localStorage.setItem(THEME_KEY, theme); } catch(_){}
+      applyTheme();
+      return;
+    }
+    const wellLink = e.target.closest("a[data-well]");
+    if(wellLink){
+      const n = wellLink.dataset.well;
+      recentWells = [n].concat(recentWells.filter(x => x !== n)).slice(0, 5);
+      saveJson(RECENT_WELLS_KEY, recentWells);
+    }
+    const refJump = e.target.closest('[data-action="ref-jump"]');
+    if(refJump){
+      const t = document.getElementById(refJump.dataset.target);
+      if(t) t.scrollIntoView({ behavior:"smooth", block:"start" });
+      return;
+    }
+    if(e.target.closest("#backBtn")){ backPressed(); return; }
+    if(e.target.closest("#searchClear")){
+      clearSearch();
+      render();
+      window.scrollTo(0, 0);
+      const sEl = document.getElementById("search"); if(sEl) sEl.focus();
+      return;
+    }
+    if(e.target.closest('[data-action="undo"]')){
+      if(undoSnapshot){
+        const snap = undoSnapshot; undoSnapshot = null;
+        restoreSnapshot(snap);
+        render();
+        showToast("Put back");
+      }
+      return;
+    }
+
+    // ---- Backup card ----
+    const bk = e.target.closest('[data-action^="backup-"]');
+    if(bk && bk.dataset.action !== "backup-file"){
+      const act = bk.dataset.action;
+      if(act === "backup-save"){
+        saveBackupFile().then(ok => {
+          if(ok){ toolsMessage = "Backup saved. Keep the file somewhere other than this phone."; render(); }
+        });
+      } else if(act === "backup-copy"){
+        copyText(JSON.stringify(buildBackup()));
+      } else if(act === "backup-paste"){
+        const card = bk.closest(".card");
+        const ta = card ? card.querySelector(".tools-paste") : null;
+        const text = ta ? ta.value.trim() : "";
+        pendingRestore = text ? parseBackupText(text) : { error:"Paste the backup text into the box first." };
+        toolsMessage = "";
+        render();
+      } else if(act === "backup-restore-confirm"){
+        if(pendingRestore && pendingRestore.backup){
+          applyRestore(pendingRestore.backup);
+          pendingRestore = null;
+          toolsMessage = "Backup restored.";
+          render();
+          showToast("Backup restored");
+        }
+      } else if(act === "backup-restore-cancel"){
+        pendingRestore = null;
+        render();
+      } else if(act === "backup-undo-restore"){
+        const pre = loadJson(PRE_RESTORE_KEY, null);
+        if(pre && pre.data){
+          writeBackupData(pre.data);
+          try{ localStorage.removeItem(PRE_RESTORE_KEY); } catch(_){}
+          toolsMessage = "Put back what was on this phone before the restore.";
+          render();
+        }
+      }
+      return;
+    }
+
+    // ---- Disposal Reads: save / copy / delete ----
+    const readsBtn = e.target.closest('[data-action^="reads-"]');
+    if(readsBtn){
+      const act = readsBtn.dataset.action, id = readsBtn.dataset.id;
+      const proc = PROCEDURES.find(p => p.id === id);
+      if(!proc) return;
+      if(act === "reads-save"){
+        const vals = readsValues[id] || {};
+        const values = proc.fields.map((_, i) => (vals[i] || "").trim());
+        if(!values.some(Boolean)) return;
+        withUndo("Reading saved", () => {
+          readsHistory[id] = readsHistory[id] || [];
+          readsHistory[id].unshift({ at: new Date().toISOString(), values });
+          delete readsValues[id];
+          saveJson(READS_HISTORY_KEY, readsHistory);
+          saveReads(readsValues);
+        });
+        render();
+      } else if(act === "reads-copy-current"){
+        const vals = readsValues[id] || {};
+        copyText(readingText(proc, { at: new Date().toISOString(), values: proc.fields.map((_, i) => vals[i] || "") }));
+      } else if(act === "reads-copy"){
+        const entry = (readsHistory[id] || []).find(en => en.at === readsBtn.dataset.at);
+        if(entry) copyText(readingText(proc, entry));
+      } else if(act === "reads-delete"){
+        withUndo("Reading deleted", () => {
+          readsHistory[id] = (readsHistory[id] || []).filter(en => en.at !== readsBtn.dataset.at);
+          saveJson(READS_HISTORY_KEY, readsHistory);
+        });
+        render();
+      } else if(act === "reads-toggle-all"){
+        readsShowAll[id] = !readsShowAll[id];
+        render();
+      }
+      return;
+    }
+
     const toggle = e.target.closest('[data-action="toggle"]');
     const stepBtn = e.target.closest('[data-action="toggle-step"]');
     const resetBtn = e.target.closest('[data-action="reset"]');
@@ -3587,6 +4850,7 @@ document.addEventListener("click", (e) => {
       const input = card ? card.querySelector(".well-input") : null;
       const results = card ? card.querySelector(".well-results") : null;
       const diag = card ? card.querySelector(".scn-diagnosis") : null;
+      const beforeAlarms = (alarmSearchReset || alarmClearActive) && activeAlarms.size ? takeSnapshot() : null;
       if(alarmSearchReset){ alarmShowAll = false; alarmShowScenarios = false; activeAlarms.clear(); saveActiveAlarms(); if(input) input.value = ""; }
       if(alarmToggleAll) alarmShowAll = !alarmShowAll;
       if(alarmToggleScn) alarmShowScenarios = !alarmShowScenarios;
@@ -3595,6 +4859,17 @@ document.addEventListener("click", (e) => {
       if(alarmClearActive){ activeAlarms.clear(); saveActiveAlarms(); }
       if(diag) diag.innerHTML = alarmDiagnosisHtml(true);
       if(results) results.innerHTML = alarmResultsHtml(input ? input.value : "");
+      if((alarmToggleScn || alarmToggleAll) && results){
+        const el = results.querySelector(`[data-action="${alarmToggleScn ? "alarm-toggle-scenarios" : "alarm-toggle-all"}"]`);
+        const nowOpen = alarmToggleScn ? alarmShowScenarios : alarmShowAll;
+        if(el) el.scrollIntoView({ block: nowOpen ? "start" : "center" });
+      }
+      if(beforeAlarms){ undoSnapshot = beforeAlarms; showToast("Alarms cleared", true); }
+      updateFabVisibility();
+      // keep the card's status line in step with the tray
+      const sub = card ? card.querySelector(".card-sub") : null;
+      const aproc = PROCEDURES.find(p => p.type === "alarms");
+      if(sub && aproc){ const st = cardStatus(aproc); sub.className = "card-sub " + (st.lamp ? "sub-" + st.lamp : ""); sub.innerHTML = cardSubInner(aproc); }
       return;
     }
     const mdEditCancel = e.target.closest('[data-action="md-edit-cancel"]');
@@ -3818,9 +5093,11 @@ document.addEventListener("click", (e) => {
       const id = mdRemove.dataset.id, entryId = mdRemove.dataset.entry;
       const d = missDigData[id];
       if(d){
-        d.entries = d.entries.filter(e => e.id !== entryId);
-        if(d.routeOrder) d.routeOrder = d.routeOrder.filter(rid => rid !== entryId);
-        saveMissDig(missDigData);
+        withUndo("Ticket deleted", () => {
+          d.entries = d.entries.filter(e => e.id !== entryId);
+          if(d.routeOrder) d.routeOrder = d.routeOrder.filter(rid => rid !== entryId);
+          saveMissDig(missDigData);
+        });
         render();
       }
       return;
@@ -3829,9 +5106,20 @@ document.addEventListener("click", (e) => {
       planMissDigRoute(mdPlanRoute.dataset.id);
       return;
     }
+    const mdOptsToggle = e.target.closest('[data-action="md-opts-toggle"]');
+    if(mdOptsToggle){
+      const pid = mdOptsToggle.dataset.id;
+      const wasOpen = !!missDigOptionsOpen[pid] || !!missDigStartFormOpen[pid] || !!missDigLocStatus[pid];
+      missDigOptionsOpen[pid] = !wasOpen;
+      if(wasOpen){ missDigStartFormOpen[pid] = false; missDigLocStatus[pid] = null; }
+      render();
+      return;
+    }
     if(mdReset){
-      missDigData[mdReset.dataset.id] = { entries: [], routeOrder: [], routeSource: null, manualStart: null, prioritizeExpiration: false };
-      saveMissDig(missDigData);
+      withUndo("Miss Digs cleared", () => {
+        missDigData[mdReset.dataset.id] = { entries: [], routeOrder: [], routeSource: null, manualStart: null, prioritizeExpiration: false };
+        saveMissDig(missDigData);
+      });
       render();
       return;
     }
@@ -3916,18 +5204,22 @@ document.addEventListener("click", (e) => {
         return;
       }
       if(abandonData[id] && abandonData[id][section]){
-        abandonData[id][section] = abandonData[id][section].filter(e => e.id !== entryId);
-        saveAbandon(abandonData);
+        withUndo("Planned abandonment deleted", () => {
+          abandonData[id][section] = abandonData[id][section].filter(e => e.id !== entryId);
+          saveAbandon(abandonData);
+        });
         render();
       }
       return;
     }
     if(abRemoveConfirm){
       const id = abRemoveConfirm.dataset.id, section = abRemoveConfirm.dataset.section, entryId = abRemoveConfirm.dataset.entry;
-      if(abandonData[id] && abandonData[id][section]){
-        abandonData[id][section] = abandonData[id][section].filter(e => e.id !== entryId);
-        saveAbandon(abandonData);
-      }
+      withUndo("Entry deleted", () => {
+        if(abandonData[id] && abandonData[id][section]){
+          abandonData[id][section] = abandonData[id][section].filter(e => e.id !== entryId);
+          saveAbandon(abandonData);
+        }
+      });
       delete abRemovalDeleteConfirm[entryId];
       render();
       return;
@@ -3988,14 +5280,16 @@ document.addEventListener("click", (e) => {
         const idx = d.planned.findIndex(e => e.id === entryId);
         if(idx !== -1){
           const entry = d.planned[idx];
-          const today = new Date().toISOString().slice(0,10);
-          if(entry.type === "line"){
-            d.removals.push({ id:newAbId(), wellName:null, lineName:entry.name, lineStatus:"removed", date:today });
-          } else {
-            d.removals.push({ id:newAbId(), wellName:entry.name, lineName:null, lineStatus:null, date:today });
-          }
-          d.planned.splice(idx,1);
-          saveAbandon(abandonData);
+          const today = localDateStr();
+          withUndo(`${entry.name} marked abandoned`, () => {
+            if(entry.type === "line"){
+              d.removals.push({ id:newAbId(), wellName:null, lineName:entry.name, lineStatus:"removed", date:today });
+            } else {
+              d.removals.push({ id:newAbId(), wellName:entry.name, lineName:null, lineStatus:null, date:today });
+            }
+            d.planned.splice(idx,1);
+            saveAbandon(abandonData);
+          });
           render();
         }
       }
@@ -4003,10 +5297,24 @@ document.addEventListener("click", (e) => {
     }
 
     if(stepBtn){
-      const id = stepBtn.dataset.id, idx = stepBtn.dataset.idx;
+      const id = stepBtn.dataset.id, idx = +stepBtn.dataset.idx;
+      const proc = PROCEDURES.find(p => p.id === id);
       completed[id] = completed[id] || {};
-      completed[id][idx] = !completed[id][idx];
+      const nowDone = !completed[id][idx];
+      completed[id][idx] = nowDone;
       saveCompleted(completed);
+      if(nowDone && proc && proc.steps){
+        const skipped = [];
+        for(let i = 0; i < idx; i++) if(!completed[id][i]) skipped.push(i + 1);
+        if(proc.steps.every((_, i) => completed[id][i])){
+          lastDone[id] = new Date().toISOString();
+          saveJson(LAST_DONE_KEY, lastDone);
+          showToast(`${proc.title} finished`);
+        } else if(skipped.length){
+          // Valve procedures run in order — say so, but don't get in the way.
+          showToast(skipped.length === 1 ? `Step ${skipped[0]} isn't checked yet` : `Steps ${skipped.join(", ")} aren't checked yet`);
+        }
+      }
       render();
       return;
     }
@@ -4016,30 +5324,41 @@ document.addEventListener("click", (e) => {
       pigStatus[id][lineId] = pigStatus[id][lineId] || {};
       const cell = pigStatus[id][lineId];
       if(cell[col]){
-        delete cell[col];
+        // Clearing a mark throws away its time — make that undoable.
+        const pproc = PROCEDURES.find(p => p.id === id);
+        const line = pproc && pproc.lines.find(l => l.id === lineId);
+        const colDef = pproc && pproc.columns.find(c => c.key === col);
+        withUndo(`${line ? line.label + " " + line.size : "Line"} ${colDef ? colDef.label.toLowerCase() : ""} ${cell[col]} cleared`, () => {
+          delete cell[col];
+          const anyLeft = Object.keys(pigStatus[id]).some(k => k !== "__started" && Object.keys(pigStatus[id][k] || {}).length);
+          if(!anyLeft) delete pigStatus[id];
+          savePig(pigStatus);
+        });
       } else {
         cell[col] = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit', hour12:false });
+        if(!pigStatus[id].__started) pigStatus[id].__started = localDateStr();   // so old marks can't be mistaken for today's run
+        savePig(pigStatus);
       }
-      savePig(pigStatus);
       render();
       return;
     }
     if(resetBtn){
       const id = resetBtn.dataset.id;
-      delete completed[id];
-      delete readsValues[id];
-      delete pigStatus[id];
-      saveCompleted(completed);
-      saveReads(readsValues);
-      savePig(pigStatus);
+      const proc = PROCEDURES.find(p => p.id === id);
+      withUndo(`${proc ? proc.title : "Card"} cleared`, () => {
+        delete completed[id];
+        delete readsValues[id];
+        delete pigStatus[id];
+        saveCompleted(completed);
+        saveReads(readsValues);
+        savePig(pigStatus);
+      });
       render();
       return;
     }
     if(toggle){
-      const id = toggle.dataset.id;
-      openCards[id] = !openCards[id];
-      saveOpenCards(openCards);
-      render();
+      // On the board a tap opens the card. Inside a card its header is just a title.
+      if(!document.body.classList.contains("in-card")) openCard(toggle.dataset.id);
       return;
     }
   } catch(err){
@@ -4101,16 +5420,43 @@ document.addEventListener("input", (e) => {
     card.querySelectorAll(".progress-track i").forEach((el,i)=>{
       el.classList.toggle("done", !!(values[i]||"").trim());
     });
-    card.querySelector(".footer-note").textContent = filledCount === total ? "All readings entered" : `${total - filledCount} reading${total-filledCount===1?'':'s'} remaining`;
+    card.querySelector(".footer-note").textContent = readsFooterNote(filledCount, total);
+    const st = cardStatus(proc);
+    const sub = card.querySelector(".card-sub");
+    if(sub){ sub.className = "card-sub " + (st.lamp ? "sub-" + st.lamp : ""); sub.innerHTML = cardSubInner(proc); }
+    card.querySelectorAll('[data-action="reads-save"], [data-action="reads-copy-current"]').forEach(b => { b.disabled = filledCount === 0; });
   } catch(err){
     console.error("input handler error:", err);
   }
 });
 
+document.addEventListener("keydown", (e) => {
+  if((e.key === "Enter" || e.key === " ") && e.target && e.target.matches && e.target.matches('.tile .card-head')){
+    e.preventDefault();
+    openCard(e.target.dataset.id);
+  }
+});
+
+document.addEventListener("change", (e) => {
+  const fileInput = e.target.closest && e.target.closest('[data-action="backup-file"]');
+  if(!fileInput) return;
+  const file = fileInput.files && fileInput.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => { pendingRestore = parseBackupText(String(reader.result || "")); toolsMessage = ""; render(); };
+  reader.onerror = () => { pendingRestore = { error:"That file couldn't be read." }; render(); };
+  reader.readAsText(file);
+});
+
 document.getElementById("search").addEventListener("input", (e) => {
   try{
     query = e.target.value.trim();
+    if(activeId){                     // searching always starts from the whole board
+      setActive(null);
+      try{ if(history.state && history.state.card) history.replaceState(null, ""); } catch(_){}
+    }
     render();
+    window.scrollTo(0, 0);
   } catch(err){
     console.error("search input error:", err);
   }
@@ -4126,11 +5472,8 @@ document.addEventListener("focusout", (e) => {
   setTimeout(() => { dropdown.innerHTML = ""; }, 200);
 });
 
-// Auto-open when there's only one procedure loaded, for convenience
-if(PROCEDURES.length === 1){
-  openCards[PROCEDURES[0].id] = true;
-}
 
+document.getElementById("buildStamp").textContent = "Version " + fmtShortDate(APP_BUILD) + ", build " + APP_REV;
 render();
 </script>
 <script>
