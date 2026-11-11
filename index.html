@@ -171,7 +171,7 @@
     overflow:hidden;
     transition:max-height .25s ease;
   }
-  .card.open .card-body{max-height:4000px;}
+  .card.open .card-body{max-height:none;}
 
   .body-inner{padding:6px 16px 18px;}
 
@@ -514,6 +514,75 @@
   .ab-tag-abandoned{background:rgba(200,55,46,0.14); color:#ff8a80; border:1px solid rgba(200,55,46,0.4);}
   .ab-tag-left-in-place{background:rgba(142,153,161,0.14); color:var(--text-dim); border:1px solid var(--border);}
   .ab-tag-type{background:rgba(224,168,46,0.14); color:#ffd77a; border:1px solid rgba(224,168,46,0.4);}
+  .ab-tag-found{background:rgba(224,168,46,0.14); color:#ffd77a; border:1px solid rgba(224,168,46,0.4);}
+  .ab-row-content{flex:1; min-width:0;}
+  .ab-line-sub{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    margin-top:8px; padding-top:8px;
+    border-top:1px solid var(--border);
+  }
+  .ab-name-sub{font-family:var(--mono); font-size:12.5px; font-weight:700; color:var(--text-dim);}
+  .ab-comments{
+    margin-top:8px; padding-top:8px;
+    border-top:1px solid var(--border);
+    font-size:13px; line-height:1.45; color:var(--text-dim);
+    white-space:pre-wrap;
+  }
+  .ab-date-end{
+    margin-top:8px;
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+  }
+  .ab-row-actions{
+    display:flex; flex-direction:column; gap:6px; flex-shrink:0;
+  }
+  .ab-edit-btn{
+    width:26px; height:26px;
+    border-radius:50%;
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--text-dim);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .ab-edit-btn:hover{border-color:var(--amber); color:var(--amber);}
+  .ab-confirm-group{
+    display:flex; align-items:center; gap:6px; flex-shrink:0;
+  }
+  .ab-confirm-text{
+    font-size:11.5px; color:var(--text-dim); white-space:nowrap;
+  }
+  .ab-confirm-yes{
+    width:26px; height:26px;
+    border-radius:50%;
+    border:none;
+    background:var(--red);
+    color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .ab-confirm-no{
+    width:26px; height:26px;
+    border-radius:50%;
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--text-dim);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .ab-row-editing{
+    display:flex; flex-direction:column;
+    background:var(--panel-2);
+    border:1px solid var(--amber);
+    border-radius:8px;
+    padding:12px;
+    margin-bottom:8px;
+  }
+  .ab-row-editing .ab-input{margin-bottom:8px;}
+  textarea.ab-input{
+    resize:vertical;
+    font-family:var(--sans);
+    min-height:44px;
+  }
   .ab-remove{
     flex-shrink:0;
     width:26px; height:26px;
@@ -810,6 +879,184 @@
   .md-src-gps{background:rgba(62,142,82,0.12); border:1px solid rgba(62,142,82,0.35); color:#8ee6a2;}
   .md-src-warn{background:rgba(224,168,46,0.1); border:1px solid rgba(224,168,46,0.3); color:#ffd77a;}
   .md-src-planning{background:var(--panel-2); border:1px solid var(--border); color:var(--text-dim);}
+
+  /* ---- reference card ---- */
+  .ref-source{
+    font-size:12px; color:var(--text-dim); line-height:1.45;
+    margin:0 0 14px; padding:8px 10px;
+    border-left:2px solid var(--border);
+  }
+  .ref-section{margin-bottom:18px;}
+  .ref-section-warn .ab-heading{color:#ffd77a; border-bottom-color:rgba(224,168,46,0.35);}
+  .ref-items{display:flex; flex-direction:column; gap:8px;}
+  .ref-item{
+    display:grid; grid-template-columns:96px 1fr; gap:10px;
+    font-size:13.5px; line-height:1.45;
+  }
+  .ref-label{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--text-dim); font-weight:700; padding-top:2px;
+  }
+  .ref-label-open{color:#ff8a80;}
+  .ref-label-closed{color:#8ee6a2;}
+  .ref-value{color:var(--text);}
+  .ref-section-warn .ref-value{color:#ffd77a;}
+  .ref-ladder{display:flex; flex-direction:column; gap:6px;}
+  .ref-rung{
+    border-left:3px solid var(--border);
+    background:var(--panel-2);
+    border-radius:0 8px 8px 0;
+    padding:8px 11px;
+  }
+  .ref-rung-red{border-left-color:var(--red);}
+  .ref-rung-amber{border-left-color:var(--amber);}
+  .ref-rung-head{display:flex; align-items:baseline; gap:10px; margin-bottom:3px;}
+  .ref-rung-level{font-family:var(--mono); font-size:15px; font-weight:800;}
+  .ref-rung-red .ref-rung-level{color:#ff8a80;}
+  .ref-rung-amber .ref-rung-level{color:#ffd77a;}
+  .ref-rung-name{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--text-dim); font-weight:700;
+  }
+  .ref-rung-text{font-size:13px; line-height:1.45; color:var(--text);}
+
+  /* ---- alarm lookup ---- */
+  .alarm-row{
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-left:3px solid var(--border);
+    border-radius:9px;
+    padding:11px 12px;
+    margin-bottom:8px;
+  }
+  .alarm-row-interlock{border-left-color:var(--red);}
+  .alarm-row-warn{border-left-color:var(--amber);}
+  .alarm-row-fault{border-left-color:#5b6b78;}
+  .alarm-row-top{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:5px;}
+  .alarm-device{font-family:var(--mono); font-size:14px; font-weight:800;}
+  .alarm-sev{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.06em; text-transform:uppercase;
+    font-weight:800; padding:2px 7px; border-radius:20px; white-space:nowrap;
+  }
+  .alarm-sev-interlock{background:rgba(200,55,46,0.16); color:#ff8a80; border:1px solid rgba(200,55,46,0.45);}
+  .alarm-sev-warn{background:rgba(224,168,46,0.14); color:#ffd77a; border:1px solid rgba(224,168,46,0.4);}
+  .alarm-sev-fault{background:rgba(91,107,120,0.2); color:var(--text-dim); border:1px solid var(--border);}
+  .alarm-text{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.02em;
+    color:var(--text-dim); margin-bottom:7px;
+  }
+  .alarm-io{color:var(--text-dim); opacity:.8;}
+  .alarm-meaning{font-size:13.5px; line-height:1.45; color:var(--text); margin-bottom:7px;}
+  .alarm-actions{
+    margin:0; padding-left:20px;
+    font-size:13px; line-height:1.5; color:var(--text);
+  }
+  .alarm-actions li{margin-bottom:2px;}
+  .alarm-interlocks{margin-bottom:12px;}
+  .alarm-il-row{
+    display:grid; grid-template-columns:1fr; gap:3px;
+    background:var(--panel-2);
+    border-left:3px solid var(--red);
+    border-radius:0 8px 8px 0;
+    padding:8px 11px; margin-bottom:6px;
+    font-size:13px; line-height:1.4;
+  }
+  .alarm-il-cause{font-weight:700;}
+  .alarm-il-result{color:var(--text-dim);}
+  .alarm-il-reset{
+    display:flex; align-items:flex-start; gap:7px;
+    font-size:12.5px; color:#ffd77a; line-height:1.45;
+    margin:10px 0 0;
+  }
+  .alarm-il-reset svg{flex-shrink:0; margin-top:2px;}
+
+  /* ---- alarm scenarios / diagnosis ---- */
+  .scn-diagnosis{margin-bottom:12px;}
+  .scn-hint{
+    display:flex; align-items:flex-start; gap:8px;
+    font-size:12.5px; color:var(--text-dim); line-height:1.45;
+    margin:0 0 12px; padding:9px 11px;
+    background:var(--panel-2); border:1px dashed var(--border); border-radius:8px;
+  }
+  .scn-hint svg{flex-shrink:0; margin-top:2px; color:var(--amber);}
+  .scn-tray{
+    background:var(--panel-2); border:1px solid var(--amber); border-radius:9px;
+    padding:10px 12px; margin-bottom:12px;
+  }
+  .scn-tray-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+  .scn-clear{padding:5px 10px; font-size:12px;}
+  .scn-chips{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:6px 0;}
+  .scn-chips-label{
+    font-family:var(--mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--text-dim); font-weight:700; margin-right:2px;
+  }
+  .scn-chip{
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:var(--mono); font-size:11px; font-weight:700;
+    padding:4px 9px; border-radius:20px;
+    background:var(--panel); border:1px solid var(--border); color:var(--text-dim);
+  }
+  .scn-chip-on{background:rgba(224,168,46,0.14); border-color:rgba(224,168,46,0.45); color:#ffd77a;}
+  .scn-chip-x{cursor:pointer; font-family:var(--mono);}
+  .scn-chip-x svg{width:11px;height:11px;}
+  .scn-unexplained{margin-top:10px;}
+  .scn-row{border-left-width:4px;}
+  .scn-title{font-family:var(--sans); font-size:14px; line-height:1.3;}
+  .scn-sub{
+    font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--text-dim); font-weight:700; margin:8px 0 3px;
+  }
+  .scn-track{
+    display:inline-flex; align-items:center; gap:6px;
+    margin-top:9px;
+    background:transparent; border:1px solid var(--border); color:var(--text-dim);
+    font-family:var(--sans); font-size:12px; font-weight:600;
+    padding:6px 11px; border-radius:7px; cursor:pointer;
+  }
+  .scn-track svg{width:12px;height:12px;}
+  .scn-track:hover{border-color:var(--amber); color:var(--amber);}
+  .scn-track-on{background:rgba(62,142,82,0.14); border-color:rgba(62,142,82,0.45); color:#8ee6a2;}
+  .scn-track-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .scn-goto{
+    margin-top:9px;
+    background:transparent; border:none; padding:6px 2px;
+    color:var(--amber); font-family:var(--sans); font-size:12px; font-weight:700;
+    cursor:pointer; text-decoration:underline; text-underline-offset:3px;
+  }
+  .scn-diagnosis{scroll-margin-top:150px;}
+  .scn-howto{
+    background:var(--panel-2); border:1px dashed var(--border); border-radius:9px;
+    padding:10px 12px; margin-bottom:12px;
+  }
+  .scn-howto-title{
+    display:flex; align-items:center; gap:7px;
+    font-size:13.5px; font-weight:700; margin-bottom:6px;
+  }
+  .scn-howto-title svg{color:var(--amber); flex-shrink:0;}
+  .scn-howto-steps{margin:0; padding-left:20px; font-size:12.5px; line-height:1.5; color:var(--text-dim);}
+  .scn-howto-steps li{margin-bottom:2px;}
+  .scn-rank{position:relative;}
+  .scn-rank-num{
+    position:absolute; top:-8px; left:10px; z-index:1;
+    font-family:var(--mono); font-size:10.5px; font-weight:800;
+    background:var(--amber); color:#1a1408;
+    padding:2px 8px; border-radius:20px;
+  }
+  .scn-fab{
+    position:fixed; left:50%; transform:translateX(-50%);
+    bottom:calc(14px + env(safe-area-inset-bottom, 0px));
+    z-index:50;
+    display:flex; align-items:center; gap:8px;
+    max-width:calc(100% - 32px);
+    background:var(--amber); color:#1a1408;
+    border:none; border-radius:999px;
+    padding:11px 16px;
+    font-family:var(--sans); font-size:13.5px; font-weight:800;
+    box-shadow:0 8px 24px rgba(0,0,0,0.45);
+    cursor:pointer;
+  }
+  .scn-fab svg{width:15px;height:15px;flex-shrink:0;}
+  .scn-fab-arrow{font-size:15px;}
 
   /* ---- well autocomplete dropdown ---- */
   .well-ac-wrap{position:relative;}
@@ -1494,6 +1741,407 @@ const PROCEDURES = [
     title: "Miss Digs",
     type: "missdigs",
     keywords: ["miss dig","miss digs","811","locate","dig request"]
+  },
+
+  /* ---------------- TANK BATTERY / SLUG CATCHER (from Ops Procedures, rev 6-22-11) ---------------- */
+  {
+    id: "tb-overview",
+    title: "Tank Battery — Slug Catcher Overview",
+    type: "reference",
+    keywords: ["tank battery","slug catcher","setpoints","levels","LT-304","PT-306","normal valve positions","MRCS","Gasunie"],
+    sections: [
+      { title: "What this is", items: [
+        { label: "Purpose", value: "Catches liquid slugs off the Winterfield 24\" main gas header and dumps them to the brine disposal tank battery." },
+        { label: "Vessel", value: "8' dia × 20' long horizontal, 300 bbl. MAOP 800 psig. Relief valve set at 856 psig." },
+        { label: "Capacity", value: "1,800 bbl/hr continuous · 100 bbl/min intermittent." },
+        { label: "Discharge", value: "Through two 8\" control valves (CV-301, CV-302) via a regulating station to the brine holding tanks." },
+        { label: "Level control", value: "In-tank Rosemount transmitter LT-304 (A) with LT-305 (B) as backup. Level drives the block valves and control valves automatically." }
+      ]},
+      { title: "Before operating — two hard rules", tone: "warn", items: [
+        { label: "Interlocks", value: "Do NOT operate unless ALL electrical and mechanical interlocks are fully functional." },
+        { label: "Venting", value: "Do NOT operate unless the downstream equipment from the slug catcher pressure regulating valves is fully vented through at least TWO of the three brine tanks (MV-301, MV-302, MV-303)." }
+      ]},
+      { title: "Slug catcher level — what happens at each level (LT-304)", ladder: [
+        { level: "48\"", name: "HIGH HIGH", tone: "red", text: "INTERLOCK — Gasunie main gas outlet valve (204×24) is driven closed. Alarm. Control valves stay permissive so you can work the level down." },
+        { level: "44\"", name: "HIGH", tone: "amber", text: "High alarm. Normal control continues. (Sheet has \"40\" handwritten next to this — confirm the current setpoint.)" },
+        { level: "36\"", name: "CV-302 opens", tone: "dim", text: "Second control valve opens to hold level at 36\". On the way down, CV-302 closes here and CV-301 takes over." },
+        { level: "24\"", name: "CV-301 opens", tone: "dim", text: "First control valve starts opening to hold level at 24\". On the way down, CV-301 closes here." },
+        { level: "20\"", name: "Block valves permissive", tone: "dim", text: "BV-308 & BV-310 are allowed to open again. If you tripped the low low interlock, an operator must log in and press Reset." },
+        { level: "18\"", name: "LOW", tone: "amber", text: "Low alarm. You're 2\" from the low low interlock — if you're flushing or draining, stop here." },
+        { level: "16\"", name: "LOW LOW", tone: "red", text: "INTERLOCK — BV-308 & BV-310 close, CV-301 & CV-302 driven to 0%. Alarm. Keeps gas from blowing through to the tanks." }
+      ]},
+      { title: "Slug catcher pressure alarms — PT-306 (handwritten on sheet)", ladder: [
+        { level: "900 psi", name: "HIGH HIGH", tone: "red", text: "High High alarm." },
+        { level: "800 psi", name: "HIGH", tone: "amber", text: "High alarm (vessel MAOP is 800 psig)." },
+        { level: "150 psi", name: "LOW", tone: "amber", text: "Low alarm. (\"120\" is written in red next to this on the sheet — confirm which is current.)" },
+        { level: "100 psi", name: "LOW LOW", tone: "red", text: "Low Low alarm." }
+      ]},
+      { title: "Pumps / storage tanks — what happens at each level (handwritten on sheet)", ladder: [
+        { level: "102\"", name: "Pump 2 kicks on", tone: "amber", text: "Second injection pump starts." },
+        { level: "60\"", name: "Pump 1 kicks on", tone: "amber", text: "Bypass valve closes and the first injection pump starts." },
+        { level: "40\"", name: "Bypass opens", tone: "dim", text: "Bypass valve opens." },
+        { level: "24\"", name: "Everything off", tone: "dim", text: "Everything shut off." }
+      ]},
+      { title: "Normal valve positions", items: [
+        { label: "Normally OPEN", value: "MV-301, MV-302, MV-303, MV-304, MV-305, MV-309, MV-311", tone: "open" },
+        { label: "Normally CLOSED", value: "MV-306, MV-307, MV-312, MV-315, MV-318", tone: "closed" },
+        { label: "Automatic", value: "BV-308, BV-310, BV-373, BV-374 — limit switches confirm both open and closed. A mis-match alarm means the switch doesn't agree with what the valve was told to do." }
+      ]},
+      { title: "Interlock reset — same for every interlock", items: [
+        { label: "Step 1", value: "Fix whatever caused it (clear the alarm condition)." },
+        { label: "Step 2", value: "An Operator logs in to the control system and presses the Reset button. Nothing comes back on by itself." },
+        { label: "Heads up", value: "Manual operation sets off valve position alarms. Notify MRCS before you start." }
+      ]}
+    ]
+  },
+  {
+    id: "tb-alarms",
+    title: "Tank Battery — Alarm Lookup",
+    type: "alarms",
+    keywords: ["alarm","alarms","interlock","MRCS","faulted","deviation","position indication","failed to close","failed to open"]
+  }
+];
+
+/* ---------------------------------------------------------------------
+   TANK BATTERY ALARMS — every alarm MRCS can send, rewritten in plain
+   language with what to actually do. severity: 'interlock' | 'warn' | 'fault'
+------------------------------------------------------------------------ */
+const TB_INTERLOCK_RESET = "Once the cause is cleared, an Operator must log in and press the Reset button — nothing comes back on by itself.";
+
+const TB_INTERLOCKS = [
+  { cause:"PT-302 High High — north sludge tank pressure > 5 INWC", result:"BV-373, BV-374, BV-310 & BV-308 close · CV-301 & CV-302 driven to 0%" },
+  { cause:"PT-304 High High — south header pressure > 20 PSIG", result:"BV-373, BV-374, BV-310 & BV-308 close · CV-301 & CV-302 driven to 0%" },
+  { cause:"LT-304 High High — slug catcher level 48\"", result:"Valve 204×24 (Gasunie main gas outlet) driven closed" },
+  { cause:"LT-304 Low Low — slug catcher level 16\"", result:"BV-310 & BV-308 close · CV-301 & CV-302 driven to 0%" },
+  { cause:"Fewer than 2 of MV-301 / MV-302 / MV-303 open", result:"BV-373, BV-374, BV-310 & BV-308 close · CV-301 & CV-302 driven to 0%" }
+];
+
+const TB_ALARMS = (function(){
+  const A = [];
+  const add = (device, alarm, severity, meaning, action, io) => A.push({ device, alarm, severity, meaning, action, io: io||"" });
+
+  // --- Manual block valves, normally OPEN ---
+  ["MV-301","MV-302","MV-303","MV-304","MV-305","MV-309","MV-311"].forEach(v => {
+    add(v, `${v} POSITION INDICATION ALARM`, "fault",
+      "The valve's limit switches are reporting BOTH open and closed at the same time. That can't be real — a switch is stuck or the wiring is bad.",
+      ["Go look at the valve and confirm its actual position", "Check the limit switch and its wiring"]);
+    add(v, `${v} ALERT NOT IN OPEN POSITION`, "warn",
+      `${v} is supposed to be OPEN during normal operation and the switch says it isn't.`,
+      ["Confirm the valve is fully open", "If it really is open, suspect the limit switch or wiring"]);
+  });
+  // --- Manual block valves, normally CLOSED ---
+  ["MV-306","MV-307","MV-312","MV-315","MV-318"].forEach(v => {
+    add(v, `${v} POSITION INDICATION ALARM`, "fault",
+      "The valve's limit switches are reporting BOTH open and closed at the same time. A switch is stuck or the wiring is bad.",
+      ["Go look at the valve and confirm its actual position", "Check the limit switch and its wiring"]);
+    add(v, `${v} ALERT NOT IN CLOSED POSITION`, "warn",
+      `${v} is supposed to be CLOSED during normal operation and the switch says it isn't.`,
+      ["Confirm the valve is fully closed", "If it really is closed, suspect the limit switch or wiring"]);
+  });
+  add("MV-301 / 302 / 303", "SLUDGE TANK BRINE INLET VALVES — LESS THAN 2 VALVES ARE OPEN", "interlock",
+    "Fewer than two of the three brine tank inlet valves are open, so the slug catcher has nowhere to safely dump. The interlock trips: BV-373, BV-374, BV-310 & BV-308 close and CV-301/CV-302 go to 0%.",
+    ["Open at least two of MV-301, MV-302, MV-303", TB_INTERLOCK_RESET]);
+
+  // --- Automatic block valves ---
+  const bvInfo = { "BV-308":"outlet isolation valve", "BV-310":"outlet isolation valve", "BV-373":"compressor inlet block valve", "BV-374":"separator inlet block valve" };
+  Object.keys(bvInfo).forEach(v => {
+    add(v, `${v} POSITION INDICATION ALARM`, "fault",
+      "Limit switches say the valve is both open AND closed. Stuck switch or bad wiring.",
+      ["Check the valve's actual position", "Check the limit switch and wiring"]);
+    add(v, `${v} ${bvInfo[v].toUpperCase()} FAILED TO CLOSE`, "warn",
+      `${v} was told to close and the limit switch says it never made it.`,
+      ["Check the valve's actual position", "Check instrument air supply to the actuator", "Check the limit switch and wiring"]);
+    add(v, `${v} ${bvInfo[v].toUpperCase()} FAILED TO OPEN`, "warn",
+      `${v} was told to open and the limit switch says it never made it.`,
+      ["Check the valve's actual position", "Check instrument air supply to the actuator", "Check the limit switch and wiring"]);
+  });
+
+  // --- Control valves ---
+  [["CV-301","M4 CH0","M2 CH5"],["CV-302","M4 CH1","M2 CH6"]].forEach(([v, ioCmd, ioFb]) => {
+    add(v, `${v} DEVIATION ALARM +/- 5%`, "warn",
+      "Where the control system told the valve to be and where it actually is are more than 5% apart.",
+      ["Compare commanded vs. actual position on the monitor station", "Check the positioner and instrument air supply"]);
+    add(v, `${v} CONTROL VALVE FAULTED`, "fault",
+      "The control system has lost a good signal to this valve — instrument or wiring problem.",
+      ["Check the wiring and the I/O channel", "Get an instrument tech on it"], ioCmd);
+    add(v, `${v} POSITION FEEDBACK FAULTED`, "fault",
+      "The position feedback signal coming back from the valve is bad.",
+      ["Check the feedback wiring and the I/O channel", "Get an instrument tech on it"], ioFb);
+  });
+
+  // --- Slug catcher level ---
+  add("LT-304", "LT-304 SLUG CATCHER LEVEL LOW LOW", "interlock",
+    "Level dropped to 16\". BV-308 & BV-310 close and CV-301/CV-302 go to 0% so gas can't blow through to the tanks.",
+    ["Check valve positions", "If the level keeps dropping with everything closed, a control valve is passing — confirm CV-301/CV-302 aren't leaking", "Level must come back above 20\" before the block valves are permissive again", TB_INTERLOCK_RESET]);
+  add("LT-304", "LT-304 SLUG CATCHER LEVEL LOW", "warn",
+    "Level dropped to 18\". Two more inches and the 16\" low low interlock closes the block valves and you'll need an operator Reset.",
+    ["Check valve positions", "Confirm the control valves aren't leaking through when closed"]);
+  add("LT-304", "LT-304 SLUG CATCHER LEVEL HIGH", "warn",
+    "Level is high (44\" per the sheet — \"40\" is handwritten next to it). Normal control keeps running.",
+    ["Check valve positions — are both CV-301 and CV-302 open and actually discharging?", "Watch it: the next step up is 48\" High High, which shuts the main gas outlet"]);
+  add("LT-304", "LT-304 SLUG CATCHER LEVEL HIGH HIGH", "interlock",
+    "Level hit 48\". The Gasunie main gas outlet valve (204×24) is driven closed. The control valves stay permissive so you can still work the level down.",
+    ["Check valve positions", "Get the level down below 48\"", TB_INTERLOCK_RESET]);
+  add("LT-304", "LEVEL TRANSMITTER \"A\" SLUG CATCHER LT-304 FAULTED", "fault",
+    "The primary level transmitter has a bad signal — instrument or wiring problem. You're running on LT-305 (B) only.",
+    ["Check the instrument and wiring", "Instrument tech"], "M2 CH13");
+  add("LT-305", "LT-305 DEVIATION ALARM +/- 5%", "warn",
+    "The A and B level transmitters disagree by more than 5%. One of them is wrong.",
+    ["Blow down the LT-305 column (it's a routine inspection item)", "Check both instruments and wiring", "Calibrate if required"]);
+  add("LT-305", "LEVEL TRANSMITTER \"B\" SLUG CATCHER LT-305 FAULTED", "fault",
+    "The backup level transmitter has a bad signal.",
+    ["Check the instrument and wiring", "Instrument tech"], "M2 CH14");
+
+  // --- Pressure transmitters ---
+  add("PT-302", "NORTH SLUDGE TANK PRESSURE TRANSMITTER PT-302 HIGH HIGH", "interlock",
+    "North sludge tank pressure is above 5 inches of water — the tank isn't venting. Interlock trips: BV-373/374/310/308 close, control valves to 0%.",
+    ["Check tank vent valves — is the tank actually venting?", "Look for a line blockage (freeze-up is the usual suspect)", "Confirm heat tracing is working", TB_INTERLOCK_RESET]);
+  add("PT-302", "PRESSURE TRANSMITTER ST-101A PT-302 FAULTED", "fault", "Bad signal from PT-302 — instrument or wiring.", ["Check instrument and wiring"], "M2 CH9");
+  add("PT-303", "SLUDGE TANK PRESSURE TRANSMITTERS PT-302 & PT-303 +/- 5% DEV", "warn",
+    "The two sludge tank pressure transmitters disagree by more than 5%.",
+    ["Check both instruments and wiring", "Calibrate if required"]);
+  add("PT-303", "PRESS TRANSMITTER ST-101C PT-303 FAULTED", "fault", "Bad signal from PT-303 — instrument or wiring.", ["Check instrument and wiring"], "M2 CH10");
+  add("PT-304", "SOUTH HEADER PRESSURE TRANSMITTER CS HEADER PT-304 HIGH HIGH", "interlock",
+    "South header pressure is above 20 PSIG. Interlock trips: BV-373/374/310/308 close, control valves to 0%.",
+    ["Check valve positions", "Look for a line blockage (freeze-up)", "Confirm heat tracing is working", TB_INTERLOCK_RESET]);
+  add("PT-304", "PRESSURE TRANSMITTER HEADER PT-304 FAULTED", "fault", "Bad signal from PT-304 — instrument or wiring.", ["Check instrument and wiring"], "M2 CH11");
+  add("PT-305", "SOUTH HEADER PRESSURE TRANSMITTERS PT-304 & PT-305 +/- 5%", "warn",
+    "The two south header pressure transmitters disagree by more than 5%.",
+    ["Check both instruments and wiring", "Calibrate if required"]);
+  add("PT-305", "PRESSURE TRANSMITTER HEADER PT-305 FAULTED", "fault", "Bad signal from PT-305 — instrument or wiring.", ["Check instrument and wiring"], "M2 CH12");
+  add("PT-306", "SLUG CATCHER PRESSURE TRANSMITTER FAULTED", "fault", "Bad signal from PT-306 (slug catcher pressure, primary).", ["Check instrument and wiring"], "M2 CH15");
+  add("PT-306", "PT-306 HIGH HIGH (900 psi) — handwritten on sheet", "warn", "Slug catcher pressure is at the 900 psi high high point.", ["Check header pressure and discharge path", "Verify against PT-307"]);
+  add("PT-306", "PT-306 HIGH (800 psi) — handwritten on sheet", "warn", "Slug catcher pressure is at the 800 psi high point (vessel MAOP).", ["Check header pressure and discharge path"]);
+  add("PT-306", "PT-306 LOW (150 psi; \"120\" handwritten) — handwritten on sheet", "warn", "Slug catcher pressure is low.", ["Check header pressure and whether the vessel is isolated"]);
+  add("PT-306", "PT-306 LOW LOW (100 psi) — handwritten on sheet", "warn", "Slug catcher pressure is at the 100 psi low low point.", ["Check header pressure and whether the vessel is isolated"]);
+  add("PT-307", "PRESSURE TRANSMITTER PT-307 SLUG CATCHER FAULTED", "fault", "Bad signal from PT-307 (slug catcher pressure, backup).", ["Check instrument and wiring"], "M2 CH0");
+  add("PT-308", "INJECTION WELL ANNULUS PRESS TRANS PT-308 FAULTED", "fault", "Bad signal from the injection well annulus pressure transmitter.", ["Check instrument and wiring"], "M2 CH1");
+
+  // --- Pumps ---
+  add("PT-301", "DISCHARGE PRESSURE HI > 900", "warn",
+    "Injection pump discharge pressure is over 900 psi — something downstream is restricting flow.",
+    ["Check valve positions downstream of the pumps", "Look for a line blockage"]);
+  add("PT-301", "PRESSURE TRANSMITTER HIGH PUMP PRESS FAULTED", "fault", "Bad signal from the pump discharge pressure transmitter.", ["Check instrument and wiring"], "M2 CH2");
+  add("DPT-301", "PUMP HIGH INLET DIFF PRESSURE > 2.5", "warn",
+    "Pressure drop across the pump suction filter is over 2.5 — the filter is plugging up.",
+    ["Check the filter and change it if needed"]);
+  add("DPT-301", "PRESSURE TRANSMITTER DIFF PUMP PRESS FAULTED", "fault", "Bad signal from the pump differential pressure transmitter.", ["Check instrument and wiring"], "M2 CH3");
+  add("PSL-301", "LOW SUCTION PRESSURE TO PUMPS", "warn",
+    "The injection pumps aren't getting enough suction pressure.",
+    ["Check valve positions on the suction side", "Look for a line blockage", "Check tank level — are they starving?"]);
+  add("AUX-101", "PUMP 1 FAILED TO START", "warn", "Pump 1 was called to run and didn't.", ["Check the motor starter", "Check wiring", "Check the pump itself"]);
+  add("AUX-202", "PUMP 2 FAILED TO START", "warn", "Pump 2 was called to run and didn't.", ["Check the motor starter", "Check wiring", "Check the pump itself"]);
+
+  // --- Tank levels ---
+  add("LT-301", "SLUDGE TANK LEVEL TRANSMITTER LT-301 FAULTED", "fault", "Bad signal from the sludge tank level transmitter.", ["Check instrument and wiring"], "M2 CH1");
+  add("LT-302", "STORAGE TANK LEVEL TRANSMITTER LT-302 FAULTED", "fault", "Bad signal from the storage tank level transmitter.", ["Check instrument and wiring"], "M3 CH1");
+  add("LT-303", "STORAGE TANK LEVEL TRANSMITTER FAULTED", "fault", "Bad signal from the storage tank level transmitter.", ["Check instrument and wiring"], "M3 CH3");
+  add("FE-100", "FE 100 FAULTED", "fault", "Bad signal from flow element FE-100.", ["Check instrument and wiring"], "M3 CH2");
+  add("LSH-303", "SLUDGE TANK HIGH LEVEL", "warn", "Sludge tank is high — the injection pumps aren't keeping up or aren't running.", ["Confirm the injection pumps are running and pumping"]);
+  add("LSH-304", "STORAGE TANK LEVEL HI LEVEL", "warn", "Storage tank is high.", ["Confirm the injection pumps are running and pumping"]);
+  add("LSH-307", "SLUDGE TANK LEVEL HIGH ON ST-101A", "warn", "Sludge tank ST-101A is high.", ["Confirm the injection pumps are running and pumping"]);
+  add("LSH-301", "HIGH CONTAINMENT LEVEL IN PUMP BUILDING", "warn",
+    "There's liquid in the pump building containment — possible leak.",
+    ["Check for a process leak in the pump building", "If it's dry, suspect the float/instrument"]);
+  add("LSH-305", "WINTERFIELD SCRUBBER HIGH LEVEL", "warn", "Winterfield scrubber is full of liquid.", ["Check the liquid piping / dump", "Check the instrument"]);
+  add("LSH-306", "CRANBERRY SCRUBBER HIGH LEVEL", "warn", "Cranberry scrubber is full of liquid.", ["Check the liquid piping / dump", "Check the instrument"]);
+  add("Riverside", "RIVERSIDE SCRUBBER HIGH LEVEL", "warn", "Riverside scrubber is full of liquid.", ["Check the liquid piping / dump", "Check the instrument"]);
+  add("Riverside", "RIVERSIDE SCRUBBER LOW LEVEL", "warn", "Riverside scrubber level is low.", ["Check the liquid piping", "Check the instrument"]);
+
+  // --- Controller ---
+  add("PLC", "PROCESSOR BATTERY FAILED", "warn",
+    "The PLC's backup battery is dead. If power drops, the program could be lost.",
+    ["Check the battery and replace it"]);
+  add("PLC", "PROCESSOR FORCES ACTIVE", "warn",
+    "Someone has forces (manual overrides) active in the PLC. That can make things behave oddly.",
+    ["Find out who put the forces in and why", "Have them removed when no longer needed"]);
+  return A;
+})();
+
+// Give every alarm a short "kind" so scenarios can match on patterns
+// (any device's FAULT, any BV's FAILED TO CLOSE, etc.) instead of exact text.
+(function tagAlarmKinds(){
+  const kindOf = (t) => {
+    t = t.toUpperCase();
+    if(/LESS THAN 2/.test(t)) return "lt2open";
+    if(/FAILED TO CLOSE/.test(t)) return "ftc";
+    if(/FAILED TO OPEN/.test(t)) return "fto";
+    if(/FAILED TO START/.test(t)) return "start";
+    if(/NOT IN OPEN/.test(t)) return "notopen";
+    if(/NOT IN CLOSED/.test(t)) return "notclosed";
+    if(/POSITION INDICATION/.test(t)) return "pos";
+    if(/FORCES ACTIVE/.test(t)) return "forces";
+    if(/BATTERY/.test(t)) return "battery";
+    if(/FAULTED/.test(t)) return "fault";
+    if(/DEVIATION|\+\/-|\bDEV\b/.test(t)) return "dev";
+    if(/HIGH.HIGH/.test(t)) return "hh";
+    if(/LOW.LOW/.test(t)) return "ll";
+    if(/HIGH|\bHI\b|> ?900|> ?2\.5/.test(t)) return "hi";
+    if(/LOW/.test(t)) return "lo";
+    return "other";
+  };
+  TB_ALARMS.forEach((a, i) => { a.idx = i; a.kind = kindOf(a.alarm); a.key = `${a.device}|${a.alarm}`; });
+})();
+
+/* ---------------------------------------------------------------------
+   ALARM SCENARIOS — what common COMBINATIONS of alarms usually mean.
+   A condition is { d: device (string or RegExp), k: kind or [kinds] }.
+   `core` is a list of groups; each group needs at least `min` (default 1)
+   of its `any` conditions present for the scenario to apply. `also` lists
+   alarms you'd expect to see alongside. `excludes` kills the scenario.
+   severity: 'safety' | 'process' | 'instrument'
+------------------------------------------------------------------------ */
+const TB_SCENARIOS = [
+  {
+    id:"il-pt302", severity:"process",
+    title:"North sludge tank not venting → interlock shut the discharge",
+    core:[{ any:[{d:"PT-302",k:"hh"}] }],
+    also:[{d:"LT-304",k:["hi","hh"]},{d:/^BV-(308|310|373|374)$/,k:"ftc"}],
+    likely:"North sludge tank pressure went over 5 inches of water — the tank isn't venting. A frozen or closed vent line is the usual cause. The interlock closed BV-373/374/310/308 and drove both control valves to 0%, so the slug catcher can't dump and its level will start climbing.",
+    confirm:["Tank vent valves open and clear?","Heat tracing on and working (winter)?","Watch LT-304 — it rises while discharge is blocked"],
+    action:["Clear the vent / line blockage","Operator logs in and presses Reset","Confirm BV-308/310 reopen and the control valves come back"]
+  },
+  {
+    id:"il-pt304", severity:"process",
+    title:"South header pressure high → interlock shut the discharge",
+    core:[{ any:[{d:"PT-304",k:"hh"}] }],
+    also:[{d:"LT-304",k:["hi","hh"]},{d:/^BV-(308|310|373|374)$/,k:"ftc"}],
+    likely:"South header pressure went over 20 PSIG. Something downstream of the control valves isn't relieving — blocked or frozen line, or a closed valve. Same interlock result: BV-373/374/310/308 close, control valves to 0%, slug catcher level will climb.",
+    confirm:["Valve lineup downstream of CV-301/302","Heat tracing on the header","Watch LT-304"],
+    action:["Clear the restriction","Operator Reset","Confirm discharge valves come back"]
+  },
+  {
+    id:"il-lt304-ll", severity:"process",
+    title:"Slug catcher pumped down — low low interlock",
+    core:[{ any:[{d:"LT-304",k:"ll"}] }],
+    also:[{d:"LT-304",k:"lo"},{d:/^CV-30[12]$/,k:"dev"},{d:"LT-305",k:"dev"}],
+    likely:"Level fell to 16\". BV-308/310 closed and both control valves went to 0% to keep gas from blowing through to the tanks. Either the vessel really ran dry — a control valve passing when it should be closed — or LT-304 is reading low falsely.",
+    confirm:["Compare LT-304 to LT-305 — if they disagree, suspect the transmitter or a plugged column, not the level","Check LI-301 sight glass","With everything closed, is the level still dropping? That's a control valve leaking through"],
+    action:["If a CV is passing: isolate with MV-309 / MV-311 and get it looked at","If it's the transmitter: blow down the column, calibrate","Level back above 20\" → Operator Reset"]
+  },
+  {
+    id:"il-lt304-hh", severity:"safety",
+    title:"Slug catcher filling faster than it can dump — high high",
+    core:[{ any:[{d:"LT-304",k:"hh"}] }],
+    also:[{d:"LT-304",k:"hi"},{d:/^CV-30[12]$/,k:["dev","fault"]},{d:/^BV-(308|310)$/,k:"fto"},{d:"PT-302",k:"hh"},{d:"PT-304",k:"hh"},{d:"MV-301 / 302 / 303",k:"lt2open"}],
+    likely:"Level hit 48\" and the Gasunie main gas outlet (204×24) was driven closed. Either liquid is coming in faster than two 8\" control valves can dump, or something is stopping the discharge: a control valve not opening, a block valve that failed to open, or another interlock (sludge tank / header pressure / inlet valves) already shut the discharge path.",
+    confirm:["Are CV-301 AND CV-302 actually open? (deviation or fault alarms say no)","Are BV-308 / BV-310 open?","Any PT-302 HH, PT-304 HH, or inlet-valve interlock active? That's why it can't dump"],
+    action:["Fix whatever is blocking the discharge first","Work the level down","Operator Reset to reopen the main gas outlet"]
+  },
+  {
+    id:"il-inlet", severity:"process",
+    title:"Brine tank inlet interlock — fewer than 2 of MV-301/302/303 open",
+    core:[{ any:[{d:"MV-301 / 302 / 303",k:"lt2open"}] }],
+    also:[{d:/^MV-30[123]$/,k:["notopen","pos"]},{d:"LT-304",k:["hi","hh"]}],
+    likely:"Someone closed a brine tank inlet valve (maintenance, switching tanks) or a limit switch failed — the PLC thinks fewer than two are open and tripped the interlock. Discharge is shut; slug catcher level will climb.",
+    confirm:["Walk MV-301, 302, 303 — physically open?","Open but still alarming → limit switch or wiring"],
+    action:["Open at least two","Operator Reset"]
+  },
+  {
+    id:"bv-not-isolating", severity:"safety",
+    title:"Interlock fired but a block valve didn't close — system NOT isolated",
+    core:[
+      { any:[{d:/^BV-/,k:"ftc"}] },
+      { any:[{d:"PT-302",k:"hh"},{d:"PT-304",k:"hh"},{d:"LT-304",k:"ll"},{d:"MV-301 / 302 / 303",k:"lt2open"}] }
+    ],
+    also:[],
+    likely:"An interlock told the block valves to close and at least one reports it never got there. Whatever the interlock was protecting against is still open. Treat this as urgent.",
+    confirm:["Which BV failed? Check its instrument air supply right now","Physically confirm the valve position"],
+    action:["Get the valve closed — close its manual block if it has one","Do NOT Reset the interlock until it's actually closed","Then chase the air supply / limit switch / wiring"]
+  },
+  {
+    id:"cv-not-responding", severity:"process",
+    title:"Control valve not doing what it's told",
+    core:[{ any:[{d:/^CV-30[12]$/,k:["dev","fault"]}] }],
+    also:[{d:"LT-304",k:["hi","hh"]}],
+    likely:"Commanded and actual position differ, or the signal to/from the valve is bad. Lost instrument air, a sticking positioner, or a wiring fault. If level alarms are climbing with it, the valve isn't discharging.",
+    confirm:["Instrument air supply to the CVs (it's a routine inspection item)","Watch the valve stroke on the monitor station"],
+    action:["Restore air / free the valve","If it's stuck and level is climbing: manual bypass per the Manual Operation procedure — notify MRCS first"]
+  },
+  {
+    id:"lt-disagree", severity:"instrument",
+    title:"Level transmitters disagree — which one's right?",
+    core:[{ any:[{d:"LT-305",k:"dev"}] }],
+    also:[{d:"LT-304",k:["hi","hh","lo","ll"]}],
+    likely:"LT-304 (A) and LT-305 (B) are more than 5% apart. One column is likely plugged or frozen, or one transmitter drifted. If a level alarm came with it, don't trust the level until you know which one is lying.",
+    confirm:["LI-301 sight glass is the referee","Blow down the LT-305 column (routine procedure)","Heat tracing on the columns in winter"],
+    action:["Calibrate the one that's off","Clear any level interlock only after the real level is known"]
+  },
+  {
+    id:"pumps-starved", severity:"process",
+    title:"Pumps starving — suction problem",
+    core:[{ any:[{d:"PSL-301",k:"lo"}] }],
+    also:[{d:"DPT-301",k:"hi"},{d:/^LSH-30[347]$/,k:"hi"},{d:"LSH-304",k:"hi"}],
+    likely:"Low suction pressure to the injection pumps. If a tank is also high, the pumps can't pull from a full tank: suction valve closed, line frozen or blocked, or the suction filter is plugged (DPT-301 high means plugged filter).",
+    confirm:["Suction valves open?","DPT-301 over 2.5 → filter","Heat tracing on the suction line"],
+    action:["Open / clear the suction path, change the filter","Watch tank levels until the pumps catch up"]
+  },
+  {
+    id:"plugged-filter", severity:"process",
+    title:"Plugged suction filter",
+    core:[{ any:[{d:"DPT-301",k:"hi"}] }],
+    also:[{d:"PSL-301",k:"lo"},{d:/^LSH-30[347]$/,k:"hi"}],
+    likely:"Pressure drop across the pump suction filter is over 2.5. The filter is loading up with solids. Left alone it starves the pumps (PSL-301) and the tanks start backing up.",
+    confirm:["Check the filter"],
+    action:["Change the filter","Check tank levels once pumps are pulling normally again"]
+  },
+  {
+    id:"tank-high-pump-failed", severity:"process",
+    title:"Tank filling and a pump didn't start",
+    core:[
+      { any:[{d:/^LSH-30[347]$/,k:"hi"},{d:"LSH-304",k:"hi"}] },
+      { any:[{d:"AUX-101",k:"start"},{d:"AUX-202",k:"start"}] }
+    ],
+    also:[],
+    likely:"A tank is high and a pump that was called to run didn't start. Level keeps rising until a pump runs. (Per the sheet: pump 1 is called at 60\", pump 2 at 102\".)",
+    confirm:["Which pump failed? Starter tripped? Overloads?"],
+    action:["Get the other pump running","Check motor starter, wiring, and the pump itself on the failed one"]
+  },
+  {
+    id:"discharge-blocked", severity:"process",
+    title:"Pump discharge pressure high — real restriction downstream",
+    core:[{ any:[{d:"PT-301",k:"hi"}] }],
+    excludes:[{d:"PT-301",k:"fault"}],
+    also:[{d:/^LSH-30[347]$/,k:"hi"}],
+    likely:"Pumps are running against a restriction: a closed valve toward the injection well, a blocked or frozen line, or the well taking less than it used to. (If PT-301 FAULT were also active this would be a bad signal, not real pressure — it isn't, so treat it as real.)",
+    confirm:["Mechanical gauge on the pump discharge","Valve lineup to the injection well","PT-308 annulus pressure look sane?"],
+    action:["Find and clear the restriction","Don't just reset — it'll come right back"]
+  },
+  {
+    id:"leak-pump-building", severity:"safety",
+    title:"Liquid in the pump building",
+    core:[{ any:[{d:"LSH-301",k:"hi"}] }],
+    also:[{d:"PSL-301",k:"lo"}],
+    likely:"The containment float in the pump building is up. Packing or seal leak, a fitting, or a stuck float. If suction pressure dropped with it, you may be losing brine.",
+    confirm:["Eyes on the pumps for a leak","Float free, or stuck?"],
+    action:["Shut down the leaking pump","If it's dry — instrument problem"]
+  },
+  {
+    id:"manual-op", severity:"process",
+    title:"Manual operation in progress — or valves left off normal",
+    core:[{ any:[{d:/^MV-/,k:["notopen","notclosed"]}], min:2 }],
+    also:[],
+    likely:"Several manual valves are off their normal positions at once. Either someone is running the slug catcher in manual bypass (MRCS should have been told), or valves weren't put back after maintenance or a calibration.",
+    confirm:["Who's on site? Any work going on?","Walk the normal-position list in the Overview card"],
+    action:["If manual op is intentional: tell MRCS","Otherwise return the valves to normal"]
+  },
+  {
+    id:"freeze", severity:"process",
+    title:"Cold-weather freeze-up — more than one thing at once",
+    core:[{ any:[{d:"PT-302",k:"hh"},{d:"PT-304",k:"hh"},{d:"PSL-301",k:"lo"},{d:"LT-305",k:"dev"}], min:2 }],
+    also:[],
+    likely:"Two or more pressure/level problems that share one cause: something froze. Vent lines, headers, level columns and suction lines freeze before anything actually breaks.",
+    confirm:["Heat tracing on every affected line"],
+    action:["Thaw it, confirm heat trace is working, then Reset"]
+  },
+  {
+    id:"plc-forces", severity:"instrument",
+    title:"PLC forces active — don't trust the other alarms yet",
+    core:[{ any:[{d:"PLC",k:"forces"}] }],
+    also:[],
+    likely:"Someone has forces (manual overrides) active in the PLC. Valves and alarms may not behave normally. Any other alarm active at the same time is suspect until the forces are removed.",
+    confirm:["Who put the forces in and why?"],
+    action:["Have the forces removed","Re-evaluate whatever else is alarming after that"]
   }
 ];
 
@@ -1534,8 +2182,22 @@ function savePig(data){
   try{ localStorage.setItem(PIG_KEY, JSON.stringify(data)); }catch(e){}
 }
 function loadAbandon(){
-  try{ return JSON.parse(localStorage.getItem(ABANDON_KEY)) || {}; }
-  catch(e){ return {}; }
+  try{
+    const data = JSON.parse(localStorage.getItem(ABANDON_KEY)) || {};
+    Object.keys(data).forEach(procId => {
+      const d = data[procId];
+      if(!d) return;
+      if(!d.removals){
+        d.removals = [];
+        (d.wells||[]).forEach(w => d.removals.push({ id:w.id, wellName:w.name, lineName:null, lineStatus:null, date:w.date||"" }));
+        (d.lines||[]).forEach(l => d.removals.push({ id:l.id, wellName:null, lineName:l.name, lineStatus:l.status||"removed", date:l.date||"" }));
+        delete d.wells;
+        delete d.lines;
+      }
+      if(!d.planned) d.planned = [];
+    });
+    return data;
+  } catch(e){ return {}; }
 }
 function saveAbandon(data){
   try{ localStorage.setItem(ABANDON_KEY, JSON.stringify(data)); }catch(e){}
@@ -1560,6 +2222,8 @@ let readsValues = loadReads();
 let pigStatus = loadPig();
 let abandonData = loadAbandon();
 let abandonFormOpen = {}; // transient UI state, not persisted: `${procId}:${section}` -> bool
+let abRemovalEditOpen = {}; // transient UI state, not persisted: entryId -> bool
+let abRemovalDeleteConfirm = {}; // transient UI state, not persisted: entryId -> bool
 let missDigData = loadMissDig();
 let missDigFormOpen = {}; // transient UI state, not persisted: procId -> bool
 let missDigStartFormOpen = {}; // transient UI state, not persisted: procId -> bool
@@ -1601,15 +2265,23 @@ function matches(proc, q){
   } else if(proc.type === "wellsearch"){
     content = WELLS.map(w => w[0]);
   } else if(proc.type === "abandonment"){
-    const d = abandonData[proc.id] || { wells:[], lines:[], planned:[] };
+    const d = abandonData[proc.id] || { removals:[], planned:[] };
     content = [
-      ...d.wells.map(e => `${e.name} ${e.date||""}`),
-      ...d.lines.map(e => `${e.name} ${e.status} ${e.date||""}`),
+      ...d.removals.map(e => `${e.wellName||""} ${e.lineName||""} ${e.lineStatus||""} ${e.date||""}`),
       ...d.planned.map(e => `${e.name} ${e.type} ${e.date||""}`)
     ];
   } else if(proc.type === "missdigs"){
     const d = missDigData[proc.id] || { entries:[] };
     content = d.entries.map(e => `${e.label} ${e.expDate||""}`);
+  } else if(proc.type === "reference"){
+    content = [];
+    (proc.sections||[]).forEach(s => {
+      content.push(s.title);
+      (s.items||[]).forEach(it => content.push(`${it.label} ${it.value}`));
+      (s.ladder||[]).forEach(r => content.push(`${r.level} ${r.name} ${r.text}`));
+    });
+  } else if(proc.type === "alarms"){
+    content = TB_ALARMS.map(a => `${a.device} ${a.alarm} ${a.meaning} ${a.io}`).concat(TB_INTERLOCKS.map(i => `${i.cause} ${i.result}`));
   } else {
     content = proc.steps.map(s=>s.text);
   }
@@ -1654,6 +2326,12 @@ function render(){
         }
         if(proc.type === "missdigs"){
           return renderMissDigsCard(proc, isOpen);
+        }
+        if(proc.type === "reference"){
+          return renderReferenceCard(proc, isOpen);
+        }
+        if(proc.type === "alarms"){
+          return renderAlarmsCard(proc, isOpen);
         }
         return renderChecklistCard(proc, isOpen);
       } catch(cardErr){
@@ -1817,6 +2495,12 @@ function renderPiggingCard(proc, isOpen){
 }
 
 function renderWellSearchCard(proc, isOpen){
+    // Carry a top-bar well-number search into the card so the well shows right away.
+    let seed = "";
+    if(query){
+      const q = query.replace(/[^0-9]/g, "");
+      if(q && WELLS.some(w => String(w[0]).replace(/^[A-Za-z]+-/,"").indexOf(q) !== -1)) seed = query;
+    }
     return `
     <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
       <div class="card-head" data-action="toggle" data-id="${proc.id}">
@@ -1831,9 +2515,13 @@ function renderWellSearchCard(proc, isOpen){
         <div class="body-inner">
           <div class="well-search-box">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input class="well-input" type="text" inputmode="numeric" placeholder="Type a well number… e.g. 200" autocomplete="off" data-action="well-input" data-id="${proc.id}">
+            <input class="well-input" type="text" inputmode="numeric" placeholder="Type a well number… e.g. 200" autocomplete="off" data-action="well-input" data-id="${proc.id}" value="${escapeHtml(seed)}">
           </div>
-          <div class="well-results" id="wellResults-${proc.id}">${wellResultsHtml("")}</div>
+          <div class="well-results" id="wellResults-${proc.id}">${wellResultsHtml(seed)}</div>
+          <div class="card-footer">
+            <span class="footer-note">${WELLS.length} wells indexed</span>
+            <button class="reset-btn" data-action="well-search-reset" data-id="${proc.id}">${iconReset} Reset</button>
+          </div>
         </div>
       </div>
     </div>`;
@@ -1885,8 +2573,8 @@ function wellResultsHtml(rawQuery){
    ABANDONMENT LOG
 ------------------------------------------------------------------------ */
 function renderAbandonmentCard(proc, isOpen){
-  const data = abandonData[proc.id] || { wells:[], lines:[], planned:[] };
-  const total = data.wells.length + data.lines.length + data.planned.length;
+  const data = abandonData[proc.id] || { removals:[], planned:[] };
+  const total = data.removals.length + data.planned.length;
 
   return `
   <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
@@ -1900,8 +2588,7 @@ function renderAbandonmentCard(proc, isOpen){
     </div>
     <div class="card-body">
       <div class="body-inner">
-        ${renderAbWellsSection(proc.id, data.wells)}
-        ${renderAbLinesSection(proc.id, data.lines)}
+        ${renderAbRemovalsSection(proc.id, data.removals)}
         ${renderAbPlannedSection(proc.id, data.planned)}
       </div>
     </div>
@@ -1910,79 +2597,118 @@ function renderAbandonmentCard(proc, isOpen){
 
 function abFormKey(procId, section){ return `${procId}:${section}`; }
 
-function renderAbWellsSection(procId, entries){
-  const formOpen = !!abandonFormOpen[abFormKey(procId,"wells")];
-  const rows = entries.length === 0
-    ? `<p class="ab-empty">No abandoned wells logged yet.</p>`
-    : entries.map(e => `
-      <div class="ab-row">
-        <div class="ab-row-main">
-          <span class="ab-name">${highlight(e.name, query)}</span>
-          ${e.date ? `<span class="ab-date">${escapeHtml(e.date)}</span>` : ""}
-        </div>
-        <button class="ab-remove" data-action="ab-remove" data-id="${procId}" data-section="wells" data-entry="${e.id}" aria-label="Remove">${iconX}</button>
-      </div>`).join("");
+function abLineLabel(e){
+  if(e.wellName){
+    const hasDistinctLine = e.lineName && e.lineName.trim() !== e.wellName.trim();
+    return hasDistinctLine ? `${e.wellName} Well Line (${e.lineName})` : `${e.wellName} Well Line`;
+  }
+  return e.lineName || "Line";
+}
 
-  const addBlock = formOpen ? `
-    <div class="ab-add-form" data-section="wells" data-id="${procId}">
-      <div class="well-ac-wrap">
-        <input type="text" class="ab-input ab-input-name well-ac-input" placeholder="Well number… e.g. W-208" autocomplete="off">
-        <div class="well-ac-dropdown"></div>
-      </div>
-      <input type="date" class="ab-input ab-input-date" aria-label="Date abandoned">
-      <label class="ab-checkbox-row">
-        <input type="checkbox" class="ab-line-checkbox" data-action="ab-line-toggle" checked>
-        <span>Well line was also removed</span>
-      </label>
-      <input type="text" class="ab-input ab-input-line-name" placeholder="Line number… e.g. 51S 8&quot;" autocomplete="off">
-      <div class="ab-add-actions">
-        <button class="ab-submit-btn" data-action="ab-submit" data-id="${procId}" data-section="wells">Add</button>
-        <button class="ab-cancel-btn" data-action="ab-cancel" data-id="${procId}" data-section="wells">Cancel</button>
-      </div>
-    </div>`
-    : `<button class="ab-add-btn" data-action="ab-add-toggle" data-id="${procId}" data-section="wells">${iconPlus} Add abandoned well</button>`;
-
+function renderAbRemovalEditRow(procId, e){
+  const lineIsDistinct = e.lineName && e.lineName.trim() !== (e.wellName||"").trim();
   return `
-  <div class="ab-section">
-    <h3 class="ab-heading">Abandoned Wells</h3>
-    <div class="ab-rows">${rows}</div>
-    ${addBlock}
+  <div class="ab-row ab-row-editing" data-entry="${e.id}">
+    <label class="ab-checkbox-row">
+      <input type="checkbox" class="ab-edit-well-checkbox" data-action="ab-edit-well-toggle" ${e.wellName ? "checked" : ""}>
+      <span>Well removed</span>
+    </label>
+    <div class="well-ac-wrap">
+      <input type="text" class="ab-input ab-edit-well-input well-ac-input ${e.wellName ? "" : "ab-hidden"}" placeholder="Well number (optional)… e.g. W-208" value="${escapeHtml(e.wellName||"")}" autocomplete="off">
+      <div class="well-ac-dropdown"></div>
+    </div>
+
+    <label class="ab-checkbox-row">
+      <input type="checkbox" class="ab-edit-line-checkbox" data-action="ab-edit-line-toggle" ${e.lineStatus ? "checked" : ""}>
+      <span>Well line</span>
+    </label>
+    <div class="ab-toggle-group ab-edit-line-status ${e.lineStatus ? "" : "ab-hidden"}">
+      <button type="button" class="ab-toggle-btn ${e.lineStatus !== "left-in-place" ? "active" : ""}" data-value="removed" data-action="ab-toggle-opt">Removed</button>
+      <button type="button" class="ab-toggle-btn ${e.lineStatus === "left-in-place" ? "active" : ""}" data-value="left-in-place" data-action="ab-toggle-opt">Left in Place</button>
+    </div>
+    <input type="text" class="ab-input ab-edit-line-input ${e.lineStatus ? "" : "ab-hidden"}" placeholder="Line number… leave blank to use the well number" value="${escapeHtml(lineIsDistinct ? e.lineName : "")}" autocomplete="off">
+
+    <input type="date" class="ab-input ab-edit-date" value="${escapeHtml(e.date||"")}" aria-label="Date">
+    <textarea class="ab-input ab-edit-comments" rows="2" placeholder="Comments (optional)">${escapeHtml(e.comments||"")}</textarea>
+    <div class="ab-add-actions">
+      <button class="ab-submit-btn" data-action="ab-edit-save" data-id="${procId}" data-entry="${e.id}">Save</button>
+      <button class="ab-cancel-btn" data-action="ab-edit-cancel" data-entry="${e.id}">Cancel</button>
+    </div>
   </div>`;
 }
 
-function renderAbLinesSection(procId, entries){
-  const formOpen = !!abandonFormOpen[abFormKey(procId,"lines")];
-  const statusLabel = { abandoned:"Abandoned", "left-in-place":"Left in Place" };
+function renderAbRemovalsSection(procId, entries){
+  const formOpen = !!abandonFormOpen[abFormKey(procId,"removals")];
   const rows = entries.length === 0
-    ? `<p class="ab-empty">No well lines logged yet.</p>`
-    : entries.map(e => `
+    ? `<p class="ab-empty">Nothing logged yet.</p>`
+    : entries.map(e => {
+        if(abRemovalEditOpen[e.id]){
+          return renderAbRemovalEditRow(procId, e);
+        }
+        const confirming = !!abRemovalDeleteConfirm[e.id];
+        return `
       <div class="ab-row">
-        <div class="ab-row-main">
-          <span class="ab-name">${highlight(e.name, query)}</span>
-          <span class="ab-tag ab-tag-${e.status}">${statusLabel[e.status]||e.status}</span>
-          ${e.date ? `<span class="ab-date">${escapeHtml(e.date)}</span>` : ""}
+        <div class="ab-row-content">
+          <div class="ab-row-main">
+            ${e.wellName ? `<span class="ab-name">${highlight(e.wellName, query)}</span><span class="ab-tag ab-tag-abandoned">Well Removed</span>` : ""}
+            ${(!e.wellName && !e.lineStatus) ? `<span class="ab-tag ab-tag-found">Abandoned</span>` : ""}
+          </div>
+          ${e.lineStatus ? `<div class="ab-line-sub">
+            <span class="ab-name-sub">${highlight(abLineLabel(e), query)}</span>
+            <span class="ab-tag ab-tag-${e.lineStatus === 'left-in-place' ? 'found' : 'abandoned'}">${e.lineStatus === 'left-in-place' ? 'Abandoned' : 'Line Removed'}</span>
+          </div>` : (e.wellName ? `<div class="ab-line-sub">
+            <span class="ab-name-sub">${highlight(e.wellName + " Well Line", query)}</span>
+            <span class="ab-tag ab-tag-found">Abandoned</span>
+          </div>` : "")}
+          ${e.comments ? `<div class="ab-comments">${highlight(e.comments, query)}</div>` : ""}
+          ${e.date ? `<div class="ab-date-end">${escapeHtml(e.date)}</div>` : ""}
         </div>
-        <button class="ab-remove" data-action="ab-remove" data-id="${procId}" data-section="lines" data-entry="${e.id}" aria-label="Remove">${iconX}</button>
-      </div>`).join("");
+        ${confirming ? `
+        <div class="ab-confirm-group">
+          <span class="ab-confirm-text">Delete?</span>
+          <button class="ab-confirm-yes" data-action="ab-remove-confirm" data-id="${procId}" data-section="removals" data-entry="${e.id}" aria-label="Confirm delete">${iconCheck}</button>
+          <button class="ab-confirm-no" data-action="ab-remove-cancel" data-entry="${e.id}" aria-label="Cancel">${iconX}</button>
+        </div>` : `
+        <div class="ab-row-actions">
+          <button class="ab-edit-btn" data-action="ab-edit-toggle" data-entry="${e.id}" aria-label="Edit">${iconEdit}</button>
+          <button class="ab-remove" data-action="ab-remove" data-id="${procId}" data-section="removals" data-entry="${e.id}" aria-label="Remove">${iconX}</button>
+        </div>`}
+      </div>`;
+      }).join("");
 
   const addBlock = formOpen ? `
-    <div class="ab-add-form" data-section="lines" data-id="${procId}">
-      <input type="text" class="ab-input ab-input-name" placeholder="Line… e.g. 53S 8&quot;" autocomplete="off">
-      <div class="ab-toggle-group">
-        <button type="button" class="ab-toggle-btn active" data-value="abandoned" data-action="ab-toggle-opt">Abandoned</button>
+    <div class="ab-add-form" data-section="removals" data-id="${procId}">
+      <label class="ab-checkbox-row">
+        <input type="checkbox" class="ab-removal-well-checkbox" data-action="ab-removal-well-toggle" checked>
+        <span>Well removed</span>
+      </label>
+      <div class="well-ac-wrap">
+        <input type="text" class="ab-input ab-removal-well-input well-ac-input" placeholder="Well number (optional)… e.g. W-208" autocomplete="off">
+        <div class="well-ac-dropdown"></div>
+      </div>
+
+      <label class="ab-checkbox-row">
+        <input type="checkbox" class="ab-removal-line-checkbox" data-action="ab-removal-line-toggle" checked>
+        <span>Well line</span>
+      </label>
+      <div class="ab-toggle-group ab-removal-line-status">
+        <button type="button" class="ab-toggle-btn active" data-value="removed" data-action="ab-toggle-opt">Removed</button>
         <button type="button" class="ab-toggle-btn" data-value="left-in-place" data-action="ab-toggle-opt">Left in Place</button>
       </div>
+      <input type="text" class="ab-input ab-removal-line-input" placeholder="Line number… leave blank to use the well number" autocomplete="off">
+
       <input type="date" class="ab-input ab-input-date" aria-label="Date">
+      <textarea class="ab-input ab-input-comments" rows="2" placeholder="Comments (optional) — e.g. found 2&quot; abandoned pipe nearby"></textarea>
       <div class="ab-add-actions">
-        <button class="ab-submit-btn" data-action="ab-submit" data-id="${procId}" data-section="lines">Add</button>
-        <button class="ab-cancel-btn" data-action="ab-cancel" data-id="${procId}" data-section="lines">Cancel</button>
+        <button class="ab-submit-btn" data-action="ab-submit" data-id="${procId}" data-section="removals">Add</button>
+        <button class="ab-cancel-btn" data-action="ab-cancel" data-id="${procId}" data-section="removals">Cancel</button>
       </div>
     </div>`
-    : `<button class="ab-add-btn" data-action="ab-add-toggle" data-id="${procId}" data-section="lines">${iconPlus} Add well line</button>`;
+    : `<button class="ab-add-btn" data-action="ab-add-toggle" data-id="${procId}" data-section="removals">${iconPlus} Add removal</button>`;
 
   return `
   <div class="ab-section">
-    <h3 class="ab-heading">Abandoned / Left-in-Place Well Lines</h3>
+    <h3 class="ab-heading">Abandoned Wells &amp; Lines</h3>
     <div class="ab-rows">${rows}</div>
     ${addBlock}
   </div>`;
@@ -2425,6 +3151,333 @@ function renderMissDigsCard(proc, isOpen){
   </div>`;
 }
 
+/* ---------------------------------------------------------------------
+   REFERENCE CARD — static quick-reference sections (specs, setpoint
+   ladders, normal positions). Nothing to check off, nothing to reset.
+------------------------------------------------------------------------ */
+function renderReferenceCard(proc, isOpen){
+  const sections = (proc.sections||[]).map(s => {
+    let body = "";
+    if(s.items){
+      body = `<div class="ref-items">${s.items.map(it => `
+        <div class="ref-item">
+          <span class="ref-label ${it.tone ? 'ref-label-'+it.tone : ''}">${highlight(it.label, query)}</span>
+          <span class="ref-value">${highlight(it.value, query)}</span>
+        </div>`).join("")}</div>`;
+    }
+    if(s.ladder){
+      body += `<div class="ref-ladder">${s.ladder.map(r => `
+        <div class="ref-rung ref-rung-${r.tone||'dim'}">
+          <div class="ref-rung-head">
+            <span class="ref-rung-level">${highlight(r.level, query)}</span>
+            <span class="ref-rung-name">${highlight(r.name, query)}</span>
+          </div>
+          <div class="ref-rung-text">${highlight(r.text, query)}</div>
+        </div>`).join("")}</div>`;
+    }
+    return `<div class="ref-section ${s.tone ? 'ref-section-'+s.tone : ''}">
+      <h3 class="ab-heading">${highlight(s.title, query)}</h3>
+      ${body}
+    </div>`;
+  }).join("");
+
+  return `
+  <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
+    <div class="card-head" data-action="toggle" data-id="${proc.id}">
+      <span class="chevron">${iconChevron}</span>
+      <div class="card-title-wrap">
+        <p class="card-title">${highlight(proc.title, query)}</p>
+        <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+      </div>
+      <div class="progress-mini">${(proc.sections||[]).length}</div>
+    </div>
+    <div class="card-body">
+      <div class="body-inner">
+        <p class="ref-source">From "Operational Procedures — Winterfield Storage Field — Slug Catcher Tank", rev 6-22-11. Handwritten additions are called out where they differ from the printed sheet.</p>
+        ${sections}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------------------------------------------------------------------
+   ALARM LOOKUP — type a device tag or any word from the alarm text MRCS
+   reads you, get the plain-language meaning and what to do.
+------------------------------------------------------------------------ */
+let alarmShowAll = false;       // transient UI state: full alarm list expanded
+let alarmShowScenarios = false; // transient UI state: scenario library expanded
+const TB_SEVERITY = {
+  interlock: { label:"INTERLOCK", cls:"alarm-sev-interlock" },
+  warn:      { label:"ALARM",     cls:"alarm-sev-warn" },
+  fault:     { label:"INSTRUMENT FAULT", cls:"alarm-sev-fault" }
+};
+
+// A term like "pt-301" (has a dash) must sit at a word boundary, so it won't
+// hit "dpt-301". Plain words ("high", "301", "close") still match as substrings.
+function alarmTermHits(a, term){
+  const hay = `${a.device} ${a.alarm} ${a.meaning} ${a.io}`.toLowerCase();
+  if(term.includes("-")){
+    const esc = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(^|[^a-z0-9])${esc}`).test(hay);
+  }
+  return hay.includes(term);
+}
+
+/* ---- Active-alarm tray (what you're seeing on MRCS right now) ---- */
+const ACTIVE_ALARMS_KEY = "fieldProcedures.activeAlarms.v1";
+let activeAlarms = (function(){
+  try{
+    const keys = JSON.parse(localStorage.getItem(ACTIVE_ALARMS_KEY)) || [];
+    return new Set(keys.map(k => TB_ALARMS.findIndex(a => a.key === k)).filter(i => i >= 0));
+  } catch(e){ return new Set(); }
+})();
+function saveActiveAlarms(){
+  try{ localStorage.setItem(ACTIVE_ALARMS_KEY, JSON.stringify([...activeAlarms].map(i => TB_ALARMS[i].key))); }catch(e){}
+}
+
+/* ---- Scenario matching ---- */
+function condMatches(cond, a){
+  const dOk = cond.d instanceof RegExp ? cond.d.test(a.device) : a.device === cond.d;
+  if(!dOk) return false;
+  const ks = Array.isArray(cond.k) ? cond.k : [cond.k];
+  return ks.includes(a.kind);
+}
+function condHitsIn(cond, alarms){ return alarms.filter(a => condMatches(cond, a)); }
+
+// Returns scenarios that apply to the given set of alarms, each with what it explains
+// and what you'd also expect to see. Includes the dynamic "bad signal" rule.
+function diagnose(alarms){
+  const out = [];
+  // Dynamic rule: same device has a FAULT plus a level/pressure reading alarm -> bad signal.
+  const byDevice = {};
+  alarms.forEach(a => { (byDevice[a.device] = byDevice[a.device] || []).push(a); });
+  Object.keys(byDevice).forEach(dev => {
+    const grp = byDevice[dev];
+    const faults = grp.filter(a => a.kind === "fault");
+    const readings = grp.filter(a => ["hi","hh","lo","ll","dev"].includes(a.kind));
+    if(faults.length && readings.length){
+      out.push({
+        id:"sig-"+dev, severity:"instrument",
+        title:`${dev}: bad signal, not a real reading`,
+        likely:`${dev} is reporting a FAULT and a ${readings.map(r=>r.kind.toUpperCase()).join("/")} alarm at the same time. When a 4–20 mA signal fails it usually rails out of range, and the PLC reads that garbage as a high (or low) value AND flags it as invalid — both in the same scan. The reading alarm is a symptom of the fault, not real process pressure/level.`,
+        confirm:["Did both fire at the same second on MRCS? That's the tell.","Look at the live value — pegged at full scale, 0, or frozen = bad signal","Check a local mechanical gauge / sight glass","For pressure: are the pumps even running?"],
+        action:["Chase the signal: wiring at the transmitter head, junction box, terminals, loop power, the I/O channel","Once the signal is back the reading alarm should clear on its own","If the gauge ALSO reads high — then it's real; handle both"],
+        explains: grp, expect: []
+      });
+    }
+  });
+
+  TB_SCENARIOS.forEach(s => {
+    if(s.excludes && s.excludes.some(c => condHitsIn(c, alarms).length)) return;
+    let ok = true; const explained = new Set();
+    s.core.forEach(g => {
+      const hits = []; g.any.forEach(c => condHitsIn(c, alarms).forEach(a => hits.push(a)));
+      const uniq = [...new Set(hits)];
+      if(uniq.length < (g.min || 1)) ok = false;
+      uniq.forEach(a => explained.add(a));
+    });
+    if(!ok) return;
+    const expect = [];
+    (s.also||[]).forEach(c => {
+      const hits = condHitsIn(c, alarms);
+      if(hits.length) hits.forEach(a => explained.add(a)); else expect.push(c);
+    });
+    out.push(Object.assign({}, s, { explains:[...explained], expect }));
+  });
+
+  const sevRank = { safety:0, process:1, instrument:2 };
+  out.sort((a,b) => (sevRank[a.severity]-sevRank[b.severity]) || (b.explains.length - a.explains.length));
+  return out;
+}
+
+function condLabel(c){
+  const dev = c.d instanceof RegExp ? c.d.source.replace(/[\^$\\]/g,"").replace(/\(|\)/g,"").replace(/\|/g,"/") : c.d;
+  const kindWords = { hi:"high", hh:"high high", lo:"low", ll:"low low", fault:"fault", dev:"deviation", pos:"position indication", ftc:"failed to close", fto:"failed to open", notopen:"not in open", notclosed:"not in closed", start:"failed to start", lt2open:"<2 open", forces:"forces active", battery:"battery" };
+  const ks = (Array.isArray(c.k) ? c.k : [c.k]).map(k => kindWords[k] || k).join(" / ");
+  return `${dev} ${ks}`;
+}
+
+const TB_SCN_SEV = {
+  safety:     { label:"SAFETY",     cls:"alarm-sev-interlock" },
+  process:    { label:"PROCESS",    cls:"alarm-sev-warn" },
+  instrument: { label:"INSTRUMENT", cls:"alarm-sev-fault" }
+};
+
+function scenarioCardHtml(s, showExplains){
+  const sev = TB_SCN_SEV[s.severity] || TB_SCN_SEV.process;
+  const rowSev = s.severity === "safety" ? "interlock" : s.severity === "process" ? "warn" : "fault";
+  const explains = showExplains && s.explains && s.explains.length
+    ? `<div class="scn-chips"><span class="scn-chips-label">Explains:</span>${s.explains.map(a => `<span class="scn-chip scn-chip-on">${escapeHtml(a.device)} · ${escapeHtml(shortKind(a))}</span>`).join("")}</div>` : "";
+  const expect = showExplains && s.expect && s.expect.length
+    ? `<div class="scn-chips"><span class="scn-chips-label">You'd also expect:</span>${s.expect.map(c => `<span class="scn-chip">${escapeHtml(condLabel(c))}</span>`).join("")}</div>` : "";
+  const involves = !showExplains
+    ? `<div class="scn-chips"><span class="scn-chips-label">Alarms involved:</span>${[...(s.core||[]).flatMap(g=>g.any), ...(s.also||[])].map(c => `<span class="scn-chip">${escapeHtml(condLabel(c))}</span>`).join("")}</div>` : "";
+  return `
+  <div class="alarm-row alarm-row-${rowSev} scn-row">
+    <div class="alarm-row-top">
+      <span class="alarm-device scn-title">${highlight(s.title, query)}</span>
+      <span class="alarm-sev ${sev.cls}">${sev.label}</span>
+    </div>
+    ${explains}${expect}${involves}
+    <div class="alarm-meaning">${highlight(s.likely, query)}</div>
+    <div class="scn-sub">Confirm it</div>
+    <ol class="alarm-actions">${s.confirm.map(x => `<li>${highlight(x, query)}</li>`).join("")}</ol>
+    <div class="scn-sub">Do this</div>
+    <ol class="alarm-actions">${s.action.map(x => `<li>${highlight(x, query)}</li>`).join("")}</ol>
+  </div>`;
+}
+
+function shortKind(a){
+  const w = { hi:"HIGH", hh:"HIGH HIGH", lo:"LOW", ll:"LOW LOW", fault:"FAULT", dev:"DEVIATION", pos:"POS IND", ftc:"FAILED TO CLOSE", fto:"FAILED TO OPEN", notopen:"NOT OPEN", notclosed:"NOT CLOSED", start:"FAILED TO START", lt2open:"<2 OPEN", forces:"FORCES", battery:"BATTERY" };
+  return w[a.kind] || a.kind;
+}
+
+// showFab: render the floating "What's going on?" bar (only when the card is open,
+// since position:fixed would otherwise leak out of a collapsed card).
+function alarmDiagnosisHtml(showFab){
+  const active = [...activeAlarms].sort((a,b)=>a-b).map(i => TB_ALARMS[i]).filter(Boolean);
+  if(active.length === 0){
+    return `
+    <div class="scn-howto">
+      <div class="scn-howto-title">${iconCrosshair} Got more than one alarm on MRCS?</div>
+      <ol class="scn-howto-steps">
+        <li>Search each alarm below and tap <b>+ I have this</b>.</li>
+        <li>The likely cause shows up right here — and a bar at the bottom of your screen jumps you back to it.</li>
+      </ol>
+    </div>`;
+  }
+  const results = diagnose(active);
+  const explainedSet = new Set(); results.forEach(r => r.explains.forEach(a => explainedSet.add(a.idx)));
+  const unexplained = active.filter(a => !explainedSet.has(a.idx));
+  const fab = showFab ? `<button class="scn-fab" data-action="alarm-goto-diag">${iconCrosshair}<span>${active.length} alarm${active.length===1?"":"s"} added · What's going on?</span><span class="scn-fab-arrow">↑</span></button>` : "";
+  return `
+  <div class="scn-tray">
+    <div class="scn-tray-head">
+      <span class="ab-heading" style="margin:0;border:0;padding:0">You're seeing (${active.length})</span>
+      <button class="ab-cancel-btn scn-clear" data-action="alarm-clear-active">Clear</button>
+    </div>
+    <div class="scn-chips">${active.map(a => `<button class="scn-chip scn-chip-on scn-chip-x" data-action="alarm-untrack" data-idx="${a.idx}">${escapeHtml(a.device)} · ${escapeHtml(shortKind(a))} ${iconX}</button>`).join("")}</div>
+  </div>
+  ${results.length
+    ? `<h3 class="ab-heading">${results.length === 1 ? "Most likely cause" : "Most likely causes, best match first"}</h3>
+       ${results.map((r, i) => `<div class="scn-rank">${results.length > 1 ? `<span class="scn-rank-num">#${i+1}</span>` : ""}${scenarioCardHtml(r, true)}</div>`).join("")}`
+    : `<p class="well-hint">No known pattern ties these together — treat each one on its own using the alarm entries below.</p>`}
+  ${unexplained.length ? `<div class="scn-chips scn-unexplained"><span class="scn-chips-label">Not part of any pattern above — handle individually:</span>${unexplained.map(a => `<span class="scn-chip">${escapeHtml(a.device)} · ${escapeHtml(shortKind(a))}</span>`).join("")}</div>` : ""}
+  ${fab}`;
+}
+
+function alarmCardHtml(a){
+  const sev = TB_SEVERITY[a.severity] || TB_SEVERITY.warn;
+  const on = activeAlarms.has(a.idx);
+  return `
+  <div class="alarm-row alarm-row-${a.severity}">
+    <div class="alarm-row-top">
+      <span class="alarm-device">${highlight(a.device, query)}</span>
+      <span class="alarm-sev ${sev.cls}">${sev.label}</span>
+    </div>
+    <div class="alarm-text">${highlight(a.alarm, query)}${a.io ? ` <span class="alarm-io">(${escapeHtml(a.io)})</span>` : ""}</div>
+    <div class="alarm-meaning">${highlight(a.meaning, query)}</div>
+    <ol class="alarm-actions">${a.action.map(s => `<li>${highlight(s, query)}</li>`).join("")}</ol>
+    <div class="scn-track-row">
+      <button class="scn-track ${on?'scn-track-on':''}" data-action="alarm-track" data-idx="${a.idx}">${on ? iconCheck + ` Added · ${activeAlarms.size} active` : iconPlus + " I have this"}</button>
+      ${on ? `<button class="scn-goto" data-action="alarm-goto-diag">See what it means ↑</button>` : ""}
+    </div>
+  </div>`;
+}
+
+function scenarioMatchesQuery(s, terms){
+  const text = `${s.title} ${s.likely}`.toLowerCase();
+  const conds = [...(s.core||[]).flatMap(g=>g.any), ...(s.also||[])];
+  return terms.every(t => {
+    if(text.includes(t)) return true;
+    const T = t.toUpperCase();
+    return conds.some(c => c.d instanceof RegExp ? c.d.test(T) : c.d.toUpperCase() === T || c.d.toUpperCase().includes(T));
+  });
+}
+
+function alarmResultsHtml(rawQuery){
+  try{
+    const q = (rawQuery||"").trim().toLowerCase();
+    const order = { interlock:0, warn:1, fault:2 };
+
+    if(!q){
+      // Empty search: interlock table always visible, plus two independent expandable sections.
+      const scnSection = alarmShowScenarios
+        ? `<h3 class="ab-heading">Known scenarios</h3>${TB_SCENARIOS.map(s => scenarioCardHtml(s, false)).join("")}
+           <button class="ab-add-btn" data-action="alarm-toggle-scenarios">Hide scenarios</button>`
+        : `<button class="ab-add-btn" data-action="alarm-toggle-scenarios">Browse all ${TB_SCENARIOS.length} known scenarios</button>`;
+      const allSorted = TB_ALARMS.slice().sort((a,b) => order[a.severity]-order[b.severity]);
+      const allSection = alarmShowAll
+        ? `<h3 class="ab-heading">All alarms</h3>${allSorted.map(alarmCardHtml).join("")}
+           <button class="ab-add-btn" data-action="alarm-toggle-all">Hide alarms</button>`
+        : `<button class="ab-add-btn" data-action="alarm-toggle-all">Show all ${TB_ALARMS.length} alarms</button>`;
+      return `
+      <p class="well-hint">Type the device tag (e.g. <b>LT-304</b>, <b>BV-310</b>) or any words from the alarm MRCS reads you (e.g. <b>failed to close</b>, <b>high high</b>).</p>
+      <h3 class="ab-heading">Interlocks — what trips what</h3>
+      <div class="alarm-interlocks">
+        ${TB_INTERLOCKS.map(i => `
+        <div class="alarm-il-row">
+          <div class="alarm-il-cause">${highlight(i.cause, query)}</div>
+          <div class="alarm-il-result">${highlight(i.result, query)}</div>
+        </div>`).join("")}
+        <p class="alarm-il-reset">${iconWarn} ${escapeHtml(TB_INTERLOCK_RESET)}</p>
+      </div>
+      ${scnSection}
+      ${allSection}`;
+    }
+
+    const terms = q.split(/\s+/).filter(Boolean);
+    let list = TB_ALARMS.filter(a => terms.every(t => alarmTermHits(a, t)));
+    const scenarios = TB_SCENARIOS.filter(s => scenarioMatchesQuery(s, terms));
+    if(list.length === 0 && scenarios.length === 0){
+      return `<p class="well-hint">No alarm matches “${escapeHtml(rawQuery.trim())}.” Try just the device tag (like <b>PT-302</b>) or one key word.</p>`;
+    }
+    // The device you searched for comes first; within that, interlocks before alarms before faults.
+    const exact = a => a.device.toLowerCase() === q ? 0 : 1;
+    list = list.slice().sort((a,b) => (exact(a)-exact(b)) || (order[a.severity]-order[b.severity]));
+    const scnHtml = scenarios.length ? `<h3 class="ab-heading">Scenarios involving this</h3>${scenarios.map(s => scenarioCardHtml(s, false)).join("")}<h3 class="ab-heading">Alarms</h3>` : "";
+    return `${scnHtml}${list.map(alarmCardHtml).join("")}`;
+  } catch(err){
+    return `<p class="well-hint">Something went wrong searching alarms: ${escapeHtml(String(err && err.message || err))}</p>`;
+  }
+}
+
+function renderAlarmsCard(proc, isOpen){
+  const ilCount = TB_ALARMS.filter(a => a.severity === "interlock").length;
+  // If the top-bar search matches alarms, carry it into the card so results show immediately.
+  let seed = "";
+  if(query){
+    const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const hit = TB_ALARMS.some(a => terms.every(t => alarmTermHits(a, t)));
+    if(hit) seed = query;
+  }
+  return `
+  <div class="card ${isOpen?'open':''}" data-id="${proc.id}">
+    <div class="card-head" data-action="toggle" data-id="${proc.id}">
+      <span class="chevron">${iconChevron}</span>
+      <div class="card-title-wrap">
+        <p class="card-title">${highlight(proc.title, query)}</p>
+        <div class="tags">${(proc.keywords.slice(0,4)).map(k=>`<span class="tag">${escapeHtml(k)}</span>`).join("")}</div>
+      </div>
+      <div class="progress-mini">${TB_ALARMS.length}</div>
+    </div>
+    <div class="card-body">
+      <div class="body-inner">
+        <div class="well-search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="well-input" type="text" placeholder="Device tag or alarm words… e.g. LT-304, failed to close" autocomplete="off" data-action="alarm-input" data-id="${proc.id}" value="${escapeHtml(seed)}">
+        </div>
+        <div class="scn-diagnosis" id="alarmDiag-${proc.id}">${alarmDiagnosisHtml(isOpen)}</div>
+        <div class="well-results" id="alarmResults-${proc.id}">${alarmResultsHtml(seed)}</div>
+        <div class="card-footer">
+          <span class="footer-note">${TB_ALARMS.length} alarms · ${ilCount} interlocks · ${TB_SCENARIOS.length} scenarios</span>
+          <button class="reset-btn" data-action="alarm-search-reset" data-id="${proc.id}">${iconReset} Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
 function stepRow(step, i, isDone, procId){
   const bell = step.type === "notify" ? `<span class="bell-icon">${iconBell}</span>` : "";
   return `
@@ -2451,14 +3504,41 @@ document.addEventListener("click", (e) => {
     const abCancel = e.target.closest('[data-action="ab-cancel"]');
     const abSubmit = e.target.closest('[data-action="ab-submit"]');
     const abRemove = e.target.closest('[data-action="ab-remove"]');
+    const abRemoveConfirm = e.target.closest('[data-action="ab-remove-confirm"]');
+    const abRemoveCancel = e.target.closest('[data-action="ab-remove-cancel"]');
     const abGraduate = e.target.closest('[data-action="ab-graduate"]');
     const wellAcSelect = e.target.closest('[data-action="well-ac-select"]');
-    const abLineToggle = e.target.closest('[data-action="ab-line-toggle"]');
+    const abRemovalWellToggle = e.target.closest('[data-action="ab-removal-well-toggle"]');
+    const abRemovalLineToggle = e.target.closest('[data-action="ab-removal-line-toggle"]');
+    const abEditToggle = e.target.closest('[data-action="ab-edit-toggle"]');
+    const abEditCancel = e.target.closest('[data-action="ab-edit-cancel"]');
+    const abEditSave = e.target.closest('[data-action="ab-edit-save"]');
+    const abEditWellToggle = e.target.closest('[data-action="ab-edit-well-toggle"]');
+    const abEditLineToggle = e.target.closest('[data-action="ab-edit-line-toggle"]');
 
-    if(abLineToggle){
-      const form = abLineToggle.closest('.ab-add-form');
-      const lineInput = form.querySelector('.ab-input-line-name');
-      lineInput.classList.toggle('ab-hidden', !abLineToggle.checked);
+    if(abEditWellToggle){
+      const row = abEditWellToggle.closest('.ab-row-editing');
+      row.querySelector('.ab-edit-well-input').classList.toggle('ab-hidden', !abEditWellToggle.checked);
+      return;
+    }
+    if(abEditLineToggle){
+      const row = abEditLineToggle.closest('.ab-row-editing');
+      const on = abEditLineToggle.checked;
+      row.querySelector('.ab-edit-line-input').classList.toggle('ab-hidden', !on);
+      row.querySelector('.ab-edit-line-status').classList.toggle('ab-hidden', !on);
+      return;
+    }
+
+    if(abRemovalWellToggle){
+      const form = abRemovalWellToggle.closest('.ab-add-form');
+      form.querySelector('.ab-removal-well-input').classList.toggle('ab-hidden', !abRemovalWellToggle.checked);
+      return;
+    }
+    if(abRemovalLineToggle){
+      const form = abRemovalLineToggle.closest('.ab-add-form');
+      const on = abRemovalLineToggle.checked;
+      form.querySelector('.ab-removal-line-input').classList.toggle('ab-hidden', !on);
+      form.querySelector('.ab-removal-line-status').classList.toggle('ab-hidden', !on);
       return;
     }
 
@@ -2478,6 +3558,45 @@ document.addEventListener("click", (e) => {
     const mdPlanRoute = e.target.closest('[data-action="md-plan-route"]');
     const mdReset = e.target.closest('[data-action="md-reset"]');
     const mdEditToggle = e.target.closest('[data-action="md-edit-toggle"]');
+    const wellSearchReset = e.target.closest('[data-action="well-search-reset"]');
+
+    if(wellSearchReset){
+      const id = wellSearchReset.dataset.id;
+      const card = wellSearchReset.closest(".card");
+      const input = card ? card.querySelector(".well-input") : null;
+      const results = document.getElementById(`wellResults-${id}`);
+      if(input) input.value = "";
+      if(results) results.innerHTML = wellResultsHtml("");
+      return;
+    }
+    const alarmSearchReset = e.target.closest('[data-action="alarm-search-reset"]');
+    const alarmToggleAll = e.target.closest('[data-action="alarm-toggle-all"]');
+    const alarmToggleScn = e.target.closest('[data-action="alarm-toggle-scenarios"]');
+    const alarmTrack = e.target.closest('[data-action="alarm-track"]');
+    const alarmUntrack = e.target.closest('[data-action="alarm-untrack"]');
+    const alarmClearActive = e.target.closest('[data-action="alarm-clear-active"]');
+    const alarmGotoDiag = e.target.closest('[data-action="alarm-goto-diag"]');
+    if(alarmGotoDiag){
+      const card = alarmGotoDiag.closest(".card");
+      const diag = card ? card.querySelector(".scn-diagnosis") : null;
+      if(diag && diag.scrollIntoView) diag.scrollIntoView({ behavior:"smooth", block:"start" });
+      return;
+    }
+    if(alarmSearchReset || alarmToggleAll || alarmToggleScn || alarmTrack || alarmUntrack || alarmClearActive){
+      const card = e.target.closest(".card");
+      const input = card ? card.querySelector(".well-input") : null;
+      const results = card ? card.querySelector(".well-results") : null;
+      const diag = card ? card.querySelector(".scn-diagnosis") : null;
+      if(alarmSearchReset){ alarmShowAll = false; alarmShowScenarios = false; activeAlarms.clear(); saveActiveAlarms(); if(input) input.value = ""; }
+      if(alarmToggleAll) alarmShowAll = !alarmShowAll;
+      if(alarmToggleScn) alarmShowScenarios = !alarmShowScenarios;
+      if(alarmTrack){ const i = +alarmTrack.dataset.idx; activeAlarms.has(i) ? activeAlarms.delete(i) : activeAlarms.add(i); saveActiveAlarms(); }
+      if(alarmUntrack){ activeAlarms.delete(+alarmUntrack.dataset.idx); saveActiveAlarms(); }
+      if(alarmClearActive){ activeAlarms.clear(); saveActiveAlarms(); }
+      if(diag) diag.innerHTML = alarmDiagnosisHtml(true);
+      if(results) results.innerHTML = alarmResultsHtml(input ? input.value : "");
+      return;
+    }
     const mdEditCancel = e.target.closest('[data-action="md-edit-cancel"]');
     const mdEditSave = e.target.closest('[data-action="md-edit-save"]');
 
@@ -2738,27 +3857,48 @@ document.addEventListener("click", (e) => {
     if(abSubmit){
       const id = abSubmit.dataset.id, section = abSubmit.dataset.section;
       const form = abSubmit.closest('.ab-add-form');
-      const nameInput = form.querySelector('.ab-input-name');
       const dateInput = form.querySelector('.ab-input-date');
-      const name = (nameInput.value || "").trim();
-      if(!name){ nameInput.focus(); return; }
       const date = dateInput ? dateInput.value : "";
-      abandonData[id] = abandonData[id] || { wells:[], lines:[], planned:[] };
-      if(section === "wells"){
-        abandonData[id].wells.push({ id:newAbId(), name, date });
-        const lineCheckbox = form.querySelector('.ab-line-checkbox');
-        if(lineCheckbox && lineCheckbox.checked){
-          const lineNameInput = form.querySelector('.ab-input-line-name');
-          const lineName = (lineNameInput.value || "").trim();
-          if(lineName){
-            abandonData[id].lines.push({ id:newAbId(), name:lineName, status:"abandoned", date });
-          }
+      abandonData[id] = abandonData[id] || { removals:[], planned:[] };
+
+      if(section === "removals"){
+        const wellCheckbox = form.querySelector('.ab-removal-well-checkbox');
+        const lineCheckbox = form.querySelector('.ab-removal-line-checkbox');
+        const wellChecked = wellCheckbox && wellCheckbox.checked;
+        const lineChecked = lineCheckbox && lineCheckbox.checked;
+
+        const wellInput = form.querySelector('.ab-removal-well-input');
+        const lineInput = form.querySelector('.ab-removal-line-input');
+        const commentsInput = form.querySelector('.ab-input-comments');
+        let wellName = wellChecked ? (wellInput.value||"").trim() : "";
+        let lineName = lineChecked ? (lineInput.value||"").trim() : "";
+        const comments = commentsInput ? (commentsInput.value||"").trim() : "";
+        // No line number given, but there's a well number — assume it's this well's own line.
+        if(lineChecked && !lineName && wellName){
+          lineName = wellName;
         }
-      } else if(section === "lines"){
-        const activeBtn = form.querySelector('.ab-toggle-btn.active');
-        const status = activeBtn ? activeBtn.dataset.value : "abandoned";
-        abandonData[id].lines.push({ id:newAbId(), name, status, date });
+        // Nothing at all was actually entered — nudge toward the first relevant field rather than erroring.
+        if(!wellName && !lineName && !comments){
+          if(wellChecked) wellInput.focus();
+          else if(lineChecked) lineInput.focus();
+          else commentsInput.focus();
+          return;
+        }
+
+        const statusBtn = form.querySelector('.ab-removal-line-status .ab-toggle-btn.active');
+        const lineStatus = lineChecked ? (statusBtn ? statusBtn.dataset.value : "removed") : null;
+        abandonData[id].removals.push({
+          id: newAbId(),
+          wellName: wellName || null,
+          lineName: lineName || null,
+          lineStatus: lineStatus,
+          date,
+          comments
+        });
       } else if(section === "planned"){
+        const nameInput = form.querySelector('.ab-input-name');
+        const name = (nameInput.value || "").trim();
+        if(!name){ nameInput.focus(); return; }
         const activeBtn = form.querySelector('.ab-toggle-btn.active');
         const type = activeBtn ? activeBtn.dataset.value : "well";
         abandonData[id].planned.push({ id:newAbId(), name, type, date });
@@ -2770,11 +3910,75 @@ document.addEventListener("click", (e) => {
     }
     if(abRemove){
       const id = abRemove.dataset.id, section = abRemove.dataset.section, entryId = abRemove.dataset.entry;
+      if(section === "removals"){
+        abRemovalDeleteConfirm[entryId] = true;
+        render();
+        return;
+      }
       if(abandonData[id] && abandonData[id][section]){
         abandonData[id][section] = abandonData[id][section].filter(e => e.id !== entryId);
         saveAbandon(abandonData);
         render();
       }
+      return;
+    }
+    if(abRemoveConfirm){
+      const id = abRemoveConfirm.dataset.id, section = abRemoveConfirm.dataset.section, entryId = abRemoveConfirm.dataset.entry;
+      if(abandonData[id] && abandonData[id][section]){
+        abandonData[id][section] = abandonData[id][section].filter(e => e.id !== entryId);
+        saveAbandon(abandonData);
+      }
+      delete abRemovalDeleteConfirm[entryId];
+      render();
+      return;
+    }
+    if(abRemoveCancel){
+      delete abRemovalDeleteConfirm[abRemoveCancel.dataset.entry];
+      render();
+      return;
+    }
+    if(abEditToggle){
+      abRemovalEditOpen[abEditToggle.dataset.entry] = true;
+      render();
+      return;
+    }
+    if(abEditCancel){
+      delete abRemovalEditOpen[abEditCancel.dataset.entry];
+      render();
+      return;
+    }
+    if(abEditSave){
+      const id = abEditSave.dataset.id, entryId = abEditSave.dataset.entry;
+      const row = abEditSave.closest('.ab-row-editing');
+      const d = abandonData[id];
+      const entry = d && d.removals.find(en => en.id === entryId);
+      if(entry){
+        const wellChecked = row.querySelector('.ab-edit-well-checkbox').checked;
+        const lineChecked = row.querySelector('.ab-edit-line-checkbox').checked;
+        const wellInput = row.querySelector('.ab-edit-well-input');
+        const lineInput = row.querySelector('.ab-edit-line-input');
+        const commentsInput = row.querySelector('.ab-edit-comments');
+        const dateInput = row.querySelector('.ab-edit-date');
+        let wellName = wellChecked ? (wellInput.value||"").trim() : "";
+        let lineName = lineChecked ? (lineInput.value||"").trim() : "";
+        const comments = commentsInput ? (commentsInput.value||"").trim() : "";
+        const date = dateInput ? dateInput.value : "";
+        if(lineChecked && !lineName && wellName) lineName = wellName;
+        if(!wellName && !lineName && !comments){
+          (wellChecked ? wellInput : lineChecked ? lineInput : commentsInput).focus();
+          return;
+        }
+        const statusBtn = row.querySelector('.ab-edit-line-status .ab-toggle-btn.active');
+        const lineStatus = lineChecked ? (statusBtn ? statusBtn.dataset.value : "removed") : null;
+        entry.wellName = wellName || null;
+        entry.lineName = lineName || null;
+        entry.lineStatus = lineStatus;
+        entry.date = date;
+        entry.comments = comments;
+        saveAbandon(abandonData);
+      }
+      delete abRemovalEditOpen[entryId];
+      render();
       return;
     }
     if(abGraduate){
@@ -2786,9 +3990,9 @@ document.addEventListener("click", (e) => {
           const entry = d.planned[idx];
           const today = new Date().toISOString().slice(0,10);
           if(entry.type === "line"){
-            d.lines.push({ id:newAbId(), name:entry.name, status:"abandoned", date:today });
+            d.removals.push({ id:newAbId(), wellName:null, lineName:entry.name, lineStatus:"removed", date:today });
           } else {
-            d.wells.push({ id:newAbId(), name:entry.name, date:today });
+            d.removals.push({ id:newAbId(), wellName:entry.name, lineName:null, lineStatus:null, date:today });
           }
           d.planned.splice(idx,1);
           saveAbandon(abandonData);
@@ -2873,6 +4077,13 @@ document.addEventListener("input", (e) => {
       const id = wellInput.dataset.id;
       const results = document.getElementById(`wellResults-${id}`);
       if(results) results.innerHTML = wellResultsHtml(wellInput.value);
+      return;
+    }
+    const alarmInput = e.target.closest('[data-action="alarm-input"]');
+    if(alarmInput){
+      const id = alarmInput.dataset.id;
+      const results = document.getElementById(`alarmResults-${id}`);
+      if(results) results.innerHTML = alarmResultsHtml(alarmInput.value);
       return;
     }
     if(!input) return;
